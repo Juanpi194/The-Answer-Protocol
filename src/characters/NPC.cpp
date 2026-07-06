@@ -1,0 +1,80 @@
+#include "characters/NPC.hpp"
+
+#include <iostream>
+
+#include "utils/utils.hpp"
+
+const std::string	NPC::PREFIX = "npc.";
+
+bool	NPC::validate_arguments(const std::string& id, const std::string& name, const std::string& description)
+{
+	std::string	npc_id;
+	std::string	npc_name;
+	std::string	npc_description;
+
+	// ID
+	npc_id = id;
+	trim_str(npc_id);
+	if (npc_id.empty())
+		return (log("NPC id cannot be empty.", LogLevel::ERROR), false);
+	if (!starts_with(npc_id, PREFIX))
+		return (log("NPC id must start with '" + PREFIX + "'.", LogLevel::ERROR), false);
+	npc_id = id.substr(PREFIX.size());
+	trim_str(npc_id);
+	if (npc_id.empty())
+		return (log("NPC id cannot be empty (After prefix).", LogLevel::ERROR), false);
+	// TODO: Check if there are spaces in the ID (there shouldn't be)
+	// ? REVIEW: Unlike items and rooms, npcs ids right side (after the dot) won't be checked.
+
+	// NAME
+	npc_name = name;
+	trim_str(npc_name);
+	if (npc_name.empty())
+		return (log("NPC name cannot be empty.", LogLevel::ERROR), false);
+	if (TITLE_NAME && !is_title(npc_name))
+		return (log("NPC name is not a title.", LogLevel::ERROR), false);
+	if (npc_name.size() > MAX_NAME_LENGTH)
+		return (log("NPC name is too long (MAX CHARACTERS: " + std::to_string(MAX_NAME_LENGTH) + ").", LogLevel::ERROR), false);
+	if (npc_name.size() < MIN_NAME_LENGTH)
+		return (log("NPC name is too short (MIN CHARACTERS: " + std::to_string(MIN_NAME_LENGTH) + ").", LogLevel::ERROR), false);
+
+	// DESCRIPTION
+	npc_description = description;
+	trim_str(npc_description);
+	if (npc_description.empty())
+		return (log("Description cannot be empty.", LogLevel::ERROR), false);
+	if (npc_description.size() > MAX_DESCRIPTION_LENGTH)
+		return (log("NPC description is too long (MAX CHARACTERS: " + std::to_string(MAX_DESCRIPTION_LENGTH) + ").", LogLevel::ERROR), false);
+	if (npc_description.size() < MIN_DESCRIPTION_LENGTH)
+		return (log("NPC description is too short (MIN CHARACTERS: " + std::to_string(MIN_DESCRIPTION_LENGTH) + ").", LogLevel::ERROR), false);
+
+	// VALIDATION PASSED
+	return (true);
+}
+
+// Constructors ---------------------------------------------------------------
+
+NPC::NPC(const std::string& id, const std::string& name, const std::string& description):
+	Character(name),
+	id(id),
+	description(description)
+{
+	if (!validate_arguments(id, name, description))
+		throw std::invalid_argument("NPC validation failed.");
+}
+
+// Getters and setters --------------------------------------------------------
+
+std::string	NPC::get_id(void) const noexcept
+{
+	return (id);
+}
+
+std::string	NPC::get_description(void) const noexcept
+{
+	return (description);
+}
+
+// Utils ----------------------------------------------------------------------
+
+// TODO: Add utils functions
