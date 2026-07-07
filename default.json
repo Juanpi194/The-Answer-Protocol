@@ -1,0 +1,23 @@
+{
+  "room": {
+    "id": "room.chest.lobby",
+    "name": "Lobby",
+    "description": "Room description text",  # ya lo pondre xoxo
+    "exits": {
+      "north": "",
+      "south": "room.south_id"
+    },
+    "chest": true,
+    "npcs": ["npc.narrator.id2"]
+  },
+  "room": {
+    "id": "room.enemy.lobby",
+    "name": "Lobby",
+    "description": "Room description text",  # ya lo pondre xoxo
+    "exits": {
+      "north": "room.north_id",
+      "south": "room.south_id"
+    },
+    "npcs": ["npc.narrator.id2"]
+  }
+}
