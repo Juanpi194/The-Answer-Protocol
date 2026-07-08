@@ -13,6 +13,16 @@ class Player final: public Fighter
 {
 	private:
 		// PlayerConnection	*player_connection;
+		// ! REVIEW: Check if this is the best way to access the fd.
+
+		/**
+		 * @brief	fd of the client that is playing
+		 * 			with this Player. If no client is created with
+		 * 			this Player, it will be set to -1.
+		 * @note	When the client changes its fd,
+		 * 			this should change with it.
+		 */
+		int					client_fd;
 		Room				*current_location;
 		unsigned int		gold;
 		std::list<Enemy*>	beaten_enemies;

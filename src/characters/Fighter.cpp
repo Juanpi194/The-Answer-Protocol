@@ -2,6 +2,12 @@
 
 #include <iostream>
 
+bool	Fighter::validate_stats(t_stats stats)
+{
+	// TODO: Add validations
+	return (true);
+}
+
 // Constructors ---------------------------------------------------------------
 
 Fighter::Fighter(const std::string& name, t_stats stats):
@@ -11,6 +17,7 @@ Fighter::Fighter(const std::string& name, t_stats stats):
 	stats(stats),
 	status(Status::HEALTHY)
 {
+	// TODO: Call validate_stats
 	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH)
 		throw std::invalid_argument("Fighter stats are not valid.");
 }

@@ -9,7 +9,7 @@ class Player;
 class NPC;
 class Item;
 
-class Room final
+class Room
 {
 	private:
 		const std::string			id;
@@ -38,7 +38,7 @@ class Room final
 
 		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Item *item);
 		Room(const Room& zone) = delete;
-		~Room(void);
+		virtual ~Room(void);
 
 		// Operators ----------------------------------------------------------
 
@@ -61,6 +61,7 @@ class Room final
 
 		// Utils --------------------------------------------------------------
 
+		virtual void	on_enter(void) noexcept = 0;
 		void			clear(void);
 		// void			connect_room()
 };

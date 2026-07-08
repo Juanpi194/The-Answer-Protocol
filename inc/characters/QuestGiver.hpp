@@ -3,7 +3,7 @@
 #include "characters/NPC.hpp"
 #include "quests/Quest.hpp"
 
-class QuestGiver: public NPC
+class QuestGiver final: public NPC
 {
 	private:
 		Quest	quest;

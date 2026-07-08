@@ -7,15 +7,20 @@
 enum Status
 {
 	HEALTHY,
-	POISON,
+	POISONED,
 	BURNT,
-	FROZEN
+	FROZEN,
+	BLEEDING,
+	CONFUSED
 };
 
 struct t_stats
 {
+	unsigned int	level;
 	unsigned int	hp;
 	unsigned int	strength;
+	unsigned int	defense;
+	unsigned int	speed;
 };
 
 // ? REVIEW: Is this the best way to make this?
@@ -36,6 +41,13 @@ class Fighter: public virtual Character
 		static constexpr unsigned int	MAX_HP = 100;
 		static constexpr unsigned int	MIN_STRENGTH = 5;
 		static constexpr unsigned int	MAX_STRENGTH = 80;
+		// TODO: Add more stats
+
+		/**
+		 * @brief	Validates if the provided stats for the fighter are valid.
+		 * @note	This method should ONLY be called in the constructor.
+		 */
+		bool	validate_stats(t_stats stats);
 	protected:
 		t_stats				stats;
 		Status				status;

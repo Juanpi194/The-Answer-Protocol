@@ -7,6 +7,8 @@ class Gear: public Item
 	private:
 		// TODO: Add attributes
 	protected:
+		// TODO: Enchantments...
+
 		/**
 		 * @brief	This method will be called by `use` by each type of gear.
 		 */

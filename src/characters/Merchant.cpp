@@ -9,12 +9,13 @@ std::string	Merchant::items_to_sell_str_format(void) const noexcept
 {
 	std::string	result = this->get_name() + "";
 
-	for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
-	{
-		if (!item_and_price.first)
-			continue ;
-		result += 
-	}
+	// for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
+	// {
+	// 	if (!item_and_price.first)
+	// 		continue ;
+	// 	result += 
+	// }
+	return (result);
 }
 
 // Constructors ---------------------------------------------------------------
