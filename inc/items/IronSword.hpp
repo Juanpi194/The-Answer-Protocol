@@ -17,7 +17,7 @@ class IronSword: public Weapon
 
 		IronSword(const std::string& id);
 		IronSword(const IronSword& sword) = delete;
-		~IronSword(void) = default;
+		~IronSword(void);
 
 		// Operators ----------------------------------------------------------
 

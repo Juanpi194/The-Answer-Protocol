@@ -17,7 +17,7 @@ class IronArmor: public Armor
 
 		IronArmor(const std::string& id);
 		IronArmor(const IronArmor& iron_armor) = delete;
-		~IronArmor(void) = default;
+		~IronArmor(void);
 
 		// Operators ----------------------------------------------------------
 

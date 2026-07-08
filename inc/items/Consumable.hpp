@@ -11,7 +11,7 @@ class Consumable: public Item
 
 		Consumable(const std::string& id, const std::string& name, const std::string& description);
 		Consumable(const Consumable& consumable) = delete;
-		~Consumable(void) = default;
+		virtual ~Consumable(void) = default;
 
 		// Operators ----------------------------------------------------------
 

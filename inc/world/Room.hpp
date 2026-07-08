@@ -16,7 +16,7 @@ class Room
 		const std::string			name;
 		const std::string			description;
 		NPC							*npc;
-		Item						*item;
+		std::list<Item*>			items;
 		std::list<Player*>			player_list;
 		std::map<Direction, Room*>	adyacent_rooms;
 
@@ -36,7 +36,7 @@ class Room
 	public:
 		// Constructors -------------------------------------------------------
 
-		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Item *item);
+		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item*>& items);
 		Room(const Room& zone) = delete;
 		virtual ~Room(void);
 
@@ -50,13 +50,13 @@ class Room
 		std::string							get_name(void) const noexcept;
 		std::string							get_description(void) const noexcept;
 		NPC									*get_NPC(void) const noexcept;
-		Item								*get_item(void) const noexcept;
+		std::list<Item*>&					get_items(void) noexcept;
+		const std::list<Item*>&				get_items(void) const noexcept;
 		std::list<Player*>&					get_player_list(void) noexcept;
 		const std::list<Player*>& 			get_player_list(void) const noexcept;
 		std::map<Direction, Room*>&			get_adyacent_rooms(void) noexcept;
 		const std::map<Direction, Room*>&	get_adyacent_rooms(void) const noexcept;
 
-		void	set_item(Item *item);
 		void	set_adyacent_room(Direction direction, Room *room);
 
 		// Utils --------------------------------------------------------------

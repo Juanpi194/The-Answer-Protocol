@@ -1,13 +1,11 @@
 TODO --------------
 Items (Armor, Weapon, ...)
+Enchantments
+static getters and setters???
 Battle
-Chest
-Narrator
-Different type of rooms
+Change .cpp for a lot of files
 
 QUESTIONS ---------
-Las salas tienen items,
-o unicamente las de los cofres tienen items al interactuar con el cofre?
 
 BUGS --------------
 Hola
@@ -21,13 +19,10 @@ Gear base classes
 Quest base
 
 CHANGES -----------
-NPCS stick to their own rooms (It is the room's job to free them), but items
-will be moving through rooms and players. Player's destructors must free all items
-in their inventories, and rooms will check if there is an item in them. If there is,
-it will be freed.
-NPCS AND ITEMS WON'T BE ABLE TO BE COPIED (because of id). ID added to rooms, npcs and items
+NPCS AND ITEMS WONT BE ABLE TO BE COPIED (because of id). ID added to rooms, npcs and items.
+More than one item per room. Only one npc per room.
 Item list moved from Character class to Fighter class, not every character must have an 'inventory'
-ATTRIBUTES :))))
+ATTRIBUTES 
 NO COMPILATION FLAGS UNTIL END
 
 COMMENT TAGS ------

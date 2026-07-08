@@ -1,11 +1,25 @@
 #pragma once
 
 #include "items/Item.hpp"
+#include "utils/types.hpp"
 
+class Enchantment;
+
+/**
+ * @brief	Abstract class that represents equipment.
+ */
 class Gear: public Item
 {
 	private:
-		// TODO: Add attributes
+		/**
+		 * @brief	Used for enchantments.
+		 */
+		const GearType	gear_type;
+		/**
+		 * @brief	The enchantment that the gear item has.
+		 * @note	Only one enchantment per item.
+		 */
+		Enchantment	*enchantment;
 	protected:
 		// TODO: Enchantments...
 
@@ -16,9 +30,9 @@ class Gear: public Item
 	public:
 		// Operators ----------------------------------------------------------
 
-		Gear(const std::string& id, const std::string& name, const std::string& description);
+		Gear(const std::string& id, const std::string& name, const std::string& description, GearType gear_type);
 		Gear(const Gear& gear) = delete;
-		~Gear(void) = default;
+		virtual ~Gear(void);
 
 		// Operators ----------------------------------------------------------
 
@@ -26,7 +40,10 @@ class Gear: public Item
 
 		// Getters and setters ------------------------------------------------
 
-		// TODO: Add getters and setters for the attributes
+		GearType	get_gear_type(void) const noexcept;
+		Enchantment	*get_enchantment(void) const noexcept;
+
+		void	set_enchantment(Enchantment *enchantment);
 
 		// Utils --------------------------------------------------------------
 

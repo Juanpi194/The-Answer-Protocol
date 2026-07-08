@@ -7,3 +7,10 @@ enum class Direction
 	SOUTH,
 	WEST
 };
+
+enum class GearType
+{
+	Iron,
+	Fire,
+	Ice
+};

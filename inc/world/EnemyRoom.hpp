@@ -10,6 +10,7 @@ class EnemyRoom final: public Room
 		// Constructors -------------------------------------------------------
 
 		EnemyRoom(const std::string& id, const std::string& name, const std::string description, Enemy *enemy);
+		EnemyRoom(const std::string& id, const std::string& name, const std::string description, Enemy *enemy, std::list<Item*> items);
 		EnemyRoom(const EnemyRoom& enemy_room) = delete;
 		~EnemyRoom(void);
 
