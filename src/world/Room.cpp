@@ -56,19 +56,19 @@ bool	Room::validate_arguments(const std::string& id, const std::string& name, co
 
 // Constructors ---------------------------------------------------------------
 
-Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Item *item):
+Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item*>& items):
 	id(id),
 	name(name),
 	description(description),
 	npc(npc),
-	item(item)
+	items(items)
 {
 	if (!validate_arguments(id, name, description))
 		throw std::invalid_argument("Provided room arguments are not valid. Room initialization failed.");
 	if (!npc)
 		log("No npc established in room with id '" + id + "'.", LogLevel::INFO);
-	if (!item)
-		log("No item established in room with id '" + id + "'.", LogLevel::INFO);
+	if (items.size() == 0)
+		log("No items established in room with id '" + id + "'.", LogLevel::INFO);
 }
 
 Room::~Room()
@@ -99,9 +99,14 @@ NPC									*Room::get_NPC(void) const noexcept
 	return (npc);
 }
 
-Item								*Room::get_item(void) const noexcept
+std::list<Item*>&					Room::get_items(void) noexcept
 {
-	return (item);
+	return (items);
+}
+
+const std::list<Item*>&				Room::get_items(void) const noexcept
+{
+	return (items);
 }
 
 std::list<Player*>&					Room::get_player_list(void) noexcept
@@ -122,13 +127,6 @@ std::map<Direction, Room*>&			Room::get_adyacent_rooms(void) noexcept
 const std::map<Direction, Room*>&	Room::get_adyacent_rooms(void) const noexcept
 {
 	return (adyacent_rooms);
-}
-
-void	Room::set_item(Item *item)
-{
-	this->item = item;
-	if (!item)
-		log("Item 'nullptr' was assigned to room " + name + ".", LogLevel::INFO);
 }
 
 void	Room::set_adyacent_room(Direction direction, Room *room)

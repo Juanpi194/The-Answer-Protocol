@@ -1,6 +1,5 @@
 #pragma once
 #include <list>
-// TODO: NI IDEA HULIO
 
 class Item;
 class Player;
@@ -16,7 +15,7 @@ class Chest
 		 * 			Sets `opened` to `true`.
 		 * @returns	A list with all the generated items. 
 		 */
-		inline std::list<Item*>	open(void) noexcept;
+		std::list<Item*>	open(void) noexcept;
 	public:
 		// Constructors -------------------------------------------------------
 

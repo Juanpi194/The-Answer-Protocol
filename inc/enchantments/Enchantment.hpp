@@ -38,7 +38,10 @@ class Enchantment
 	public:
 		// Constructors -------------------------------------------------------
 
-		Enchantment(const std::string& name, const std::string& description);
+		/**
+		 * @throws	`std::invalid_argument` if validation fails.
+		 */
+		Enchantment(const std::string& name, const std::string& description, const std::list<GearType> allowed_gear_types);
 		Enchantment(const Enchantment& enchantment);
 		virtual ~Enchantment(void) = default;
 
@@ -48,11 +51,16 @@ class Enchantment
 
 		// Getters and setters ------------------------------------------------
 
-		std::string	get_name(void) const noexcept;
-		std::string	get_description(void) const noexcept;
+		std::string					get_name(void) const noexcept;
+		std::string					get_description(void) const noexcept;
+		const std::list<GearType>	get_allowed_gear_types(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
 
+		/**
+		 * @brief	Tries to apply the enchantment to the provided gear.
+		 * @param	gear	The gear to enchant.
+		 */
 		void			apply_to(Gear& gear);
 		virtual void	effect(void) noexcept = 0;
 };

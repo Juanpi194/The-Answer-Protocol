@@ -21,8 +21,6 @@ class Gear: public Item
 		 */
 		Enchantment	*enchantment;
 	protected:
-		// TODO: Enchantments...
-
 		/**
 		 * @brief	This method will be called by `use` by each type of gear.
 		 */

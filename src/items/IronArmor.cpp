@@ -11,6 +11,11 @@ void	IronArmor::special_use(void) noexcept
 // Constructors ---------------------------------------------------------------
 
 IronArmor::IronArmor(const std::string& id):
-	Armor(id, NAME, DESCRIPTION, REDUCED_DAMAGE)
+	Armor(id, NAME, DESCRIPTION, DAMAGE_REDUCTION, GEAR_TYPE)
 {
+}
+
+IronArmor::~IronArmor(void)
+{
+	// TODO: Free enchantment...
 }

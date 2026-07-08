@@ -4,6 +4,8 @@ Enchantments
 static getters and setters???
 Battle
 Change .cpp for a lot of files
+std::invalid argument es de <stdexcept>, cambiar donde ponga <iostream>
+Los items deben de tener constructor copia :(
 
 QUESTIONS ---------
 
@@ -17,6 +19,7 @@ Room base
 Character base classes
 Gear base classes
 Quest base
+Review items initializations
 
 CHANGES -----------
 NPCS AND ITEMS WONT BE ABLE TO BE COPIED (because of id). ID added to rooms, npcs and items.

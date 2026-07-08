@@ -2,18 +2,17 @@
 
 #include "enchantments/Enchantment.hpp"
 
-//TODO: The class :D
-
 class Flame final: public Enchantment
 {
 	private:
-		static const std::string	NAME;	// Defined in Flame.cpp
-		static const std::string	DESCRIPTION;	// Defined in Flame.cpp
+		static const std::string			NAME;	// Defined in Flame.cpp
+		static const std::string			DESCRIPTION;	// Defined in Flame.cpp
+		static const std::list<GearType>	ALLOWED_GEAR_TYPES;	// Defined in Flame.cpp
 	public:
 		// Constructors -------------------------------------------------------
 
 		Flame(void);
-		Flame(const Flame& flame) = delete;
+		Flame(const Flame& flame);
 		~Flame(void) = default;
 
 		// Operators ----------------------------------------------------------
@@ -26,4 +25,5 @@ class Flame final: public Enchantment
 
 		// Utils --------------------------------------------------------------
 
+		void	effect(void) noexcept override;
 };

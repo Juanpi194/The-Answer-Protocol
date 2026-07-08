@@ -9,7 +9,8 @@ class IronArmor: public Armor
 
 		static const std::string		NAME;	// Defined in IronArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp
-		static constexpr unsigned int	REDUCED_DAMAGE = 3;
+		static constexpr unsigned int	DAMAGE_REDUCTION = 3;
+		static constexpr GearType		GEAR_TYPE = GearType::Iron;
 
 		void	special_use(void) noexcept override;
 	public:

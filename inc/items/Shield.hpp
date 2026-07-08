@@ -13,7 +13,7 @@ class Shield: public Item
 	public:
 		// Constructors -------------------------------------------------------
 
-		Shield(const std::string& id, const std::string& name, const std::string& description, unsigned int max_uses);
+		Shield(const std::string& id, const std::string& name, const std::string& description, const unsigned int max_uses);
 		Shield(const Shield& shield) = delete;
 		virtual ~Shield(void) = default;
 

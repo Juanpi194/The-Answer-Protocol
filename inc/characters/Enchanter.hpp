@@ -14,7 +14,7 @@ class Enchanter final: public NPC
 		// Constructors -------------------------------------------------------
 
 		// TODO: Add enchantments to the constructor
-		Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int> enchantments);
+		Enchanter(const std::string& id, const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments);
 		Enchanter(const Enchanter& enchanter) = delete;
 		~Enchanter(void);
 
@@ -34,7 +34,8 @@ class Enchanter final: public NPC
 		/**
 		 * @brief	Applies the specified enchantment to a gear item.
 		 * @param	gear	The gear item to enchant.
-		 * @param	enchantment	The enchant to be set to the item.
+		 * @param	enchantment	Pointer to the enchant to be set to the item.
+		 * @throws	`std::invalid_argument` if `enchantment` is `nullptr`.
 		 */
-		void	enchant(Gear& gear, Enchantment enchantment) noexcept;
+		void	enchant(Gear& gear, Enchantment *enchantment) __nonnull();
 };

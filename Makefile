@@ -12,13 +12,19 @@ BATTLE_SRC = $(addprefix $(SRC_FOLDER)/$(BATTLE_FOLDER)/, \
 
 CHARACTERS_FOLDER = characters
 CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
-					Character.cpp Enemy.cpp Fighter.cpp Merchant.cpp NPC.cpp \
+					Character.cpp Enchanter.cpp Enemy.cpp Fighter.cpp \
+					Merchant.cpp Narrator.cpp NPC.cpp \
 					Player.cpp QuestGiver.cpp)
+
+ENCHANTMENTS_FOLDER = enchantments
+ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
+						Enchantment.cpp Flame.cpp)
 
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
-				Armor.cpp Consumable.cpp Gear.cpp IronArmor.cpp IronSword.cpp \
-				Item.cpp Weapon.cpp)
+				Armor.cpp Chest.cpp Consumable.cpp Gear.cpp \
+				IronArmor.cpp IronShield.cpp IronSword.cpp \
+				Item.cpp Shield.cpp Weapon.cpp)
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \

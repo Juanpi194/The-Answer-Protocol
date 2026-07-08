@@ -27,7 +27,7 @@ class NPC: public virtual Character
 
 		NPC(const std::string& id, const std::string& name, const std::string& description);
 		NPC(const NPC& npc) = delete;
-		~NPC(void) = default;
+		virtual ~NPC(void) = default;
 
 		// Operators ----------------------------------------------------------
 

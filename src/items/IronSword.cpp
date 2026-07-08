@@ -11,6 +11,11 @@ void	IronSword::special_use(void) noexcept
 // Constructors ---------------------------------------------------------------
 
 IronSword::IronSword(const std::string& id):
-	Weapon(id, NAME, DESCRIPTION, EXTRA_DAMAGE)
+	Weapon(id, NAME, DESCRIPTION, EXTRA_DAMAGE, GEAR_TYPE)
 {
+}
+
+IronSword::~IronSword(void)
+{
+	// TODO: Free enchantment...
 }
