@@ -17,8 +17,8 @@ class PlayerConnection final
 		PlayerConnection(const std::string& name, int client_fd, Server *server);
 		PlayerConnection(const PlayerConnection& player) = delete;
 
-		/*
-		@brief	Closes fd, sets it to -1, sets connected as false, ...
+		/** 
+		 * @brief	Closes fd, sets it to -1, sets connected as false, ... 
 		*/
 		~PlayerConnection(void);
 

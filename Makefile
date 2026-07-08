@@ -51,6 +51,9 @@ CRAZY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
 				-Wcast-align -Wold-style-cast -Woverloaded-virtual \
 				-Wnon-virtual-dtor -D_POSIX_C_SOURCE=200809L -O3 \
 				-march=native -flto
+# -MMD -MP (revisar)
+# DEPS = $(OBJS:.o=.d)
+# -include $(DEPS)
 DEBUG_FLAG = -D WOW -D DEBUG_BUILD
 CC = c++
 

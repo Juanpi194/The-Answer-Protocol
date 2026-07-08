@@ -17,6 +17,13 @@ class Merchant final: public NPC
 		 * 			the merchant will still have it to keep selling it.
 		 */
 		const std::map<Item*, unsigned int>	items_to_sell;
+
+		/**
+		 * @brief	Creates a string with all the shop items and
+		 * 			their respective prices.
+		 * @returns	All items with a string format.
+		 */
+		std::string	items_to_sell_str_format(void) const noexcept;
 	public:
 		// Constructors -------------------------------------------------------
 

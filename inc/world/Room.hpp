@@ -3,17 +3,11 @@
 #include <list>
 #include <map>
 
+#include "utils/types.hpp"
+
 class Player;
 class NPC;
 class Item;
-
-enum class Direction
-{
-	NORTH,
-	EAST,
-	SOUTH,
-	WEST
-};
 
 class Room final
 {
