@@ -32,3 +32,23 @@
     - Sangrado ()
     - Paralizado ()
     - Confuso ()
+
+
+
+Puntos nuevos a coemntar:
+1. En vez de chest true que chest sea un tipo de sala y asi podemos cambiarlo con mas facilidad?
+    - Y a las salas con chest y a las que den objetos mas chulis meterle un npc flow guardian del cofre y que te frase a lo "Este cofre solo podra ser abierto por alguien digno de el xoxo" (Nose no soy tan original pero algo flow asi mola)
+    - Osea puede ser mas fumada pero molaria salas de chest normal y salas de cheat con un npc. 
+
+2. Una sola sala de lobby (que es mas de lo que habalmos ayer pero tenemos que hablar el tema del respawn)
+
+3. Que el narrador ya que va a ser un Tipo de npc en concreto, salga mas veces que al incio, por ejemplo antes del boss final para advertir de peligro y al derrotarlo que sea el el que te da las felicidades y molaria que te diera un logro tipo. 
+    Narrador: "Nos has salvado del Dragon que nos tenia encerrados en esta mazmorra, ahora podremos ser libres gracias a ti, Toma esta medalla como sello de tu valentia.
+    Gracias por todo <Nombre del jugador>"
+    ~ Has obtenido "Medalla por ser perfecta xoxo"~
+
+
+4. Salas y eso:
+   https://excalidraw.com/#json=AjDlYJg0chlU4lVVBuc9F,Zpo8Y-DYAYE3p353psM5AQ
+
+

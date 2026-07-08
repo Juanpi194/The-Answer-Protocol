@@ -1,23 +1,597 @@
 {
-  "room": {
-    "id": "room.chest.lobby",
-    "name": "Lobby",
-    "description": "Room description text",  # ya lo pondre xoxo
-    "exits": {
-      "north": "",
-      "south": "room.south_id"
-    },
-    "chest": true,
-    "npcs": ["npc.narrator.id2"]
+  "world": {
+    "name": "Hay que pensarlo",
+    "spawn": "room.safe.spawn"
   },
-  "room": {
-    "id": "room.enemy.lobby",
-    "name": "Lobby",
-    "description": "Room description text",  # ya lo pondre xoxo
-    "exits": {
-      "north": "room.north_id",
-      "south": "room.south_id"
+
+  "items": {
+    "starter_pack": { "name": "Starter Pack" },
+    "medal_forest": { "name": "Forest Medal", "type": "medal" },
+    "medal_mountain": { "name": "Mountain Medal", "type": "medal" },
+    "medal_ice": { "name": "Medal of the Frozen Kingdom", "type": "medal" },
+    "medal_fire": { "name": "Medal of the Kingdom of Fire", "type": "medal" },
+    "potion_fire": { "name": "Fire Potion" },
+    "potion_ice": { "name": "Ice Potion" }
+  },
+
+  "rooms": [
+
+    {
+      "id": "room.safe.spawn",
+      "name": "Lobby",
+      "description": "",
+      "type": "safe",
+      "exits": { 
+        "north": "room.safe.tutorial" 
+      }
     },
-    "npcs": ["npc.narrator.id2"]
-  }
+    {
+      "id": "room.safe.tutorial",
+      "name": "Tutorial",
+      "description": "Solo un texto explicando el uso del juego, no hay npc.",
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.spawn", 
+        "north": "room.safe.narrator" 
+      }
+    },
+    {
+      "id": "room.safe.narrator",
+      "name": "Narrador",
+      "description": "El narrador entrega el primer item.",
+      "type": "safe",
+      "exits": {
+         "south": "room.safe.tutorial", 
+         "north": "room.safe.path1" 
+        },
+      "npcs": "narrador",
+      "items_received": ["starter_pack"]
+    },
+    {
+      "id": "room.safe.path1",
+      "name": "Path",
+      "description": "Solo se puede avanzar al norte.",
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.narrator",
+        "north": "room.safe.plaza" 
+      }
+    },
+    {
+      "id": "room.safe.plaza",
+      "name": "Plaza Central",
+      "description": "Hub principal.",
+      "type": "safe",
+      "exits": {
+        "south": "room.safe.path1",
+        "north": "room.safe.path_choice",
+        "west": "room.safe.plaza_west",
+        "east": "room.gate.dragon"
+      }
+    },
+
+    {
+      "id": "room.safe.path_choice",
+      "name": "Path Selection Room",
+      "description": "Npc que te cuenta los diferentes caminos a elegir, no es obligatoria su interaccion.",
+      "type": "safe",
+      "npc_opcional": true,
+      "exits": {
+        "south": "room.safe.plaza",
+        "west": "room.safe.forest",
+        "north": "room.safe.mountain",
+        "east": "room.safe.kingdom_choice"
+      },
+      "npcs": "road_guide"
+    },
+
+    { 
+      "id": "room.safe.forest", 
+      "name": "forest", 
+      "description": "", 
+      "type": "safe",
+      "exits": { 
+        "east": "room.safe.path_choice", 
+        "north": "room.safe.forest_npc_mision" 
+      }
+    },
+    { 
+      "id": "room.safe.forest_npc_mision", 
+      "name": "Npc de mision (goblins)", 
+      "description": "Te comenta de los goblins.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.forest", 
+        "north": "room.combat.forest_goblin1" 
+      }, 
+        "npcs": "npc_mision_goblins"
+    },
+    { 
+      "id": "room.combat.forest_goblins1", 
+      "name": "goblin", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "goblin",
+      "exits": { 
+        "south": "room.safe.forest_npc_mision", 
+        "north": "room.chest.forest_chest1"
+     }
+    },
+    { 
+      "id": "room.chest.forest_chest1", 
+      "name": "chest", 
+      "description": "Desde aqui: al norte sigue el camino principal, al oeste hay un camino alternativo.", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.combat.forest_goblin1", 
+        "north": "room.combat.forest_goblin3", 
+        "west": "room.combat.forest_goblin2" 
+      } 
+    },
+
+    { 
+      "id": "room.combat.forest_goblin2", 
+      "name": "goblin (camino alternativo)", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "goblin",
+      "exits": { 
+        "east": "room.chest.forest_chest1", 
+        "north": "room.safe.forest_side_mission"
+        }
+    },
+    { 
+      "id": "room.safe.forest_side_mission", 
+      "name": "Side mission", 
+      "description": "Npc hace una pregunta si respondes bien te da un objeto/monedas.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.combat.forest_goblins2", 
+        "north": "room.chest.forest_final" 
+        }, 
+        "npcs": "npc_ask"
+    },
+
+    { 
+      "id": "room.combat.forest_goblins3", 
+      "name": "goblin (camino principal)", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "goblin",
+      "exits": { 
+        "south": "room.chest.forest_chest1", 
+        "north": "room.chest.forest_final"
+        } 
+    },
+    { 
+      "id": "room.chest.forest_final", 
+      "name": "Forest Medal Room", 
+      "description": "Entrega la medalla del forest. Opcion de volver a la plaza o ir a las salas anteriores.", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.combat.forest_goblins3",
+        "north": "room.safe.plaza"
+        }, 
+      "npcs": "npc_medal",
+      "items_received": ["medal_forest"]
+    },
+    { 
+      "id": "room.safe.mountain", 
+      "name": "mountain", 
+      "description": "",
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.path_choice", 
+        "north": "room.safe.mountain_npc_mision" 
+        } 
+    },
+    { 
+      "id": "room.safe.mountain_npc_mision", 
+      "name": "Npc de mision (ogres)", 
+      "description": "Te comenta de los ogres.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.mountain", 
+        "north": "room.combat.mountain_ogre1"
+        }, 
+      "npcs": "npc_mision_ogres" 
+    },
+    { 
+      "id": "room.combat.mountain_ogre1", 
+      "name": "ogre", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "ogre",
+      "exits": { 
+        "south": "room.safe.mountain_npc_mision", 
+        "north": "room.chest.mountain_chest1" 
+        } 
+    },
+    { 
+      "id": "room.chest.mountain_chest1", 
+      "name": "chest", 
+      "description": "", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.combat.mountain_ogre1", 
+        "north": "room.combat.mountain_ogre2" 
+      }
+    },
+    { 
+      "id": "room.combat.mountain_ogre2", 
+      "name": "ogre", 
+      "description": "Desde aqui: al norte el camino directo, al oeste la mision secundaria.", 
+      "type": "combat", 
+      "enemy": "ogre",
+      "exits": { 
+        "south": "room.chest.mountain_chest1", 
+        "north": "room.chest.mountain_final", 
+        "west": "room.safe.mountain_side_mission" 
+        } 
+    },
+    { 
+      "id": "room.safe.mountain_side_mission", 
+      "name": "Mision secundaria + Monedas", 
+      "description": "Npc hace una ask, si respondes bien te da un objeto/monedas.", 
+      "type": "safe",
+      "exits": { 
+        "east": "room.combat.mountain_ogre2", 
+        "north": "room.combat.mountain_shades" 
+        }, 
+        "npcs": "npc_ask" 
+    },
+     {
+      "id": "room.combat.mountain_shades",
+      "name": "Shades",
+      "description": "",
+      "type": "combat",
+      "enemigo": "shades",
+      "exits": {
+        "south": "room.safe.mountain_side_mission",
+        "north": "room.chest.mountain_final"
+      }
+    },
+    { 
+      "id": "room.chest.mountain_final", 
+      "name": "Mountain Medal Room", 
+      "description": "Entrega la medalla de la montaña. Opcion de volver a la plaza o ir a las salas anteriores.", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.combat.mountain_ogre2",
+        "north": "room.safe.plaza"
+        }, 
+      "npcs": "npc_medal",
+      "items_received": ["medal_mountain"] 
+    },
+    { 
+      "id": "room.safe.kingdom_choice", 
+      "name": "Selection of the kingdom you want to go to", 
+      "description": "", 
+      "type": "safe",
+      "exits": { 
+        "west": "room.safe.path_choice", 
+        "north": "room.safe.frozen_kingdom", 
+        "east": "room.safe.kingdom_of_fire" 
+        }
+    },
+
+    { 
+      "id": "room.safe.frozen_kingdom", 
+      "name": "Kingdom of Ice", 
+      "description": "", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.kingdom_choice", 
+        "north": "room.safe.frozen_npc_mision" 
+        } 
+    },
+    { 
+      "id": "room.safe.frozen_npc_mision", 
+      "name": "Mission of the Ice Kingdom", 
+      "description": "Te comenta del wizard.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.frozen_kingdom", 
+        "north": "room.chest.frozen_chest1" 
+        }, 
+      "npcs": "npc_mision_wizard"
+    },
+    { 
+      "id": "room.chest.frozen_chest1", 
+      "name": "chest", 
+      "description": "Contiene una pocion de fuego.", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.safe.frozen_npc_mision", 
+        "north": "room.combat.frozen_wizard1" },  
+        "items_received": ["potion_fire"] 
+    },
+    { 
+      "id": "room.combat.frozen_wizard1", 
+      "name": "Ice Wizard", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "wizard",
+      "exits": { 
+        "south": "room.chest.frozen_chest1", 
+        "east": "room.chest.frozen_chest2",
+        "north": "room.chest.frozen_final"
+        }
+    },
+    { "id": "room.chest.frozen_chest2", 
+    "name": "chest", 
+    "description": "", 
+    "type": "chest",
+    "exits": { 
+      "west": "room.combat.frozen_wizard1", 
+      "east": "room.combat.frozen_shade1"
+      }
+    },
+    { 
+      "id": "room.combat.frozen_shade1", 
+      "name": "shade", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "shade",
+      "exits": { 
+        "west": "room.chest.frozen_chest2", 
+        "north": "room.chest.frozen_chest3" 
+        }
+    },
+    { 
+      "id": "room.chest.frozen_chest3", 
+      "name": "chest", 
+      "description": "", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.combat.frozen_shade1", 
+        "west": "room.combat.frozen_shade3" 
+        }
+    },
+    { 
+      "id": "room.combat.frozen_shade3", 
+      "name": "shade", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "shade",
+      "exits": {  
+        "south": "room.chest.frozen_chest3",
+        "west": "room.chest.frozen_final"
+        }
+    },
+    { 
+      "id": "room.chest.frozen_final", 
+      "name": "Frozen Kingdom Medal Room", 
+      "description": "Entrega la medalla del reino frozen. Opcion de volver a la plaza o ir a las salas anteriores.", 
+      "type": "chest",
+      "exits": { 
+        "east": "room.combat.frozen_shade3",
+        "south": "room.combat.frozen_wizard1",
+        "north": "room.safe.plaza"
+      }, 
+      "npcs": "npc_medal",
+      "items_received": ["medal_ice"]
+    },
+
+    { 
+      "id": "room.safe.kingdom_of_fire", 
+      "name": "Kingdom of Fire", 
+      "description": "", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.kingdom_choice", 
+        "north": "room.safe.fire_npc_mision" 
+        }
+    },
+    { 
+      "id": "room.safe.fire_npc_mision", 
+      "name": "Mission of the fire kingdom", 
+      "description": "Te comenta del wizard.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.safe.kingdom_of_fire", 
+        "north": "room.chest.fire_chest1"
+        }, 
+      "npcs": "npc_mision_wizard"
+    },
+    { 
+      "id": "room.chest.fire_chest1", 
+      "name": "chest", 
+      "description": "Contiene una pocion de hielo.", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.safe.fire_npc_mision", 
+        "north": "room.combat.fire_wizard1" },
+        "items_received": ["potion_ice"] 
+    },
+    { 
+      "id": "room.combat.fire_wizard1", 
+      "name": "Fire Wizard", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "wizard",
+      "exits": { 
+        "south": "room.chest.fire_chest1", 
+        "east": "room.chest.fire_chest2",
+        "north": "room.chest.fire_final"
+        } 
+    },
+    { 
+    "id": "room.chest.fire_chest2", 
+    "name": "chest", 
+    "description": "", 
+    "type": "chest",
+    "exits": { 
+      "west": "room.combat.fire_wizard1", 
+      "east": "room.combat.fire_shade1"
+      }
+    },
+    { 
+      "id": "room.combat.fire_shade1", 
+      "name": "shade", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "shade",
+      "exits": { 
+        "west": "room.chest.fire_chest2", 
+        "north": "room.chest.fire_chest3" 
+        }
+    },
+    { 
+      "id": "room.chest.fire_chest3", 
+      "name": "chest", 
+      "description": "", 
+      "type": "chest",
+      "exits": { 
+        "south": "room.combat.fire_shade1", 
+        "west": "room.combat.fire_shade3" 
+        }
+    },
+    { 
+      "id": "room.combat.fire_shade3", 
+      "name": "shade", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "shade",
+      "exits": {  
+        "south": "room.chest.fire_chest3",
+        "west": "room.chest.fire_final"
+        }
+    },
+    { 
+      "id": "room.chest.fire_final", 
+      "name": "Fire Kingdom Medal Room", 
+      "description": "Entrega la medalla del reino de fuego. Opcion de volver a la plaza o ir a las salas anteriores.", 
+      "type": "chest",
+      "exits": { 
+        "east": "room.combat.fire_shade3",
+        "south": "room.combat.fire_wizard1",
+        "north": "room.safe.plaza"
+      }, 
+      "npcs": "npc_medal",
+      "items_received": ["medal_fire"]
+    },
+
+    { 
+      "id": "room.safe.plaza_west", 
+      "name": "Western Crossroads", 
+      "description": "", 
+      "type": "safe",
+      "exits": { 
+        "east": "room.safe.plaza", 
+        "west": "room.shop.enchanter", 
+        "south": "room.shop.mercader" 
+        }
+    },
+    { 
+      "id": "room.shop.enchanter", 
+      "name": "Enchanting", 
+      "description": "", 
+      "type": "shop",
+      "exits": { 
+        "east": "room.safe.plaza_west" 
+        }, 
+      "npcs": "enchanter"
+    },
+    { 
+      "id": "room.shop.mercader", 
+      "name": "Mercader", 
+      "description": "", 
+      "type": "shop",
+      "exits": { 
+        "north": "room.safe.plaza_west" 
+        }, 
+      "npcs": "mercader"
+    },
+
+    { 
+      "id": "room.gate.dragon", 
+      "name": "Puerta del Dragon", 
+      "description": "Solo se puede pasar con las 4 medallas.", 
+      "type": "gate",
+      "requires_items": ["medal_forest", "medal_mountain", "medal_ice", "medal_fire"],
+      "exits": {
+        "west": "room.safe.plaza", 
+        "north": "room.safe.fortress_intro" 
+        } 
+      },
+    { 
+      "id": "room.safe.fortress_intro", 
+      "name": "Dragon's Fortress", 
+      "description": "Texto explicando la fortaleza, sin npc.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.gate.dragon", 
+        "north": "room.safe.narrator_final" 
+        }
+    },
+    { 
+      "id": "room.safe.narrator_final", 
+      "name": "Ultimo Consejo", 
+      "description": "El narrador da el ultimo consejo. Se elige sur o este.", 
+      "type": "safe",
+      "exits": { 
+        "west": "room.safe.fortress_intro", 
+        "south": "room.combat.goblins_final", 
+        "east": "room.combat.shadow_final" 
+        }, 
+      "npcs": "narrator"
+    },
+
+    { 
+      "id": "room.combat.shadow_final", 
+      "name": "Sombra (camino este)", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "Sombra",
+      "exits": { 
+        "west": "room.safe.narrator_final", 
+        "north": "room.safe.warning_dragon_east" 
+        }
+    },
+    { 
+      "id": "room.safe.warning_dragon_east", 
+      "name": "Dragon's Warning", 
+      "description": "Npc advierte que en la siguiente sala esta el dragon.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.combat.shadow_final", 
+        "north": "room.boss.dragon" 
+        }, 
+      "npcs": "npc_warning" 
+    },
+
+    { 
+      "id": "room.combat.goblins_final", 
+      "name": "goblins (camino sur)", 
+      "description": "", 
+      "type": "combat", 
+      "enemy": "goblins",
+      "exits": { 
+        "south": "room.safe.narrator_final", 
+        "north": "room.safe.warning_dragon_south" 
+        }
+    },
+    { 
+      "id": "room.safe.warning_dragon_south", 
+      "name": "Dragon's Warning", 
+      "description": "Npc advierte que en la siguiente sala esta el dragon.", 
+      "type": "safe",
+      "exits": { 
+        "south": "room.combat.goblins_final", 
+        "north": "room.boss.dragon" 
+        }, 
+      "npcs": "npc_warning"
+    },
+
+    { 
+      "id": "room.boss.dragon", 
+      "name": "Dragon's Room", 
+      "description": "Enfrentamiento final. Se llega desde la advertencia este o la advertencia sur.", 
+      "type": "boss",
+      "exits": {},
+      "enemy": "Dragon"
+    }
+
+  ]
 }
