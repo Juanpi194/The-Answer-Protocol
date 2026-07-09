@@ -4,6 +4,7 @@
 
 #include "utils/utils.hpp"
 
+unsigned int		Item::available_id = 0;
 const std::string	Item::PREFIX = "item.";
 
 bool	Item::validate_arguments(const std::string& id, const std::string& name, const std::string& description)

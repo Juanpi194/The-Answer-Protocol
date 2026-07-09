@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <map>
 
 class Item;
 class Player;
@@ -9,6 +10,7 @@ class Chest
 	private:
 		bool	opened;
 		// TODO: Add item pool.
+		static const std::map<Item*, unsigned int>	POSSIBLE_ITEMS;	// Defined in Chest.cpp
 
 		/**
 		 * @brief	Opens the chest, generating random items from the pool.

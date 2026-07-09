@@ -15,3 +15,8 @@ Flame::Flame(const Flame& flame):
 	Enchantment(flame.get_name(), flame.get_description(), flame.get_allowed_gear_types())
 {
 }
+
+void	Flame::effect(void) noexcept
+{
+	// TODO: Logic...
+}

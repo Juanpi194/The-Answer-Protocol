@@ -9,6 +9,7 @@ class Flame final: public Enchantment
 		static const std::string			DESCRIPTION;	// Defined in Flame.cpp
 		static const std::list<GearType>	ALLOWED_GEAR_TYPES;	// Defined in Flame.cpp
 	public:
+
 		// Constructors -------------------------------------------------------
 
 		Flame(void);

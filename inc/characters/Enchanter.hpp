@@ -13,7 +13,6 @@ class Enchanter final: public NPC
 	public:
 		// Constructors -------------------------------------------------------
 
-		// TODO: Add enchantments to the constructor
 		Enchanter(const std::string& id, const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments);
 		Enchanter(const Enchanter& enchanter) = delete;
 		~Enchanter(void);

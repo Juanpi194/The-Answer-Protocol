@@ -8,6 +8,7 @@ class Item
 		const std::string	name;
 		const std::string	description;
 
+		static unsigned int			available_id;
 		static const std::string	PREFIX;	// Defined in Item.cpp
 		static constexpr bool		TITLE_NAME = true;
 		static constexpr size_t		MIN_NAME_LENGTH = 3;

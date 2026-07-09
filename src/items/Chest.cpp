@@ -1,4 +1,8 @@
 #include "items/Chest.hpp"
+#include "items/IronSword.hpp"
+
+// TODO: Add more items in the pool
+// const std::map<Item*, unsigned int>	Chest::POSSIBLE_ITEMS = {{IronSword("item.gear.weapon.ironsword1"), 100}};
 
 std::list<Item*>	Chest::open(void) noexcept
 {

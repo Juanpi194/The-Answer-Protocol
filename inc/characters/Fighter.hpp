@@ -41,6 +41,10 @@ class Fighter: public virtual Character
 		static constexpr unsigned int	MAX_HP = 100;
 		static constexpr unsigned int	MIN_STRENGTH = 5;
 		static constexpr unsigned int	MAX_STRENGTH = 80;
+		static constexpr unsigned int	MIN_DEFENSE = 3;
+		static constexpr unsigned int	MAX_DEFENSE = 90;
+		static constexpr unsigned int	MIN_SPEED = 3;
+		static constexpr unsigned int	MAX_SPEED = 70;
 		// TODO: Add more stats
 
 		/**
