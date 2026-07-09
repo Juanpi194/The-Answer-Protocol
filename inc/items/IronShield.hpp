@@ -5,12 +5,14 @@
 class IronShield final: public Shield
 {
 	private:
+		static const std::string		NAME;	// Defined in IronArmor.cpp
+		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp
 		static constexpr unsigned int	MAX_USES = 5;
 	public:
 		// Constructors -------------------------------------------------------
 
-		IronShield(const std::string& id, const std::string& name, const std::string& description);
-		IronShield(const IronShield& iron_shield) = delete;
+		IronShield(void);
+		IronShield(const IronShield& iron_shield);
 		~IronShield(void) = default;
 
 		// Operators ----------------------------------------------------------

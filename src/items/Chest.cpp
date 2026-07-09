@@ -1,8 +1,6 @@
 #include "items/Chest.hpp"
-#include "items/IronSword.hpp"
 
-// TODO: Add more items in the pool
-// const std::map<Item*, unsigned int>	Chest::POSSIBLE_ITEMS = {{IronSword("item.gear.weapon.ironsword1"), 100}};
+#include "items/ItemFactory.hpp"
 
 std::list<Item*>	Chest::open(void) noexcept
 {
@@ -16,13 +14,23 @@ std::list<Item*>	Chest::open(void) noexcept
 // Constructors ---------------------------------------------------------------
 
 Chest::Chest(void):
-	opened(false)
+	opened(false),
+	pool(ItemFactory::create_default_pool())
 {
+	// TODO: Check pool sum.
 }
 
 // Getters and setters --------------------------------------------------------
 
-// TODO: Add item pool getter
+bool								Chest::is_opened(void) const noexcept
+{
+	return (opened);
+}
+
+const std::map<Item*, unsigned int>	Chest::get_pool(void) const noexcept
+{
+	return (pool);
+}
 
 // Utils ----------------------------------------------------------------------
 

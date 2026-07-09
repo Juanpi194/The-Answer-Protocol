@@ -2,9 +2,9 @@
 
 // Constructors ---------------------------------------------------------------
 
-QuestGiver::QuestGiver(const std::string& id, const std::string& name, const std::string& description, Quest& quest):
+QuestGiver::QuestGiver(const std::string& name, const std::string& description, Quest& quest):
 	Character(name),
-	NPC(id, name, description),
+	NPC(name, description),
 	quest(quest)
 {
 }

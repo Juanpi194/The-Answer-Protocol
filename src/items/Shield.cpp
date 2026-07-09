@@ -2,10 +2,17 @@
 
 // Constructors ---------------------------------------------------------------
 
-Shield::Shield(const std::string& id, const std::string& name, const std::string& description, const unsigned int max_uses):
-	Item(id, name, description),
+Shield::Shield(const std::string& name, const std::string& description, const unsigned int max_uses):
+	Item(name, description),
 	uses(0),
 	max_uses(max_uses)
+{
+}
+
+Shield::Shield(const Shield& shield):
+	Item(shield.get_name(), shield.get_description()),
+	uses(0),
+	max_uses(shield.max_uses)
 {
 }
 

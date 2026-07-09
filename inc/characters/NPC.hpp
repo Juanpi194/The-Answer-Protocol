@@ -8,6 +8,7 @@ class NPC: public virtual Character
 		const std::string	id;
 		const std::string	description;
 
+		static unsigned int			available_id;
 		static const std::string	PREFIX;	// Defined in NPC.cpp
 		static constexpr bool		TITLE_NAME = true;
 		static constexpr size_t		MIN_NAME_LENGTH = 3;
@@ -21,12 +22,12 @@ class NPC: public virtual Character
 		 * @returns	`true` if all parameters follow the expected. `false` otherwise.
 		 * @note	This method should ONLY be used in the constructor.
 		 */
-		static bool	validate_arguments(const std::string& id, const std::string& name, const std::string& description);
+		static bool	validate_arguments(const std::string& name, const std::string& description);
 	public:
 		// Constructors -------------------------------------------------------
 
-		NPC(const std::string& id, const std::string& name, const std::string& description);
-		NPC(const NPC& npc) = delete;
+		NPC(const std::string& name, const std::string& description);
+		NPC(const NPC& npc);
 		virtual ~NPC(void) = default;
 
 		// Operators ----------------------------------------------------------

@@ -13,8 +13,11 @@ class Shield: public Item
 	public:
 		// Constructors -------------------------------------------------------
 
-		Shield(const std::string& id, const std::string& name, const std::string& description, const unsigned int max_uses);
-		Shield(const Shield& shield) = delete;
+		Shield(const std::string& name, const std::string& description, const unsigned int max_uses);
+		/**
+		 * @note	The copy will set `uses` to 0.
+		 */
+		Shield(const Shield& shield);
 		virtual ~Shield(void) = default;
 
 		// Operators ----------------------------------------------------------

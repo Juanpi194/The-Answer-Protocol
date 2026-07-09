@@ -8,6 +8,7 @@ class MerchantRoom final: public Room
 {
 	public:
 		// Constructors -------------------------------------------------------
+
 		MerchantRoom(const std::string& id, const std::string& name, const std::string description, Merchant* merchant);
 		MerchantRoom(const MerchantRoom& merchant_room) = delete;
 		~MerchantRoom(void);

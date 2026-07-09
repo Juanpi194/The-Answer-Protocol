@@ -10,7 +10,11 @@ class Narrator final: public NPC
 		// Constructors -------------------------------------------------------
 
 		// ! FIXME: Change sentences logic
-		Narrator(const std::string& id, const std::string& name, const std::string& description, const std::string& sentence);
+		Narrator(const std::string& name, const std::string& description, const std::string& sentence);
+
+		/**
+		 * @note	It is not allowed to make a copy because each narrator should be unique.
+		 */
 		Narrator(const Narrator& narrator) = delete;
 		~Narrator(void) = default;
 

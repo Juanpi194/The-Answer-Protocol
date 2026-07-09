@@ -1,6 +1,6 @@
 #include "server/PlayerConnection.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "server/Server.hpp"
 #include "utils/utils.hpp"

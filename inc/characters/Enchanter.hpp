@@ -9,12 +9,29 @@ class Enchantment;
 class Enchanter final: public NPC
 {
 	private:
-		const std::map<Enchantment*, unsigned int>	enchantments;	// Enchantment and price
+		/**
+		 * @brief	Enchantment list that the merchant will be selling.
+		 * 			Each enchantment has its own prize. Const so it never
+		 * 			changes. Buying an enchantment makes a copy of it,
+		 * 			the enchanter will still have it to keep selling it.
+		 */
+		const std::map<Enchantment*, unsigned int>	enchantments;
 	public:
 		// Constructors -------------------------------------------------------
 
-		Enchanter(const std::string& id, const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments);
+		/**
+		 * @throws	`std::invalid_argument` if there is any `nullptr` in the `map`.
+		 */
+		Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments);
+
+		/**
+		 * @note	It is not allowed to make a copy because each enchanter should be unique.
+		 */
 		Enchanter(const Enchanter& enchanter) = delete;
+
+		/**
+		 * @brief	Frees all Enchantments from the map.
+		 */
 		~Enchanter(void);
 
 		// Operators ----------------------------------------------------------
@@ -23,7 +40,7 @@ class Enchanter final: public NPC
 
 		// Getters and setters ------------------------------------------------
 
-		const std::map<Enchantment*, unsigned int>	get_enchantments(void) const noexcept;
+		const std::map<Enchantment*, unsigned int>&	get_enchantments(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
 		// TODO: Throws exception if enchantment doesn't work for gear.

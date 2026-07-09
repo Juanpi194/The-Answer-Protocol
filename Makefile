@@ -24,7 +24,7 @@ ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				Armor.cpp Chest.cpp Consumable.cpp Gear.cpp \
 				IronArmor.cpp IronShield.cpp IronSword.cpp \
-				Item.cpp Shield.cpp Weapon.cpp)
+				ItemFactory.cpp Item.cpp Shield.cpp Weapon.cpp)
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \
@@ -46,7 +46,7 @@ WORLD_FOLDER = world
 WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
-SRC = $(CHARACTERS_SRC) $(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+SRC = $(CHARACTERS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 

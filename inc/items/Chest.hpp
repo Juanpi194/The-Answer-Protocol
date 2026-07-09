@@ -8,9 +8,8 @@ class Player;
 class Chest
 {
 	private:
-		bool	opened;
-		// TODO: Add item pool.
-		static const std::map<Item*, unsigned int>	POSSIBLE_ITEMS;	// Defined in Chest.cpp
+		bool								opened;
+		const std::map<Item*, unsigned int>	pool;
 
 		/**
 		 * @brief	Opens the chest, generating random items from the pool.
@@ -31,7 +30,8 @@ class Chest
 
 		// Getters and setters ------------------------------------------------
 
-		// TODO: Ni idea
+		bool								is_opened(void) const noexcept;
+		const std::map<Item*, unsigned int>	get_pool(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
 

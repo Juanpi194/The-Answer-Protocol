@@ -1,6 +1,6 @@
 #include "world/World.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "utils/utils.hpp"
 

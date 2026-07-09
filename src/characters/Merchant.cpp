@@ -1,18 +1,16 @@
 #include "characters/Merchant.hpp"
 
-#include <iostream>
-#include <cctype>
+#include <stdexcept>
 
 #include "items/Item.hpp"
 
 // Constructors ---------------------------------------------------------------
 
-Merchant::Merchant(const std::string& id, const std::string& name, const std::string& description, const std::map<Item*, unsigned int>& items_to_sell):
+Merchant::Merchant(const std::string& name, const std::string& description, const std::map<Item*, unsigned int>& items_to_sell):
 	Character(name),
-	NPC(id, name, description),
+	NPC(name, description),
 	items_to_sell(items_to_sell)
 {
-	// ? REVIEW: Is the validation correct?
 	for (const std::pair<Item*, unsigned int>& item_and_price: items_to_sell)
 	{
 		if (!item_and_price.first)
@@ -22,7 +20,6 @@ Merchant::Merchant(const std::string& id, const std::string& name, const std::st
 
 Merchant::~Merchant(void)
 {
-	// ? REVIEW: Is it the delete logic correct?
 	for (const std::pair<Item*, unsigned int>& item_and_price: items_to_sell)
 		delete (item_and_price.first);
 }

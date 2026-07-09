@@ -6,7 +6,7 @@
 class Enchantment;
 
 /**
- * @brief	Abstract class that represents equipment.
+ * @brief	Abstract class that represents equipment (Weapons and Armor).
  */
 class Gear: public Item
 {
@@ -28,8 +28,11 @@ class Gear: public Item
 	public:
 		// Operators ----------------------------------------------------------
 
-		Gear(const std::string& id, const std::string& name, const std::string& description, GearType gear_type);
-		Gear(const Gear& gear) = delete;
+		Gear(const std::string& name, const std::string& description, GearType gear_type);
+		/**
+		 * @note	The copy will not have the enchantments from the original.
+		 */
+		Gear(const Gear& gear);
 		virtual ~Gear(void);
 
 		// Operators ----------------------------------------------------------

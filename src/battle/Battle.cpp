@@ -1,6 +1,6 @@
 #include "battle/Battle.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "utils/utils.hpp"
 

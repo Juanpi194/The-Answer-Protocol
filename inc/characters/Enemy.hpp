@@ -10,9 +10,9 @@ class Enemy: public NPC, public Fighter
 	public:
 		// Constructors -------------------------------------------------------
 
-		Enemy(const std::string& id, const std::string& name, const std::string& description, t_stats stats, unsigned int gold);
-		Enemy(const Enemy& enemy) = delete;
-		virtual	~Enemy(void) = default;
+		Enemy(const std::string& name, const std::string& description, t_stats stats, unsigned int gold);
+		Enemy(const Enemy& enemy);
+		virtual	~Enemy(void);
 
 		// Operators ----------------------------------------------------------
 

@@ -2,8 +2,13 @@
 
 // Constructors ---------------------------------------------------------------
 
-Consumable::Consumable(const std::string& id, const std::string& name, const std::string& description):
-	Item(id, name, description)
+Consumable::Consumable(const std::string& name, const std::string& description):
+	Item(name, description)
+{
+}
+
+Consumable::Consumable(const Consumable& consumable):
+	Item(consumable.get_name(), consumable.get_description())
 {
 }
 

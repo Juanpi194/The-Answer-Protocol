@@ -1,6 +1,6 @@
 #include "characters/Fighter.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 bool	Fighter::validate_stats(t_stats stats)
 {

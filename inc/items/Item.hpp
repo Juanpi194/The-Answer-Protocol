@@ -22,12 +22,12 @@ class Item
 		 * @returns	`true` if all parameters follow the expected. `false` otherwise.
 		 * @note	This method should ONLY be used in the constructor.
 		 */
-		static bool	validate_arguments(const std::string& id, const std::string& name, const std::string& description);
+		static bool	validate_arguments(const std::string& name, const std::string& description);
 	public:
 		// Constructors -------------------------------------------------------
 
-		Item(const std::string& id, const std::string& name, const std::string& description);
-		Item(const Item& item) = delete;
+		Item(const std::string& name, const std::string& description);
+		Item(const Item& item);
 		virtual ~Item(void) = default;
 
 		// Operators ----------------------------------------------------------

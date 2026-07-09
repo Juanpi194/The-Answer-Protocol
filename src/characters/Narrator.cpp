@@ -2,9 +2,9 @@
 
 // Constructors ---------------------------------------------------------------
 
-Narrator::Narrator(const std::string& id, const std::string& name, const std::string& description, const std::string& sentence):
+Narrator::Narrator(const std::string& name, const std::string& description, const std::string& sentence):
 	Character(name),	
-	NPC(id, name, description),
+	NPC(name, description),
 	sentence(sentence)	
 {
 	// ? REVIEW: Check sentence logic

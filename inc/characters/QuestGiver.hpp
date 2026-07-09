@@ -10,7 +10,11 @@ class QuestGiver final: public NPC
 	public:
 		// Constructors -------------------------------------------------------
 
-		QuestGiver(const std::string& id, const std::string& name, const std::string& description, Quest& quest);
+		QuestGiver(const std::string& name, const std::string& description, Quest& quest);
+
+		/**
+		 * @note	It is not allowed to make copies because each quest giver should be unique.
+		 */
 		QuestGiver(const QuestGiver& quest_giver) = delete;
 		~QuestGiver(void) = default;
 

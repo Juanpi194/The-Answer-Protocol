@@ -1,30 +1,16 @@
 #include "characters/NPC.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "utils/utils.hpp"
 
+unsigned int		NPC::available_id = 0;
 const std::string	NPC::PREFIX = "npc.";
 
-bool	NPC::validate_arguments(const std::string& id, const std::string& name, const std::string& description)
+bool	NPC::validate_arguments(const std::string& name, const std::string& description)
 {
-	std::string	npc_id;
 	std::string	npc_name;
 	std::string	npc_description;
-
-	// ID
-	npc_id = id;
-	trim_str(npc_id);
-	if (npc_id.empty())
-		return (log("NPC id cannot be empty.", LogLevel::ERROR), false);
-	if (!starts_with(npc_id, PREFIX))
-		return (log("NPC id must start with '" + PREFIX + "'.", LogLevel::ERROR), false);
-	npc_id = id.substr(PREFIX.size());
-	trim_str(npc_id);
-	if (npc_id.empty())
-		return (log("NPC id cannot be empty (After prefix).", LogLevel::ERROR), false);
-	// TODO: Check if there are spaces in the ID (there shouldn't be)
-	// ? REVIEW: Unlike items and rooms, npcs ids right side (after the dot) won't be checked.
 
 	// NAME
 	npc_name = name;
@@ -54,13 +40,20 @@ bool	NPC::validate_arguments(const std::string& id, const std::string& name, con
 
 // Constructors ---------------------------------------------------------------
 
-NPC::NPC(const std::string& id, const std::string& name, const std::string& description):
+NPC::NPC(const std::string& name, const std::string& description):
 	Character(name),
-	id(id),
+	id(PREFIX + std::to_string(available_id++)),
 	description(description)
 {
-	if (!validate_arguments(id, name, description))
+	if (!validate_arguments(name, description))
 		throw std::invalid_argument("NPC validation failed.");
+}
+
+NPC::NPC(const NPC& npc):
+	Character(npc.get_name()),
+	id(PREFIX + std::to_string(available_id++)),
+	description(npc.description)
+{
 }
 
 // Getters and setters --------------------------------------------------------

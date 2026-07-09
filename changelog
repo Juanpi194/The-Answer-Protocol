@@ -1,11 +1,10 @@
 TODO --------------
-Items (Armor, Weapon, ...)
+Items
 Enchantments
 static getters and setters???
 Battle
-Change .cpp for a lot of files
-std::invalid argument es de <stdexcept>, cambiar donde ponga <iostream>
-Los items deben de tener constructor copia :(
+Factories for enchantments and NPCs
+Different types of rooms
 
 QUESTIONS ---------
 
@@ -19,13 +18,12 @@ Room base
 Character base classes
 Gear base classes
 Quest base
-Review items initializations
 
 CHANGES -----------
-NPCS AND ITEMS WONT BE ABLE TO BE COPIED (because of id). ID added to rooms, npcs and items.
+NPCS and items will have their id set automatically. Only rooms will need a manual id.
 More than one item per room. Only one npc per room.
 Item list moved from Character class to Fighter class, not every character must have an 'inventory'
-ATTRIBUTES 
+ATTRIBUTES
 NO COMPILATION FLAGS UNTIL END
 
 COMMENT TAGS ------

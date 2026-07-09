@@ -1,6 +1,6 @@
 #include "quests/Quest.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "utils/utils.hpp"
 

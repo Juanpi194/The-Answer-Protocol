@@ -1,34 +1,16 @@
 #include "items/Item.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "utils/utils.hpp"
 
 unsigned int		Item::available_id = 0;
 const std::string	Item::PREFIX = "item.";
 
-bool	Item::validate_arguments(const std::string& id, const std::string& name, const std::string& description)
+bool	Item::validate_arguments(const std::string& name, const std::string& description)
 {
-	std::string	item_id;
 	std::string	item_name;
 	std::string	item_description;
-
-	// ID
-	item_id = id;
-	trim_str(item_id);
-	if (item_id.empty())
-		return (log("Item id cannot be empty.", LogLevel::ERROR), false);
-	if (!starts_with(item_id, PREFIX))
-		return (log("Item id must start with '" + PREFIX + "'.", LogLevel::ERROR), false);
-	item_id = id.substr(PREFIX.size());
-	trim_str(item_id);
-	if (item_id.empty())
-		return (log("Item id cannot be empty (After prefix).", LogLevel::ERROR), false);
-	// TODO: Check if there are spaces in the ID (there shouldn't be)
-	if (item_id.size() > MAX_NAME_LENGTH)
-		return (log("Item id name is too long (MAX CHARACTERS: " + std::to_string(MAX_NAME_LENGTH) + ").", LogLevel::ERROR), false);
-	if (item_id.size() < MIN_NAME_LENGTH)
-		return (log("Item id name is too short (MIN CHARACTERS: " + std::to_string(MIN_NAME_LENGTH) + ").", LogLevel::ERROR), false);
 
 	// NAME
 	item_name = name;
@@ -58,13 +40,20 @@ bool	Item::validate_arguments(const std::string& id, const std::string& name, co
 
 // Constructors ---------------------------------------------------------------
 
-Item::Item(const std::string& id, const std::string& name, const std::string& description):
-	id(id),	
+Item::Item(const std::string& name, const std::string& description):
+	id(PREFIX + std::to_string(available_id++)),	
 	name(name),
 	description(description)
 {
-	if (!validate_arguments(id, name, description))
+	if (!validate_arguments(name, description))
 		throw std::invalid_argument("Item validation failed.");
+}
+
+Item::Item(const Item& item):
+	id(PREFIX + std::to_string(available_id++)),
+	name(item.name),
+	description(item.description)
+{
 }
 
 // Getters and setters --------------------------------------------------------

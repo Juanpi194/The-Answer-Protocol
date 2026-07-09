@@ -4,11 +4,19 @@
 
 // Constructors ---------------------------------------------------------------
 
-Gear::Gear(const std::string& id, const std::string& name, const std::string& description, GearType gear_type):
-	Item(id, name, description),
+Gear::Gear(const std::string& name, const std::string& description, GearType gear_type):
+	Item(name, description),
 	gear_type(gear_type),
 	enchantment(nullptr)
 {
+}
+
+Gear::Gear(const Gear& gear):
+	Item(gear.get_name(), gear.get_description()),
+	gear_type(gear.gear_type),
+	enchantment(nullptr)
+{
+	// ? REVIEW: Does the copy have the same enchantments the one being copied has?
 }
 
 Gear::~Gear(void)

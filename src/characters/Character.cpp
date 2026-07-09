@@ -1,6 +1,6 @@
 #include "characters/Character.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "utils/utils.hpp"
 #include "world/Room.hpp"

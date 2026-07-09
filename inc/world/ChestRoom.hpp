@@ -9,12 +9,11 @@ class Enemy;
 class ChestRoom final: public Room
 {
 	private:
-		// TODO: Add chest.
 		Chest	chest;
 	public:
 		// Constructors -------------------------------------------------------
 
-		ChestRoom(const std::string& name, const std::string& description, Enemy *enemy);
+		ChestRoom(const std::string& id, const std::string& name, const std::string& description, Enemy *enemy);
 		ChestRoom(const ChestRoom& chest_room) = delete;
 		~ChestRoom(void);
 
