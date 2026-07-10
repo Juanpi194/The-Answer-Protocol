@@ -19,8 +19,3 @@ IronSword::IronSword(const IronSword& iron_sword):
 	Weapon(iron_sword.get_name(), iron_sword.get_description(), iron_sword.get_extra_damage(), iron_sword.get_gear_type())
 {
 }
-
-IronSword::~IronSword(void)
-{
-	// TODO: Free enchantment...
-}

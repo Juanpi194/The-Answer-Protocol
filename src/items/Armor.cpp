@@ -16,11 +16,6 @@ Armor::Armor(const Armor& armor):
 {
 }
 
-Armor::~Armor(void)
-{
-	// TODO: Free enchantment, ...
-}
-
 // Getters and setters --------------------------------------------------------
 
 const unsigned int	Armor::get_damage_reduction(void) const noexcept

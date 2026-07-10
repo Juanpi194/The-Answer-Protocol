@@ -18,7 +18,7 @@ class IronSword final: public Weapon
 
 		IronSword(void);
 		IronSword(const IronSword& iron_sword);
-		~IronSword(void);
+		~IronSword(void) = default;
 
 		// Operators ----------------------------------------------------------
 

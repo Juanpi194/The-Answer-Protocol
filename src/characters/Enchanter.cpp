@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "enchantments/Enchantment.hpp"
+#include "items/Gear.hpp"
 
 // Constructors ---------------------------------------------------------------
 
@@ -40,7 +41,18 @@ void	Enchanter::on_interact(Player& player)
 
 void	Enchanter::enchant(Gear& gear, Enchantment *enchantment)
 {
+	// ? REVIEW: Check this method logic (probably redo it).
+	bool	allowed;
+
+	allowed = false;
 	if (!enchantment)
 		throw std::invalid_argument("Enchantment cannot be nullptr.");
-	// TODO: Logic...
+	for (GearType gear_type: enchantment->get_allowed_gear_types())
+	{
+		if (gear_type == gear.get_gear_type())
+			allowed = true;
+	}
+	if (!allowed)
+		return ;	// ! FIXME: Logic if the gear type is not allowed in this enchantment.
+	gear.set_enchantment(enchantment);
 }

@@ -36,6 +36,10 @@ class Room
 	public:
 		// Constructors -------------------------------------------------------
 
+		/**
+		 * @throws	`std::invalid_argument` if validation failed or
+		 * 			if the item list contains any `nullptr`.
+		 */
 		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item*>& items);
 		Room(const Room& zone) = delete;
 		virtual ~Room(void);
@@ -61,7 +65,19 @@ class Room
 
 		// Utils --------------------------------------------------------------
 
-		virtual void	on_enter(void) noexcept = 0;
+		/**
+		 * @brief	Add an item to the list of items of this room.
+		 * @param	item	The item to add to the list.
+		 * @throws	`std::invalid_argument` if `item` is `nullptr` or if
+		 * 			`item` is already in the list.
+		 */
+		void	add_item(Item *item) __nonnull();
+
+		// ? REVIEW: Should we do these methods?
+
+		// virtual void	on_enter(void) noexcept = 0;
+
 		void			clear(void);
+
 		// void			connect_room()
 };

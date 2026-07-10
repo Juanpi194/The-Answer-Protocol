@@ -24,7 +24,7 @@ class Armor: public Gear
 		 * @note	The copy will set `reduced_damage` as 0.
 		 */
 		Armor(const Armor& armor);
-		virtual ~Armor(void);
+		virtual ~Armor(void) = default;
 
 		// Operators ----------------------------------------------------------
 

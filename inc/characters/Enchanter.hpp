@@ -48,7 +48,8 @@ class Enchanter final: public NPC
 		void	on_interact(Player& player) override;
 
 		/**
-		 * @brief	Applies the specified enchantment to a gear item.
+		 * @brief	Applies the specified enchantment to a gear item if the item can
+		 * 			get the provided enchantment.
 		 * @param	gear	The gear item to enchant.
 		 * @param	enchantment	Pointer to the enchant to be set to the item.
 		 * @throws	`std::invalid_argument` if `enchantment` is `nullptr`.

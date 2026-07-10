@@ -7,6 +7,8 @@ Factories for enchantments and NPCs
 Different types of rooms
 
 QUESTIONS ---------
+Chest room does not make sense if there can be enemy rooms with chests.
+Should we set a boolean in each room indicating if there is a chest or not?
 
 BUGS --------------
 Hola

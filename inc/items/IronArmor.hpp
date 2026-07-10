@@ -18,7 +18,7 @@ class IronArmor: public Armor
 
 		IronArmor(void);
 		IronArmor(const IronArmor& iron_armor);
-		~IronArmor(void);
+		~IronArmor(void) = default;
 
 		// Operators ----------------------------------------------------------
 

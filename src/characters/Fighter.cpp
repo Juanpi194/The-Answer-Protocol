@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include "utils/utils.hpp"
+
 bool	Fighter::validate_stats(t_stats stats)
 {
 	// TODO: Add validations
@@ -71,12 +73,16 @@ const std::list<Item*>&	Fighter::get_item_list(void) const noexcept
 
 void	Fighter::set_armor(Armor *armor) noexcept
 {
+	if (!armor)
+		log("Fighter '" + get_name() + "' received nullptr armor.", LogLevel::INFO);
 	this->armor = armor;
 }
 
 void	Fighter::set_weapon(Weapon *weapon) noexcept
 {
-	this->armor = armor;
+	if (!weapon)
+		log("Fighter '" + get_name() + "' received nullptr weapon.", LogLevel::INFO);
+	this->weapon = weapon;
 }
 
 void	Fighter::set_status(Status status) noexcept

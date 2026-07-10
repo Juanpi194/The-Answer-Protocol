@@ -28,7 +28,8 @@ class Character
 		std::string				get_name(void) const noexcept;
 		Room					*get_current_room(void) const noexcept;
 
-		void					set_name(const std::string& name);
+		void	set_name(const std::string& name);
+		void	set_current_room(Room *room) noexcept;
 
 		// Utils --------------------------------------------------------------
 

@@ -21,7 +21,7 @@ class Weapon: public Gear
 
 		Weapon(const std::string& name, const std::string& description, unsigned int extra_damage, const GearType gear_type);
 		Weapon(const Weapon& weapon);
-		virtual ~Weapon(void);
+		virtual ~Weapon(void) = default;
 
 		// Operators ----------------------------------------------------------
 

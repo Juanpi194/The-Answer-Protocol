@@ -61,5 +61,12 @@ void	Character::set_name(const std::string& name)
 	this->name = name;
 }
 
+void	Character::set_current_room(Room *room) noexcept
+{
+	if (!room)
+		log("Character '" + name + "' set to nullptr room.", LogLevel::INFO);
+	this->current_room = room;
+}
+
 // Utils ----------------------------------------------------------------------
 

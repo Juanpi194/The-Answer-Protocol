@@ -3,14 +3,16 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
+#include "characters/NPC.hpp"
+#include "characters/Player.hpp"
 
-const std::string	Room::PREFIX = "room.";
+const std::string Room::PREFIX = "room.";
 
-bool	Room::validate_arguments(const std::string& id, const std::string& name, const std::string& description)
+bool Room::validate_arguments(const std::string& id, const std::string& name, const std::string& description)
 {
 	std::string	room_id;
-	std::string	room_name;
-	std::string	room_description;
+	std::string room_name;
+	std::string room_description;
 
 	// ID
 	room_id = id;
@@ -56,7 +58,7 @@ bool	Room::validate_arguments(const std::string& id, const std::string& name, co
 
 // Constructors ---------------------------------------------------------------
 
-Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item*>& items):
+Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item *>& items):
 	id(id),
 	name(name),
 	description(description),
@@ -69,12 +71,30 @@ Room::Room(const std::string& id, const std::string& name, const std::string& de
 		log("No npc established in room with id '" + id + "'.", LogLevel::INFO);
 	if (items.size() == 0)
 		log("No items established in room with id '" + id + "'.", LogLevel::INFO);
+	else
+	{
+		for (Item *item: items)
+		{
+			if (!item)
+				throw std::invalid_argument("Item list cannot contain a nullptr.");
+		}
+	}
 }
 
 Room::~Room()
 {
-	// TODO: Clear players, items, ...
-	this->clear();
+	// NPC
+	if (npc)
+		delete (npc);
+	npc = nullptr;
+
+	// Items
+	for (Item *item: items)
+		delete(item);
+
+	// Players
+	for (Player *player: player_list)
+		player->set_current_room(nullptr);
 }
 
 // Getters and setters --------------------------------------------------------
@@ -99,7 +119,7 @@ NPC									*Room::get_NPC(void) const noexcept
 	return (npc);
 }
 
-std::list<Item*>&					Room::get_items(void) noexcept
+std::list<Item *>&					Room::get_items(void) noexcept
 {
 	return (items);
 }
@@ -114,7 +134,7 @@ std::list<Player*>&					Room::get_player_list(void) noexcept
 	return (player_list);
 }
 
-const std::list<Player*>& 			Room::get_player_list(void) const noexcept
+const std::list<Player*>&			Room::get_player_list(void) const noexcept
 {
 	return (player_list);
 }
@@ -135,6 +155,18 @@ void	Room::set_adyacent_room(Direction direction, Room *room)
 }
 
 // Utils ----------------------------------------------------------------------
+
+void	Room::add_item(Item *item)
+{
+	if (!item)
+		throw std::invalid_argument("Cannot add a nulltr to the item list.");
+	for (Item *item_in_list: items)
+	{
+		if (item_in_list == item)
+			throw std::invalid_argument("Cannot add the same item twice in the same room.");
+	}
+	items.push_back(item);
+}
 
 void	Room::clear(void)
 {

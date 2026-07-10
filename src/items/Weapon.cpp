@@ -16,11 +16,6 @@ Weapon::Weapon(const Weapon& weapon):
 {
 }
 
-Weapon::~Weapon(void)
-{
-	// TODO: Free enchants...
-}
-
 // Getters and setters --------------------------------------------------------
 
 unsigned int	Weapon::get_extra_damage(void) const noexcept

@@ -1,6 +1,7 @@
 #include "items/Gear.hpp"
 
 #include "utils/utils.hpp"
+#include "enchantments/Enchantment.hpp"
 
 // Constructors ---------------------------------------------------------------
 
@@ -21,7 +22,9 @@ Gear::Gear(const Gear& gear):
 
 Gear::~Gear(void)
 {
-	// TODO: Free enchantments...
+	if (enchantment)
+		delete (enchantment);
+	enchantment = nullptr;
 }
 
 // Getters and setters --------------------------------------------------------

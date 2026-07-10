@@ -33,5 +33,6 @@ class Shield: public Item
 
 		// Utils --------------------------------------------------------------
 
+		void	use(void) noexcept override;
 		void	protect(void) noexcept;
 };
