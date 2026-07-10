@@ -29,6 +29,15 @@ class World
 		 * @note	This method should ONLY be used when initializing the world.
 		 */
 		static bool	validate_json(const std::string& json_path);
+
+		/**
+		 * @brief	Checks if a room exists in the world.
+		 * @param	room	The room to evaluate.
+		 * @returns	`true` if `room` exists in the world. `false` if
+		 * 			`room` is not in the world list of rooms or if it
+		 * 			is `nullptr`.
+		 */
+		bool	room_in_world(Room *room) __nonnull();
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -62,5 +71,25 @@ class World
 
 		// Utils --------------------------------------------------------------
 
-		void	reset_world(void);
+		// ? REVIEW: Does this method make sense?
+		// void	reset_world(void);
+
+		/**
+		 * @brief	Adds a new room to the world, connecting it to an already
+		 * 			existing room in the world in a specified direction from
+		 * 			that room.
+		 * @param	new_room	Pointer to the new room to add.
+		 * @param	connected_to	Pointer to the room that `new_room` is
+		 * 							connected to.
+		 * @param	direction	The direction that connects `connected_to` to
+		 * 						`new_room`.
+		 * @throws	`std::invalid_argument` if any of the pointers are
+		 * 			`nullptr`, if `new_room` and `connected_to` are the same,
+		 * 			if `new_room` is already in the world,
+		 * 			if the room it is `connected to` has another room
+		 * 			in the specified direction, or if any of
+		 * 			the pointers are `nullptr`.
+		 * @example	direction = EAST -> `connected_to` has `new_room` at east
+		 */
+		void	add_room(Room *new_room, Room *connected_to, Direction direction) __nonnull((1, 2));
 };

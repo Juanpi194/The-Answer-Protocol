@@ -27,7 +27,7 @@ class Enchantment
 		 * @returns	`true` if passes the validation process. `false` otherwise.
 		 * @note	This method should be used ONLY in the constructor.
 		 */
-		bool	validate_arguments(const std::string& name, const std::string& description);
+		static bool	validate_arguments(const std::string& name, const std::string& description);
 	
 		/**
 		 * @brief	Checks if the given gear could get the enchantment.

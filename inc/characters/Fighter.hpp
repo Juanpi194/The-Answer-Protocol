@@ -51,7 +51,7 @@ class Fighter: public virtual Character
 		 * @brief	Validates if the provided stats for the fighter are valid.
 		 * @note	This method should ONLY be called in the constructor.
 		 */
-		bool	validate_stats(t_stats stats);
+		static bool	validate_stats(t_stats stats);
 	protected:
 		t_stats				stats;
 		Status				status;

@@ -28,6 +28,21 @@ bool	World::validate_json(const std::string& json_path)
 	return (true);
 }
 
+bool	World::room_in_world(Room *room)
+{
+	bool	found;
+
+	found = false;
+	if (!room)
+		return (false);
+	for (Room *room_in_list: rooms)
+	{
+		if (room_in_list == room)
+			found = true;
+	}
+	return (found);
+}
+
 // Constructors ---------------------------------------------------------------
 
 World::World(const std::string& name):
@@ -48,6 +63,8 @@ World::World(const std::string& name, const std::string& json_path)
 World::~World(void)
 {
 	// TODO: Delete all npcs, items, ...
+	for (Room *room: rooms)
+		delete (room);
 }
 
 // Getters and setters --------------------------------------------------------
@@ -69,7 +86,20 @@ const std::list<Room*>&	World::get_rooms(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	World::reset_world(void)
+void	World::add_room(Room *new_room, Room *connected_to, Direction direction)
 {
-	// TODO: Reset all rooms, npcs, ...
+	if (!new_room || !connected_to)
+		throw std::invalid_argument("Tried to add a room with not valid parameters.");
+	if (new_room == connected_to)
+		throw std::invalid_argument("Tried to add a new room connected to itself.");
+	if (room_in_world(new_room))
+		throw std::invalid_argument("New room to add already exists in the world.");
+	if (!room_in_world(connected_to))
+		throw std::invalid_argument("Room that connects with the new room does not exist in the world.");
+	if (connected_to->get_adyacent_rooms().count(direction) > 0)
+		throw std::invalid_argument("The room that is being connected with the new room already has a room at the specified direction.");
+
+	// Validation passed
+	rooms.push_back(new_room);	
+	connected_to->get_adyacent_rooms()[direction] = new_room;
 }

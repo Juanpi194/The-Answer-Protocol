@@ -31,7 +31,6 @@ bool debug_mode = true;
 int main(void)
 {
 	// SHORT IDEA OF HOW TO MANAGE DEBUG, flag in top of this file
-	World world("The Amazing World Of Gumball");
 
 	if (debug_mode)
 	{
@@ -39,6 +38,8 @@ int main(void)
 		std::cout << "No server will be started" << std::endl;
 
 		// Pruebitas
+		World	world("The Amazing World Of Gumball");
+
 		Item	*item1 = ItemFactory::create_iron_sword();
 		std::cout << item1->get_id() << std::endl;
 		std::cout << item1->get_name() << std::endl;
@@ -49,15 +50,21 @@ int main(void)
 		std::cout << item2->get_name() << std::endl;
 		std::cout << item2->get_description() << std::endl;
 
-		delete (item1);
-		delete (item2);
+		std::list<Item*>	item_list = {item1, item2};
+		std::list<Item*>	item_list_empty;
 
 		Enchantment	*enchantment = new Flame();
 		std::map<Enchantment*, unsigned int>	enchantments = {{enchantment, 10}};
-		Enchanter	enchanter("Juanpi", "He sucks so much.", enchantments);
-		std::cout << enchanter.get_id() << std::endl;
-		std::cout << enchanter.get_name() << std::endl;
-		std::cout << enchanter.get_description() << std::endl;
+		Enchanter	*enchanter = new Enchanter("Juanpi", "He sucks so much.", enchantments);
+		std::cout << enchanter->get_id() << std::endl;
+		std::cout << enchanter->get_name() << std::endl;
+		std::cout << enchanter->get_description() << std::endl;
+
+		Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, item_list);
+		Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", nullptr, item_list_empty);
+
+		world.get_rooms().push_back(room1);
+		world.add_room(room2, room1, Direction::NORTH);
 	}
 	else
 	{
