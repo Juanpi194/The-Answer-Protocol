@@ -21,7 +21,6 @@ utils
 CHANGES -----------
 NPCS and items will have their id set automatically. Only rooms will need a manual id.
 More than one item per room. Only one npc per room.
-ATTRIBUTES
 NO COMPILATION FLAGS UNTIL END
 
 COMMENT TAGS ------

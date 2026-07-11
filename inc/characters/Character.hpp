@@ -15,7 +15,7 @@ class Character
 	public:
 		// Constructors -------------------------------------------------------
 
-		Character(const std::string& name);
+		explicit Character(const std::string& name);
 		Character(const Character& character);
 		virtual ~Character(void) = default;
 

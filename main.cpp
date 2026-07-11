@@ -83,6 +83,14 @@ static void	pruebitas(PlayerConnection& player_connection)
 			else
 				std::cout << "No hay npc en esta sala, tonto\n";
 		}
+		else if (answer == "TAKE")
+		{
+			player->obtain_item("Iron Sword");
+		}
+		else if (answer == "DROP")
+		{
+			player->drop_item("Iron Sword");
+		}
 		else if (answer == "QUIT")
 			break ;
 		else

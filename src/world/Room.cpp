@@ -181,6 +181,23 @@ void				Room::add_player(Player *player)
 	player->set_current_room(this);
 }
 
+void				Room::remove_item(Item *item)
+{
+	bool	found;
+
+	found = false;
+	if (!item)
+		throw std::invalid_argument("Cannot remove a nullptr from the item list.");
+	for (Item *item_in_list: items)
+	{
+		if (item_in_list == item)
+			found = true;
+	}
+	if (!found)
+		throw std::invalid_argument("Item to removed must be in the room.");
+	items.remove(item);
+}
+
 void				Room::remove_player(Player *player)
 {
 	bool	found;
@@ -194,7 +211,7 @@ void				Room::remove_player(Player *player)
 			found = true;
 	}
 	if (!found)
-		throw std::invalid_argument("Player to removed must be in the room.");
+		throw std::invalid_argument("Player to remove must be in the room.");
 	player_list.remove(player);
 	player->set_current_room(nullptr);
 }

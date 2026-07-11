@@ -82,6 +82,14 @@ class Room
 		void	add_player(Player *player) __nonnull();
 
 		/**
+		 * @brief	Removes an item from the list of items of this room.
+		 * @param	item	The item to be removed.
+		 * @throws	`std::invalid_argument` if `item` is `nullptr` or if
+		 * 			`item` is not in the list.
+		 */
+		void	remove_item(Item *item) __nonnull();
+
+		/**
 		 * @brief	Removes a player from the list of players of this room.
 		 * 			This means that after this method, player's `current_room`
 		 * 			will be `nullptr`.
@@ -93,11 +101,23 @@ class Room
 
 		// ? REVIEW: Should we do these methods?
 
+		/**
+		 * @brief	Removed the specified item if its in the list, and
+		 * 			it also returns it.
+		 * @param	item	The item to remove. Assign as `nullptr` if you
+		 * 					want the last item to be removed.
+		 * @returns	`item` if found, or the last item of the list if
+		 * 			`item` is `nullptr`.
+		 * @throws	`std::invalid_argument` if `item` is not `nullptr` and its
+		 * 			not in the item list.
+		 */
+		Item	*pop_item(Item *item = nullptr);
+
 		// virtual void	on_enter(void) noexcept = 0;
 
 		void			clear(void);
 
-		// void			connect_room()
+		void			connect_room();
 
 		/**
 		 * @brief	Generates the room information in json format.

@@ -34,7 +34,7 @@ class Player final: public Fighter
 
 		// ! REVIEW: Is it needed to have a pointer to the player_connection?
 		// Player(const std::string& name, PlayerConnection *player_connection);
-		Player(const std::string& name);
+		explicit Player(const std::string& name);
 		Player(const Player& player) = delete;
 		~Player(void) = default;
 
@@ -55,8 +55,52 @@ class Player final: public Fighter
 
 		// Items --
 
-		void			obtain_item(Item *item);
-		void			drop_item(Item *item);
+		/**
+		 * @brief		Adds the specified item to the player's item list
+		 * 				and removes it from the current room.
+		 * @param		item	The item to be obtained by the player.
+		 * @returns		`true` if the item was obtained, `false` otherwise.
+		 * @deprecated	Looking for an item requires its name, not the item
+		 * 				itself. That's why this method will not be used.
+		 * 				Use the one that receives a string instead.
+		 */
+		bool			obtain_item(Item *item) noexcept __nonnull();
+		
+		/**
+		 * @brief	Tries to find an item with the specified name in the
+		 * 			player's room. If it gets find, it will be removed from
+		 * 			the room and added to the player's item list.
+		 * @param	item_name	The name of the item to find.
+		 * @returns	`true` if the item was successfully added to the players
+		 * 			item list. `false` otherwise (including not finding
+		 * 			the item in the room).
+		 * @note	`item_name` can be either a name or an id.
+		 */
+		bool			obtain_item(const std::string& item_name) noexcept;
+
+		/**
+		 * @brief		Adds the specified item to the current room's item list
+		 * 				and removes it from the player.
+		 * @param		item	The item to be dropped by the player.
+		 * @returns		`true` if the item was dropped, `false` otherwise.
+		 * @deprecated	Looking for an item requires its name, not the item
+		 * 				itself. That's why this method will not be used.
+		 * 				Use the one that receives a string instead.
+		 */
+		bool			drop_item(Item *item) noexcept __nonnull();
+
+		/**
+		 * @brief	Tries to find an item with the specified name in the
+		 * 			player's item list. If it gets find, it will be reomoved
+		 * 			from the player and added to the current room's item list.
+		 * @param	item_name	The name of the item to find.
+		 * @returns	`true` if the item was successfully added to the current
+		 * 			room item list. `false` otherwise (including not finding
+		 * 			the item in the room).
+		 * @note	`item_name` can be either a name or an id.
+		 */
+		bool			drop_item(const std::string& item_name) noexcept;
+
 		void			buy_item(const Merchant& merchant, Item *item);
 
 		// Location --

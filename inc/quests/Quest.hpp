@@ -12,7 +12,7 @@ class Quest
 	public:
 		// Constructors -------------------------------------------------------
 
-		Quest(const std::string& description);
+		explicit Quest(const std::string& description);
 		Quest(const Quest& quest);
 		~Quest(void) = default;
 

@@ -44,7 +44,7 @@ class World
 		/**
 		 * @brief	Default world.
 		 */
-		World(const std::string& name);
+		explicit World(const std::string& name);
 
 		/**
 		 * @brief	World with data in the json.
