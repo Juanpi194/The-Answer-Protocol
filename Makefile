@@ -95,7 +95,7 @@ run:
 
 $(OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) $(DEBUG_FLAG) -c $< -o $@
 
 all: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) -o $(PROGRAM_NAME)

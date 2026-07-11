@@ -4,6 +4,19 @@
 
 #include "utils/utils.hpp"
 
+/**
+ * @brief	Obtains the opposite direction of the specified direction.
+ * @note	A static function that obtains the opposite direction
+ * 			of a specified direction would consume less resources, but this
+ * 			is easier to read.
+ */
+static const std::map<Direction, Direction>	OPPOSITE_DIRECTIONS = {
+	{Direction::NORTH, Direction::SOUTH},
+	{Direction::SOUTH, Direction::NORTH},
+	{Direction::EAST, Direction::WEST},
+	{Direction::WEST, Direction::EAST}
+};
+
 bool	World::validate_name(const std::string& name)
 {
 	std::string	temp = name;
@@ -102,4 +115,6 @@ void	World::add_room(Room *new_room, Room *connected_to, Direction direction)
 	// Validation passed
 	rooms.push_back(new_room);	
 	connected_to->get_adyacent_rooms()[direction] = new_room;
+	new_room->get_adyacent_rooms()[OPPOSITE_DIRECTIONS.at(direction)] = connected_to;
+	log("New room '" + new_room->get_name() + "' was connected to '" + connected_to->get_name() + "'.", LogLevel::DEBUG);
 }

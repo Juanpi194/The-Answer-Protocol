@@ -156,10 +156,10 @@ void	Room::set_adyacent_room(Direction direction, Room *room)
 
 // Utils ----------------------------------------------------------------------
 
-void	Room::add_item(Item *item)
+void				Room::add_item(Item *item)
 {
 	if (!item)
-		throw std::invalid_argument("Cannot add a nulltr to the item list.");
+		throw std::invalid_argument("Cannot add a nullptr to the item list.");
 	for (Item *item_in_list: items)
 	{
 		if (item_in_list == item)
@@ -168,7 +168,106 @@ void	Room::add_item(Item *item)
 	items.push_back(item);
 }
 
-void	Room::clear(void)
+void				Room::add_player(Player *player)
 {
-	// TODO: Kick players, items, ...
+	if (!player)
+		throw std::invalid_argument("Cannot add a nullptr to the player list.");
+	for (Player *player_in_list: player_list)
+	{
+		if (player_in_list == player)
+			throw std::invalid_argument("Cannot add the same player twice in the same room.");
+	}
+	player_list.push_back(player);
+	player->set_current_room(this);
+}
+
+void				Room::remove_player(Player *player)
+{
+	bool	found;
+
+	found = false;
+	if (!player)
+		throw std::invalid_argument("Cannot remove a nullptr from the player list.");
+	for (Player *player_in_list: player_list)
+	{
+		if (player_in_list == player)
+			found = true;
+	}
+	if (!found)
+		throw std::invalid_argument("Player to removed must be in the room.");
+	player_list.remove(player);
+	player->set_current_room(nullptr);
+}
+
+void				Room::clear(void)
+{
+	// TODO: Kick players (setting their room to nullptr), free items, ...
+}
+
+const std::string	Room::look(void) const noexcept
+{
+	// TODO: Add chest and extras.
+	// ? REVIEW: Full review of everything.
+	std::string	result;
+	bool		first;
+
+	result += "{ \"room\": { ";
+	result += "\"id\": \"" + id + "\", ";
+	result += "\"name\": \"" + name + "\", ";
+	result += "\"description\": \"" + description + "\", ";
+	result += "\"exits\": ";
+	if (adyacent_rooms.size() == 0)
+		result += "\"None\"";
+	else
+	{
+		first = true;
+		result += "{";
+		for (std::pair<Direction, Room*> direction_and_room: adyacent_rooms)
+		{
+			// TODO: Exits and rooms' ids.
+		}
+		result += "}";
+	}
+	result += " }, ";
+	result += "\"players\": ";
+	if (player_list.size() == 0)
+		result += "\"None\"";
+	else
+	{
+		first = true;
+		result += "[";
+		for (Player *player: player_list)
+		{
+			if (!first)
+				result += ", ";
+			result += "\"" + player->get_name() + "\"";
+			first = false;
+		}
+		result += "]";
+	}
+	result += ", ";
+	result += "\"items\": ";
+	if (items.size() == 0)
+		result += "\"None\"";
+	else
+	{
+		first = true;
+		result += "[";
+		for (Item *item: items)
+		{
+			if (!first)
+				result += ", ";
+			result += "\"" + item->get_id() + "\"";
+			first = false;
+		}
+		result += "]";
+	}
+	result += ", ";
+	result += "\"npc\": ";
+	if (!npc)
+		result += "\"None\"";
+	else
+		result += "\"" + npc->get_id() + "\"";
+	result += " }";
+	return (result);
 }

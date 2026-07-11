@@ -73,6 +73,24 @@ class Room
 		 */
 		void	add_item(Item *item) __nonnull();
 
+		/**
+		 * @brief	Adds a player to the list of players of this room.
+		 * @param	player	The player to be added.
+		 * @throws	`std::invalid_argument` if `player` is `nullptr` or if
+		 * 			`player` is already in the list.
+		 */
+		void	add_player(Player *player) __nonnull();
+
+		/**
+		 * @brief	Removes a player from the list of players of this room.
+		 * 			This means that after this method, player's `current_room`
+		 * 			will be `nullptr`.
+		 * @param	player	The player to be removed.
+		 * @throws	`std::invalid_argument` if `player` is `nullptr` or if
+		 * 			`player` is not in the list.
+		 */
+		void	remove_player(Player *player) __nonnull();
+
 		// ? REVIEW: Should we do these methods?
 
 		// virtual void	on_enter(void) noexcept = 0;
@@ -80,4 +98,10 @@ class Room
 		void			clear(void);
 
 		// void			connect_room()
+
+		/**
+		 * @brief	Generates the room information in json format.
+		 * @returns	The json format as `string`.
+		 */
+		const std::string	look(void) const noexcept;
 };

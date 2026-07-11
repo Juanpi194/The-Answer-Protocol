@@ -3,7 +3,7 @@
 #include "utils/utils.hpp"
 
 
-void	log(const std::string& msg, LogLevel level)
+void	log(const std::string& msg, LogLevel level) noexcept
 {
 	const char	*labels[] = {"", "ERROR", "WARN", "INFO", "DEBUG"};
 

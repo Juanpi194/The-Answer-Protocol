@@ -4,15 +4,18 @@
 
 #include "enchantments/Enchantment.hpp"
 #include "items/Gear.hpp"
+#include "characters/Player.hpp"
 
 // Constructors ---------------------------------------------------------------
 
-Enchanter::Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments):
+Enchanter::Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments_to_sell):
 	Character(name),
 	NPC(name, description),
-	enchantments(enchantments)
+	enchantments_to_sell(enchantments_to_sell)
 {
-	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments)
+	if (enchantments_to_sell.size() == 0)
+		throw std::invalid_argument("Enchanter's enchantments list to sell cannot be empty.");
+	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
 	{
 		if (!enchantment_and_price.first)
 			throw std::invalid_argument("Enchanter's enchantments list to sell cannot have any nullptr in it.");
@@ -21,21 +24,34 @@ Enchanter::Enchanter(const std::string& name, const std::string& description, co
 
 Enchanter::~Enchanter(void)
 {
-	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments)
+	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
 		delete (enchantment_and_price.first);
 }
 
 // Getters and setters --------------------------------------------------------
 
-const std::map<Enchantment*, unsigned int>&	Enchanter::get_enchantments(void) const noexcept
+const std::map<Enchantment*, unsigned int>&	Enchanter::get_enchantments_to_sell(void) const noexcept
 {
-	return (enchantments);
+	return (enchantments_to_sell);
 }
 
 // Utils ----------------------------------------------------------------------
 
 void	Enchanter::on_interact(Player& player)
 {
+	std::string	products;
+
+	// ? REVIEW: Logic and format ...
+	products = "===";
+	player.send_to_client("Welcome!");
+	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
+	{
+		products += "\n";
+		products += (enchantment_and_price.first->get_name() + " - " + std::to_string(enchantment_and_price.second));
+	}
+	products += "\n===";
+	player.send_to_client(products);
+	player.receive_command();
 	// TODO: Logic...
 }
 

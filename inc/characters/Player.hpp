@@ -23,8 +23,10 @@ class Player final: public Fighter
 		 * 			this should change with it.
 		 */
 		int					client_fd;
-		Room				*current_location;
 		unsigned int		gold;
+		// ? REVIEW: Is this list now needed that every enemy will be a copy?
+		// ?		 Maybe make it a list of strings,
+		// ?		 or a map with the ammount of each one.
 		std::list<Enemy*>	beaten_enemies;
 		std::list<Quest>	quest_list;
 	public:
@@ -43,7 +45,6 @@ class Player final: public Fighter
 		// Getters and setters ------------------------------------------------
 
 		// PlayerConnection			*get_player_connection(void) const noexcept;
-		Room						*get_current_location(void) const noexcept;
 		unsigned int				get_gold(void) const noexcept;
 		std::list<Enemy*>&			get_beaten_enemies(void) noexcept;
 		const std::list<Enemy*>&	get_beaten_enemies(void) const noexcept;
@@ -60,7 +61,15 @@ class Player final: public Fighter
 
 		// Location --
 
-		void			move(void);
+		/**
+		 * @brief	Moves the player to a room that exists in the specified
+		 * 			direction.
+		 * @param	direction	The chosen direction.
+		 * @returns	`true` if the player successfully moved to the neighbor,
+		 * 			`false` if the player has `current_room` as `nullptr` or
+		 * 			if there is no room in that direction.
+		 */
+		bool			move(Direction direction) noexcept;
 
 		// Fight --
 
@@ -72,4 +81,21 @@ class Player final: public Fighter
 
 		void			interact_with(Character& character);
 		void			on_interact(Player& player) override;
+
+		// User --
+
+		// TODO: Finish documentation of the methods below.
+
+		/**
+		 * @throws	`std::runtime_error` if input reading fails or EOF.
+		 */
+		std::string		receive_command(void);
+
+		/**
+		 * @brief	Sends a message to the fd of this player. If `client_fd`
+		 * 			is `-1`, the message will be sent to `cout`.
+		 * @param	msg	The message to send.
+		 * @throws
+		 */
+		void			send_to_client(const std::string& msg) const;
 };

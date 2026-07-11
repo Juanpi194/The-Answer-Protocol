@@ -1,26 +1,30 @@
 #include "server/PlayerConnection.hpp"
 
 #include <stdexcept>
+#include <iostream>
+#include <unistd.h>
 
 #include "server/Server.hpp"
+#include "characters/Player.hpp"
 #include "utils/utils.hpp"
 
 // Constructors ---------------------------------------------------------------
 
 PlayerConnection::PlayerConnection(const std::string& name, int client_fd, Server *server):
-	player(name),
+	player(Player(name)),
 	client_fd(client_fd),
 	connected(true),
 	server(server)
 {
-	if (!server)
-		throw std::invalid_argument("Player connection must be addressed to a server when being created.");
+	// if (!server)
+	// 	throw std::invalid_argument("Player connection must be addressed to a server when being created.");
 	// TODO: Check if player name or fd is already in the server
 }
 
 PlayerConnection::~PlayerConnection(void)
 {
 	// TODO: Close fd, ...
+	close(client_fd);
 }
 
 Player&			PlayerConnection::get_player(void) noexcept

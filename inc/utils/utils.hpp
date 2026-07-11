@@ -51,7 +51,7 @@ extern LogLevel	current_level;
  * @example	log("Hello", LogLevel::LOG_ERROR);
  * @note		All logs will be printed in the `cerr` (2).
  */
-void		log(const std::string& msg, LogLevel level = current_level);
+void		log(const std::string& msg, LogLevel level = current_level) noexcept;
 
 /**
  * @brief	All space characters at the beginning and at the end will be removed.

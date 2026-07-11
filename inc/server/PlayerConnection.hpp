@@ -40,6 +40,6 @@ class PlayerConnection final
 
 		// Utils --------------------------------------------------------------
 
-		void	connect(void);
-		void	disconnect(void);
+		void		connect(void);
+		void		disconnect(void);
 };

@@ -77,7 +77,7 @@ class World
 		/**
 		 * @brief	Adds a new room to the world, connecting it to an already
 		 * 			existing room in the world in a specified direction from
-		 * 			that room.
+		 * 			that room. The room must not exist in the world.
 		 * @param	new_room	Pointer to the new room to add.
 		 * @param	connected_to	Pointer to the room that `new_room` is
 		 * 							connected to.

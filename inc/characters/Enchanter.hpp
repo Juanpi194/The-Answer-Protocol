@@ -15,14 +15,14 @@ class Enchanter final: public NPC
 		 * 			changes. Buying an enchantment makes a copy of it,
 		 * 			the enchanter will still have it to keep selling it.
 		 */
-		const std::map<Enchantment*, unsigned int>	enchantments;
+		const std::map<Enchantment*, unsigned int>	enchantments_to_sell;
 	public:
 		// Constructors -------------------------------------------------------
 
 		/**
 		 * @throws	`std::invalid_argument` if there is any `nullptr` in the `map`.
 		 */
-		Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments);
+		Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments_to_sell);
 
 		/**
 		 * @note	It is not allowed to make a copy because each enchanter should be unique.
@@ -40,7 +40,7 @@ class Enchanter final: public NPC
 
 		// Getters and setters ------------------------------------------------
 
-		const std::map<Enchantment*, unsigned int>&	get_enchantments(void) const noexcept;
+		const std::map<Enchantment*, unsigned int>&	get_enchantments_to_sell(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
 		// TODO: Throws exception if enchantment doesn't work for gear.
