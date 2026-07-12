@@ -5,26 +5,17 @@
 
 // Constructors ---------------------------------------------------------------
 
-Gear::Gear(const std::string& name, const std::string& description, GearType gear_type):
-	Item(name, description),
+Gear::Gear(const std::string& id, const std::string& name, const std::string& description, GearType gear_type):
+	Item(id, name, description),
 	gear_type(gear_type),
 	enchantment(nullptr)
 {
-}
-
-Gear::Gear(const Gear& gear):
-	Item(gear.get_name(), gear.get_description()),
-	gear_type(gear.gear_type),
-	enchantment(nullptr)
-{
-	// ? REVIEW: Does the copy have the same enchantments the one being copied has?
 }
 
 Gear::~Gear(void)
 {
 	if (enchantment)
 		delete (enchantment);
-	enchantment = nullptr;
 }
 
 // Getters and setters --------------------------------------------------------
@@ -45,6 +36,7 @@ void	Gear::set_enchantment(Enchantment *enchantment)
 {
 	if (!enchantment)
 		log("No enchantment provided to set to '" + get_name() + "'.", LogLevel::INFO);
-	// TODO: Logic of checking if can be set...
+	// ? REVIEW: Should this method check if the enchantment can be set?
+	// ?		 Or should it be a quick and dangerous way to set an enchantment?
 	this->enchantment = enchantment;
 }

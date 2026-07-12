@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
+#include "utils/types.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
 
@@ -24,7 +25,8 @@ bool Room::validate_arguments(const std::string& id, const std::string& name, co
 	trim_str(room_id);
 	if (room_id.empty())
 		return (log("Room id name cannot be empty (After prefix).", LogLevel::ERROR), false);
-	// TODO: Check if there are spaces in the ID (there shouldn't be)
+	if (has_space(room_id))
+		return (log("Room id cannot have spaces.", LogLevel::ERROR), false);
 	if (room_id.size() > MAX_NAME_LENGTH)
 		return (log("Room id name is too long (MAX CHARACTERS: " + std::to_string(MAX_NAME_LENGTH) + ").", LogLevel::ERROR), false);
 	if (room_id.size() < MIN_NAME_LENGTH)
@@ -86,7 +88,6 @@ Room::~Room()
 	// NPC
 	if (npc)
 		delete (npc);
-	npc = nullptr;
 
 	// Items
 	for (Item *item: items)
@@ -151,7 +152,14 @@ const std::map<Direction, Room*>&	Room::get_adyacent_rooms(void) const noexcept
 
 void	Room::set_adyacent_room(Direction direction, Room *room)
 {
-	// TODO: Check if a room exists in that direction, decide ...
+	// ? REVIEW: Is this method really needed? There is a method in World that connects two rooms.
+	// ?		 It can be used as a short and dangerous way to connect rooms. Make docstring if so.
+	if (!room)
+	{
+		log("Tried to connect a nullptr room to '" + name + "'.", LogLevel::WARNING);
+		return ;
+	}
+	this->adyacent_rooms[direction] = room;
 }
 
 // Utils ----------------------------------------------------------------------
@@ -241,7 +249,12 @@ const std::string	Room::look(void) const noexcept
 		result += "{";
 		for (std::pair<Direction, Room*> direction_and_room: adyacent_rooms)
 		{
-			// TODO: Exits and rooms' ids.
+			// ? REVIEW: Leave it in uppercase, or make a to_lower function for the direction.
+			if (!first)
+				result += ", ";
+			result += "\"" + direction_to_string(direction_and_room.first) + "\": ";
+			result += "\"" + direction_and_room.second->get_id() + "\"";
+			first = false;
 		}
 		result += "}";
 	}

@@ -1,10 +1,13 @@
 #include "characters/Narrator.hpp"
 
+unsigned int		Narrator::available_id = 0;
+const std::string	Narrator::PREFIX = "narrator.";
+
 // Constructors ---------------------------------------------------------------
 
 Narrator::Narrator(const std::string& name, const std::string& description, const std::string& sentence):
 	Character(name),	
-	NPC(name, description),
+	NPC(NPC::PREFIX + PREFIX + std::to_string(available_id++), name, description),
 	sentence(sentence)	
 {
 	// ? REVIEW: Check sentence logic

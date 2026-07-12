@@ -75,7 +75,6 @@ World::World(const std::string& name, const std::string& json_path)
 
 World::~World(void)
 {
-	// TODO: Delete all npcs, items, ...
 	for (Room *room: rooms)
 		delete (room);
 }

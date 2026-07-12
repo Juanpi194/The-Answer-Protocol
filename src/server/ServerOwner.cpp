@@ -7,48 +7,6 @@
 #include "utils/utils.hpp"
 #include "server/Server.hpp"
 
-// Maybe move this functions to utils?
-
-static bool	has_uppercase(const std::string& str)
-{
-	for (char c: str)
-	{
-		if (std::isupper(c))
-			return (true);
-	}
-	return (false);
-}
-
-static bool	has_lowercase(const std::string& str)
-{
-	for (char c: str)
-	{
-		if (std::islower(c))
-			return (true);
-	}
-	return (false);
-}
-
-static bool	has_number(const std::string& str)
-{
-	for (char c: str)
-	{
-		if (std::isdigit(c))
-			return (true);
-	}
-	return (false);
-}
-
-static bool	has_symbol(const std::string& str)
-{
-	for (char c: str)
-	{
-		if (std::ispunct(c))
-			return (true);
-	}
-	return (false);
-}
-
 /**
  * @brief	Shows a message explaining why the given password is incorrect.
  * 			Resets `password` using the `clear` function.

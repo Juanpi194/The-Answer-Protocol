@@ -28,11 +28,8 @@ class Gear: public Item
 	public:
 		// Operators ----------------------------------------------------------
 
-		Gear(const std::string& name, const std::string& description, GearType gear_type);
-		/**
-		 * @note	The copy will not have the enchantments from the original.
-		 */
-		Gear(const Gear& gear);
+		Gear(const std::string& id, const std::string& name, const std::string& description, GearType gear_type);
+		Gear(const Gear& gear) = delete;
 		virtual ~Gear(void);
 
 		// Operators ----------------------------------------------------------

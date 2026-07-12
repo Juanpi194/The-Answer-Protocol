@@ -17,6 +17,9 @@ class Merchant final: public NPC
 		 * 			the merchant will still have it to keep selling it.
 		 */
 		const std::map<Item*, unsigned int>	items_to_sell;
+
+		static unsigned int			available_id;	// Defined in Merchant.cpp
+		static const std::string	PREFIX;	// Defined in Merchant.cpp
 	public:
 		// Constructors -------------------------------------------------------
 

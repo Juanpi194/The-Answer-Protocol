@@ -2,25 +2,12 @@
 
 // Constructors ---------------------------------------------------------------
 
-Enemy::Enemy(const std::string& name, const std::string& description, t_stats stats, unsigned int gold):
+Enemy::Enemy(const std::string& id, const std::string& name, const std::string& description, t_stats stats, unsigned int gold):
 	Character(name),
-	NPC(name, description),
+	NPC(id, name, description),
 	Fighter(name, stats),
 	gold(gold)
 {
-}
-
-Enemy::Enemy(const Enemy& enemy):
-	Character(enemy.get_name()),
-	NPC(enemy.get_name(), enemy.get_description()),
-	Fighter(enemy.get_name(), enemy.stats),
-	gold(enemy.gold)
-{
-}
-
-Enemy::~Enemy(void)
-{
-	// TODO: Free weapon and armor if has one...
 }
 
 // Getters and setters --------------------------------------------------------

@@ -7,6 +7,8 @@ class IronSword final: public Weapon
 	private:
 		// TODO: Add attributes
 
+		static unsigned int				available_id;	// Defined in IronSword.cpp
+		static const std::string		PREFIX;	// Defined in IronSword.cpp
 		static const std::string		NAME;	// Defined in IronSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronSword.cpp
 		static constexpr unsigned int	EXTRA_DAMAGE = 5;

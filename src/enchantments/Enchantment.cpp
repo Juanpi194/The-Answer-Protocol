@@ -61,7 +61,7 @@ const std::list<GearType>	Enchantment::get_allowed_gear_types(void) const noexce
 
 void	Enchantment::apply_to(Gear& gear)
 {
-	// TODO: Apply enchantment to the given gear.
+	// ? REVIEW: Does this make sense?
 	if (can_apply(gear))
 		gear.set_enchantment(this);
 	else

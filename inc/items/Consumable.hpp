@@ -9,8 +9,8 @@ class Consumable: public Item
 	public:
 		// Constructors -------------------------------------------------------
 
-		Consumable(const std::string& name, const std::string& description);
-		Consumable(const Consumable& consumable);
+		Consumable(const std::string& id, const std::string& name, const std::string& description);
+		Consumable(const Consumable& consumable) = delete;
 		virtual ~Consumable(void) = default;
 
 		// Operators ----------------------------------------------------------

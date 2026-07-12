@@ -18,24 +18,6 @@ Character::Character(const std::string& name):
 		throw std::invalid_argument("Character name cannot be empty");
 }
 
-Character::Character(const Character& character):
-	name(character.name),
-	current_room(character.current_room)
-{
-	log("Character '" + character.name + "' was copied", LogLevel::DEBUG);
-}
-
-// Operators ------------------------------------------------------------------
-
-Character&	Character::operator=(const Character& other)
-{
-	if (this == &other)
-		return (*this);
-	name = other.name;
-	current_room = other.current_room;
-	return (*this);
-}
-
 // Getters and setters --------------------------------------------------------
 
 std::string				Character::get_name(void) const noexcept

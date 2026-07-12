@@ -24,7 +24,8 @@ PlayerConnection::PlayerConnection(const std::string& name, int client_fd, Serve
 PlayerConnection::~PlayerConnection(void)
 {
 	// TODO: Close fd, ...
-	close(client_fd);
+	if (client_fd >= 0)
+		close(client_fd);
 }
 
 Player&			PlayerConnection::get_player(void) noexcept

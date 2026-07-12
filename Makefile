@@ -40,7 +40,8 @@ SERVER_SRC = $(addprefix $(SRC_FOLDER)/$(SERVER_FOLDER)/, \
 
 UTILS_FOLDER = utils
 UTILS_SRC = $(addprefix $(SRC_FOLDER)/$(UTILS_FOLDER)/, \
-				colors.cpp globals.cpp log.cpp string_utils.cpp)
+				colors.cpp globals.cpp log.cpp string_utils.cpp \
+				types.cpp)
 
 WORLD_FOLDER = world
 WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \

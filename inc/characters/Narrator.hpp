@@ -6,6 +6,9 @@ class Narrator final: public NPC
 {
 	private:
 		const std::string	sentence;
+
+		static unsigned int			available_id;	// Defined in Narrator.cpp
+		static const std::string	PREFIX;	// Defined in Narrator.cpp
 	public:
 		// Constructors -------------------------------------------------------
 

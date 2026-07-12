@@ -16,6 +16,9 @@ class Enchanter final: public NPC
 		 * 			the enchanter will still have it to keep selling it.
 		 */
 		const std::map<Enchantment*, unsigned int>	enchantments_to_sell;
+
+		static unsigned int			available_id;	// Defined in Enchanter.cpp
+		static const std::string	PREFIX;	// Definied in Enchanter.cpp
 	public:
 		// Constructors -------------------------------------------------------
 

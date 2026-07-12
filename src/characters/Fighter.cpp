@@ -7,6 +7,8 @@
 bool	Fighter::validate_stats(t_stats stats)
 {
 	// TODO: Add validations
+	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH)
+		return (false);
 	return (true);
 }
 
@@ -19,24 +21,18 @@ Fighter::Fighter(const std::string& name, t_stats stats):
 	stats(stats),
 	status(Status::HEALTHY)
 {
-	// TODO: Call validate_stats and finish all the stat validations.
-	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH)
+	if (!validate_stats(stats))
 		throw std::invalid_argument("Fighter stats are not valid.");
-}
-
-Fighter::Fighter(const Fighter& fighter):
-	Character(fighter.get_name()),
-	armor(fighter.armor),
-	weapon(fighter.weapon),
-	stats(fighter.stats),
-	status(fighter.status)
-{
-	this->current_room = fighter.current_room;
 }
 
 Fighter::~Fighter(void)
 {
-	// TODO: Free all items in the list and armor and weapon if they exist.
+	for (Item *item: item_list)
+		delete (item);
+	if (armor)
+		delete (armor);
+	if (weapon)
+		delete (weapon);
 }
 
 // Getters and setters --------------------------------------------------------

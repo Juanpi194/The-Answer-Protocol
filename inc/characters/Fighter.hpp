@@ -59,8 +59,10 @@ class Fighter: public virtual Character
 	public:
 		// Constructors -------------------------------------------------------
 
+		// TODO: Add a way to create a fighter with specific items.
+
 		Fighter(const std::string& name, t_stats stats);
-		Fighter(const Fighter& fighter);
+		Fighter(const Fighter& fighter) = delete;
 		virtual ~Fighter(void);
 
 		// Operators ----------------------------------------------------------

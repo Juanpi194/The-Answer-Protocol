@@ -1,10 +1,13 @@
 #include "characters/QuestGiver.hpp"
 
+unsigned int		QuestGiver::available_id = 0;
+const std::string	QuestGiver::PREFIX = "quest_giver.";
+
 // Constructors ---------------------------------------------------------------
 
 QuestGiver::QuestGiver(const std::string& name, const std::string& description, Quest& quest):
 	Character(name),
-	NPC(name, description),
+	NPC(NPC::PREFIX + PREFIX + std::to_string(available_id++), name, description),
 	quest(quest)
 {
 }

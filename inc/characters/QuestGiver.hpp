@@ -7,6 +7,9 @@ class QuestGiver final: public NPC
 {
 	private:
 		Quest	quest;
+
+		static unsigned int			available_id;	// Defined in QuestGiver.cpp
+		static const std::string	PREFIX;	// Defined in QuestGiver.cpp
 	public:
 		// Constructors -------------------------------------------------------
 

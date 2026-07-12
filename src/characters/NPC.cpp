@@ -4,7 +4,6 @@
 
 #include "utils/utils.hpp"
 
-unsigned int		NPC::available_id = 0;
 const std::string	NPC::PREFIX = "npc.";
 
 bool	NPC::validate_arguments(const std::string& name, const std::string& description)
@@ -40,20 +39,13 @@ bool	NPC::validate_arguments(const std::string& name, const std::string& descrip
 
 // Constructors ---------------------------------------------------------------
 
-NPC::NPC(const std::string& name, const std::string& description):
+NPC::NPC(const std::string& id, const std::string& name, const std::string& description):
 	Character(name),
-	id(PREFIX + std::to_string(available_id++)),
+	id(id),
 	description(description)
 {
 	if (!validate_arguments(name, description))
 		throw std::invalid_argument("NPC validation failed.");
-}
-
-NPC::NPC(const NPC& npc):
-	Character(npc.get_name()),
-	id(PREFIX + std::to_string(available_id++)),
-	description(npc.description)
-{
 }
 
 // Getters and setters --------------------------------------------------------

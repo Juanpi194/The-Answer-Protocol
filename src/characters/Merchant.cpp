@@ -5,11 +5,14 @@
 #include "items/Item.hpp"
 #include "characters/Player.hpp"
 
+unsigned int		Merchant::available_id = 0;
+const std::string	Merchant::PREFIX = "merchant.";
+
 // Constructors ---------------------------------------------------------------
 
 Merchant::Merchant(const std::string& name, const std::string& description, const std::map<Item*, unsigned int>& items_to_sell):
 	Character(name),
-	NPC(name, description),
+	NPC(NPC::PREFIX + PREFIX + std::to_string(available_id++), name, description),
 	items_to_sell(items_to_sell)
 {
 	if (items_to_sell.empty())

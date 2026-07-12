@@ -17,7 +17,7 @@ Chest::Chest(void):
 	opened(false),
 	pool(ItemFactory::create_default_pool())
 {
-	// TODO: Check pool sum.
+	// TODO: Check pool sum (It should get to 100).
 }
 
 // Getters and setters --------------------------------------------------------

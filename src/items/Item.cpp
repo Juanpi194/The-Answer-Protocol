@@ -4,7 +4,6 @@
 
 #include "utils/utils.hpp"
 
-unsigned int		Item::available_id = 0;
 const std::string	Item::PREFIX = "item.";
 
 bool	Item::validate_arguments(const std::string& name, const std::string& description)
@@ -40,20 +39,13 @@ bool	Item::validate_arguments(const std::string& name, const std::string& descri
 
 // Constructors ---------------------------------------------------------------
 
-Item::Item(const std::string& name, const std::string& description):
-	id(PREFIX + std::to_string(available_id++)),	
+Item::Item(const std::string& id, const std::string& name, const std::string& description):
+	id(id),	
 	name(name),
 	description(description)
 {
 	if (!validate_arguments(name, description))
 		throw std::invalid_argument("Item validation failed.");
-}
-
-Item::Item(const Item& item):
-	id(PREFIX + std::to_string(available_id++)),
-	name(item.name),
-	description(item.description)
-{
 }
 
 // Getters and setters --------------------------------------------------------

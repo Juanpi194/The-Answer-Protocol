@@ -1,5 +1,7 @@
 #include "utils/utils.hpp"
 
+#include <cctype>
+
 void	trim_str(std::string& s, bool middle)
 {
 	std::string	result;
@@ -48,7 +50,7 @@ bool	is_title(const std::string& str)
 	bool	new_word = true;
 	bool	has_letter = false;
 
-	for (unsigned char c : str)
+	for (const unsigned char c : str)
 	{
 		if (std::isalpha(c))
 		{
@@ -69,4 +71,54 @@ bool	is_title(const std::string& str)
 			new_word = true;
 	}
 	return (has_letter);
+}
+
+bool	has_uppercase(const std::string& str)
+{
+	for (const char c: str)
+	{
+		if (std::isupper(c))
+			return (true);
+	}
+	return (false);
+}
+
+bool	has_lowercase(const std::string& str)
+{
+	for (const char c: str)
+	{
+		if (std::islower(c))
+			return (true);
+	}
+	return (false);
+}
+
+bool	has_number(const std::string& str)
+{
+	for (const char c: str)
+	{
+		if (std::isdigit(c))
+			return (true);
+	}
+	return (false);
+}
+
+bool	has_symbol(const std::string& str)
+{
+	for (const char c: str)
+	{
+		if (std::ispunct(c))
+			return (true);
+	}
+	return (false);
+}
+
+bool	has_space(const std::string& str)
+{
+	for (char c: str)
+	{
+		if (std::isspace(c))
+			return (true);
+	}
+	return (false);
 }

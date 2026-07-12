@@ -19,6 +19,7 @@ bool debug_mode = true;
 #include "enchantments/Enchantment.hpp"
 #include "enchantments/Flame.hpp"
 #include "items/Item.hpp"
+#include "items/IronArmor.hpp"
 #include "items/IronSword.hpp"
 #include "items/ItemFactory.hpp"
 #include "items/Consumable.hpp"
@@ -41,16 +42,18 @@ static void	pruebitas(PlayerConnection& player_connection)
 
 	Item	*item1 = ItemFactory::create_iron_sword();
 	Item	*item2 = new IronSword();
+	Item	*item3 = new IronArmor();
 
-	std::list<Item*>	item_list = {item1, item2};
-	std::list<Item*>	item_list_empty;
+
+	std::list<Item*>	item_list_1 = {item1, item2};
+	std::list<Item*>	item_list_2 = {item3};
 
 	Enchantment	*enchantment = new Flame();
 	std::map<Enchantment*, unsigned int>	enchantments = {{enchantment, 10}};
 	Enchanter	*enchanter = new Enchanter("Rocio", "She sucks so much.", enchantments);
 
-	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, item_list);
-	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", nullptr, item_list_empty);
+	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, item_list_1);
+	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", nullptr, item_list_2);
 
 	room1->add_player(player);
 
@@ -84,13 +87,9 @@ static void	pruebitas(PlayerConnection& player_connection)
 				std::cout << "No hay npc en esta sala, tonto\n";
 		}
 		else if (answer == "TAKE")
-		{
 			player->obtain_item("Iron Sword");
-		}
 		else if (answer == "DROP")
-		{
 			player->drop_item("Iron Sword");
-		}
 		else if (answer == "QUIT")
 			break ;
 		else

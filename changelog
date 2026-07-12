@@ -1,12 +1,12 @@
 TODO --------------
 Items
 Enchantments
+Añadir id a los enchantments
 Review invalid_argument exceptions and maybe set them as boolean functions (returning false in case of error)
 static getters and setters???
 Battle
 Factories for enchantments and NPCs???
 Different types of rooms
-FINISH AUTO ID SETTER FOR NPCS (AND MAYBE ITEMS).
 
 QUESTIONS ---------
 Chest room does not make sense if there can be enemy rooms with chests.
@@ -22,6 +22,9 @@ CHANGES -----------
 NPCS and items will have their id set automatically. Only rooms will need a manual id.
 More than one item per room. Only one npc per room.
 NO COMPILATION FLAGS UNTIL END
+Copy constructors of items and npcs abstract classes changed to delete.
+As npcs, only the enemies will be able to be copied. Add copy constructors when
+specific enemies are added.
 
 COMMENT TAGS ------
 TODO

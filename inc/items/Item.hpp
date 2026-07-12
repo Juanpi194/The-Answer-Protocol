@@ -8,8 +8,6 @@ class Item
 		const std::string	name;
 		const std::string	description;
 
-		static unsigned int			available_id;
-		static const std::string	PREFIX;	// Defined in Item.cpp
 		static constexpr bool		TITLE_NAME = true;
 		static constexpr size_t		MIN_NAME_LENGTH = 3;
 		static constexpr size_t		MAX_NAME_LENGTH = 18;
@@ -23,11 +21,16 @@ class Item
 		 * @note	This method should ONLY be used in the constructor.
 		 */
 		static bool	validate_arguments(const std::string& name, const std::string& description);
+	protected:
+		static const std::string	PREFIX;	// Defined in Item.cpp
 	public:
 		// Constructors -------------------------------------------------------
 
-		Item(const std::string& name, const std::string& description);
-		Item(const Item& item);
+		/**
+		 * @brief
+		 */
+		Item(const std::string& id, const std::string& name, const std::string& description);
+		Item(const Item& item) = delete;
 		virtual ~Item(void) = default;
 
 		// Operators ----------------------------------------------------------

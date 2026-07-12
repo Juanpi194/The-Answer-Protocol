@@ -6,11 +6,14 @@
 #include "items/Gear.hpp"
 #include "characters/Player.hpp"
 
+unsigned int		Enchanter::available_id = 0;
+const std::string	Enchanter::PREFIX = "enchanter.";
+
 // Constructors ---------------------------------------------------------------
 
 Enchanter::Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments_to_sell):
 	Character(name),
-	NPC(name, description),
+	NPC(NPC::PREFIX + PREFIX + std::to_string(available_id++), name, description),
 	enchantments_to_sell(enchantments_to_sell)
 {
 	if (enchantments_to_sell.size() == 0)

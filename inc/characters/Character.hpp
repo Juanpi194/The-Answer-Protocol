@@ -16,12 +16,12 @@ class Character
 		// Constructors -------------------------------------------------------
 
 		explicit Character(const std::string& name);
-		Character(const Character& character);
+		Character(const Character& character) = delete;
 		virtual ~Character(void) = default;
 
 		// Operators ----------------------------------------------------------
 
-		Character&	operator=(const Character& other);
+		Character&	operator=(const Character& other) = delete;
 
 		// Getters and setters ------------------------------------------------
 

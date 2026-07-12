@@ -48,7 +48,7 @@ extern LogLevel	current_level;
  * 				A new line character is printed at the end.
  * @param		msg		Message to be printed.
  * @param		level	Log level to print `msg`.
- * @example	log("Hello", LogLevel::LOG_ERROR);
+ * @example		log("Hello", LogLevel::LOG_ERROR);
  * @note		All logs will be printed in the `cerr` (2).
  */
 void		log(const std::string& msg, LogLevel level = current_level) noexcept;
@@ -97,6 +97,18 @@ bool		ends_with(const std::string& str, const std::string& suffix);
  * @returns	`true` if is a title. `false` otherwise.
 */
 bool		is_title(const std::string& str);
+
+// TODO: Docstrings of these functions.
+
+bool	has_uppercase(const std::string& str);
+
+bool	has_lowercase(const std::string& str);
+
+bool	has_number(const std::string& str);
+
+bool	has_symbol(const std::string& str);
+
+bool	has_space(const std::string& str);
 
 /**
  * @brief	Colors the given string with the color. 

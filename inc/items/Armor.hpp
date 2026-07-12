@@ -19,11 +19,8 @@ class Armor: public Gear
 	public:
 		// Constructors -------------------------------------------------------
 
-		Armor(const std::string& name, const std::string& description, const unsigned int damage_reduction, const GearType gear_type);
-		/**
-		 * @note	The copy will set `reduced_damage` as 0.
-		 */
-		Armor(const Armor& armor);
+		Armor(const std::string& id, const std::string& name, const std::string& description, const unsigned int damage_reduction, const GearType gear_type);
+		Armor(const Armor& armor) = delete;
 		virtual ~Armor(void) = default;
 
 		// Operators ----------------------------------------------------------
@@ -33,7 +30,7 @@ class Armor: public Gear
 		// Getters and setters ------------------------------------------------
 
 		const unsigned int	get_damage_reduction(void) const noexcept;
-		unsigned int	get_reduced_damage(void) const noexcept;
+		unsigned int		get_reduced_damage(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
 

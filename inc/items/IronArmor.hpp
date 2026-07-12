@@ -2,11 +2,13 @@
 
 #include "items/Armor.hpp"
 
-class IronArmor: public Armor
+class IronArmor final: public Armor
 {
 	private:
 		// TODO: Add attributes
 
+		static unsigned int				available_id;	// Defined in IronArmor.cpp
+		static const std::string		PREFIX;	// Defined in IronArmor.cpp
 		static const std::string		NAME;	// Defined in IronArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp
 		static constexpr unsigned int	DAMAGE_REDUCTION = 3;

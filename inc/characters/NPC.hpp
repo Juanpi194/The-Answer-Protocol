@@ -8,13 +8,11 @@ class NPC: public virtual Character
 		const std::string	id;
 		const std::string	description;
 
-		static unsigned int			available_id;
-		static const std::string	PREFIX;	// Defined in NPC.cpp
-		static constexpr bool		TITLE_NAME = true;
-		static constexpr size_t		MIN_NAME_LENGTH = 3;
-		static constexpr size_t		MAX_NAME_LENGTH = 18;
-		static constexpr size_t		MIN_DESCRIPTION_LENGTH = 8;
-		static constexpr size_t		MAX_DESCRIPTION_LENGTH = 60;
+		static constexpr bool	TITLE_NAME = true;
+		static constexpr size_t	MIN_NAME_LENGTH = 3;
+		static constexpr size_t	MAX_NAME_LENGTH = 18;
+		static constexpr size_t	MIN_DESCRIPTION_LENGTH = 8;
+		static constexpr size_t	MAX_DESCRIPTION_LENGTH = 60;
 
 		/**
 		 * @brief	Verifies that the provided arguments follow the specified
@@ -23,11 +21,13 @@ class NPC: public virtual Character
 		 * @note	This method should ONLY be used in the constructor.
 		 */
 		static bool	validate_arguments(const std::string& name, const std::string& description);
+	protected:
+		static const std::string	PREFIX;	// Defined in NPC.cpp
 	public:
 		// Constructors -------------------------------------------------------
 
-		NPC(const std::string& name, const std::string& description);
-		NPC(const NPC& npc);
+		NPC(const std::string& id, const std::string& name, const std::string& description);
+		NPC(const NPC& npc) = delete;
 		virtual ~NPC(void) = default;
 
 		// Operators ----------------------------------------------------------
