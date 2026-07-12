@@ -14,6 +14,13 @@ enum Status
 	CONFUSED
 };
 
+/**
+ * @param	level		The level of the fighter.
+ * @param	hp			The hp of the fighter (health points).
+ * @param	strength	The strength of the fighter (attack).
+ * @param	defense		The defense of the fighter (defense).
+ * @param	speed		The speed of the fighter (speed).
+ */
 struct t_stats
 {
 	unsigned int	level;

@@ -9,11 +9,15 @@
 // __always_inline
 // __attribute__((__hot__))
 // __attribute__((warn_unused_result))
-// __attribute_warn_unused_result__
 // __attribute_nonnull__((1))
-void	func(char *str)
-{
 
+int	func(char *str) __attribute_warn_unused_result__;
+
+int	func(char *str)
+{
+	if (!str)
+		return (0);
+	return (1);
 }
 
 int	main(void)

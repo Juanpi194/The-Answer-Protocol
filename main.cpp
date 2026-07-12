@@ -16,6 +16,7 @@ bool debug_mode = true;
 #include "characters/Enchanter.hpp"
 #include "characters/Player.hpp"
 #include "characters/Fighter.hpp"
+#include "characters/Goblin.hpp"
 #include "characters/Merchant.hpp"
 #include "characters/QuestGiver.hpp"
 #include "enchantments/Enchantment.hpp"
@@ -47,18 +48,20 @@ static void	pruebitas(PlayerConnection& player_connection)
 	Item	*item2 = new IronSword();
 	Item	*item3 = new IronArmor();
 
-
 	std::list<Item*>	item_list_1 = {item1, item2};
 	std::list<Item*>	item_list_2 = {item3};
 
 	Enchantment	*enchantment = new Flame();
 	std::map<Enchantment*, unsigned int>	enchantments = {{enchantment, 10}};
-	Enchanter	*enchanter = new Enchanter("Rocio", "She sucks so much.", enchantments);
+
+	// TODO: SHOW THIS SHIT
+	NPC		*enchanter = new Enchanter("Rocio", "She sucks so much.", enchantments);
+	Goblin	*goblin = new Goblin();
 
 	Chest	*chest_1 = new Chest();
 
 	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, nullptr, item_list_1);
-	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", nullptr, chest_1, item_list_2);
+	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", goblin, chest_1, item_list_2);
 
 	room1->add_player(player);
 
@@ -102,7 +105,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 			{
 				std::list<Item*> result = chest->interact(*player);
 				if (result.size() == 0)
-					std::cout << "No tienes llave picha (o el cofre ya está abierto o no ha salido nada.)\n";
+					std::cout << "No tienes llave picha.\n";
 				for (Item *item: result)
 					player->get_current_room()->add_item(item);
 			}

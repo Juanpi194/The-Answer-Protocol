@@ -1,7 +1,7 @@
 TODO --------------
-Items
+Items (Keys to open chests and rooms)
 Enchantments
-Añadir id a los enchantments
+Añadir id a los enchantments???
 Review invalid_argument exceptions and maybe set them as boolean functions (returning false in case of error)
 static getters and setters???
 Battle

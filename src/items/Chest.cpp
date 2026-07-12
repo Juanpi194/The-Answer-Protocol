@@ -15,19 +15,24 @@ std::list<Item*>	Chest::open(void) noexcept
 	if (opened)
 		return (generated_items);
 	opened = true;
-	// TODO: Opening chest logic, this leaves leaks.
-	// while (generated_items.size() == 0)
-	// {
-	// 	for (std::pair<Item*, unsigned int> item_and_chance: pool)
-	// 	{
-	// 		random = rand() % 100;
-	// 		if (random < item_and_chance.second)
-	// 		{
-	// 			generated_items.push_back(item_and_chance.first);
-	// 			item_and_chance.first = nullptr;
-	// 		}
-	// 	}
-	// }
+
+	// ? REVIEW: Instead of making it a loop until one item is generated,
+	// ?		 we could give a default item (maybe a potion) if no item is
+	// ?		 is generated.
+	// Generating items
+    while (generated_items.size() == 0)
+	{
+		for (std::pair<Item* const, unsigned int>& entry : pool)
+		{
+			random = rand() % 100;
+			if (random < entry.second)
+				generated_items.push_back(entry.first);
+		}
+	}
+
+	// Cleaning the chest to avoid double delete
+	for (Item *item: generated_items)
+		pool.erase(item);
 	log("Chest opened.", LogLevel::DEBUG);
 	return (generated_items);
 }
@@ -60,6 +65,11 @@ bool									Chest::is_opened(void) const noexcept
 	return (opened);
 }
 
+std::map<Item*, unsigned int>&			Chest::get_pool(void) noexcept
+{
+	return (pool);
+}
+
 const std::map<Item*, unsigned int>&	Chest::get_pool(void) const noexcept
 {
 	return (pool);
@@ -76,6 +86,8 @@ std::list<Item*>	Chest::interact(Player& player) noexcept
 	// TODO: Check if player has key, open if so. Return empty list otherwise.
 	// if (no key)
 	// 	return (log("Player '" + player.get_name() + "' has no key to open the chest.", LogLevel::INFO), result);
+	// ? REVIEW: Maybe instead of adding them to the room,
+	// ?		 we should add them to the player.
 	result = open();
 	return (result);
 }

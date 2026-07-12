@@ -9,9 +9,9 @@ std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void) noexcept
 	std::map<Item*, unsigned int>	pool;
 
 	// TODO: Add more items to the pool
-	pool[create_iron_armor()] = 100;
-	pool[create_iron_shield()] = 100;
-    pool[create_iron_sword()] = 100;
+	pool[create_iron_armor()] = 30;
+	pool[create_iron_shield()] = 30;
+    pool[create_iron_sword()] = 30;
 	return (pool);
 }
 
