@@ -6,6 +6,7 @@
 #include "utils/types.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
+#include "items/Chest.hpp"
 
 const std::string Room::PREFIX = "room.";
 
@@ -60,17 +61,20 @@ bool Room::validate_arguments(const std::string& id, const std::string& name, co
 
 // Constructors ---------------------------------------------------------------
 
-Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item *>& items):
+Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Chest *chest, std::list<Item *>& items):
 	id(id),
 	name(name),
 	description(description),
 	npc(npc),
+	chest(chest),
 	items(items)
 {
 	if (!validate_arguments(id, name, description))
 		throw std::invalid_argument("Provided room arguments are not valid. Room initialization failed.");
 	if (!npc)
 		log("No npc established in room with id '" + id + "'.", LogLevel::INFO);
+	if (!chest)
+		log("No chest established in room with id '" + id + "'.", LogLevel::INFO);
 	if (items.size() == 0)
 		log("No items established in room with id '" + id + "'.", LogLevel::INFO);
 	else
@@ -89,9 +93,13 @@ Room::~Room()
 	if (npc)
 		delete (npc);
 
+	// Chest
+	if (chest)
+		delete (chest);
+
 	// Items
 	for (Item *item: items)
-		delete(item);
+		delete (item);
 
 	// Players
 	for (Player *player: player_list)
@@ -118,6 +126,11 @@ std::string							Room::get_description(void) const noexcept
 NPC									*Room::get_NPC(void) const noexcept
 {
 	return (npc);
+}
+
+Chest								*Room::get_chest(void) const noexcept
+{
+	return (chest);
 }
 
 std::list<Item *>&					Room::get_items(void) noexcept

@@ -29,7 +29,8 @@ class Weapon: public Gear
 
 		// Getters and setters ------------------------------------------------
 
-		unsigned int	get_extra_damage(void) const noexcept;
+		const unsigned int	get_extra_damage(void) const noexcept;
+		unsigned int		get_total_extra_damage(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
 

@@ -8,6 +8,7 @@
 class Player;
 class NPC;
 class Item;
+class Chest;
 
 class Room
 {
@@ -16,6 +17,7 @@ class Room
 		const std::string			name;
 		const std::string			description;
 		NPC							*npc;
+		Chest						*chest;
 		std::list<Item*>			items;
 		std::list<Player*>			player_list;
 		std::map<Direction, Room*>	adyacent_rooms;
@@ -40,7 +42,7 @@ class Room
 		 * @throws	`std::invalid_argument` if validation failed or
 		 * 			if the item list contains any `nullptr`.
 		 */
-		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, std::list<Item*>& items);
+		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Chest *chest, std::list<Item*>& items);
 		Room(const Room& zone) = delete;
 		virtual ~Room(void);
 
@@ -54,6 +56,7 @@ class Room
 		std::string							get_name(void) const noexcept;
 		std::string							get_description(void) const noexcept;
 		NPC									*get_NPC(void) const noexcept;
+		Chest								*get_chest(void) const noexcept;
 		std::list<Item*>&					get_items(void) noexcept;
 		const std::list<Item*>&				get_items(void) const noexcept;
 		std::list<Player*>&					get_player_list(void) noexcept;

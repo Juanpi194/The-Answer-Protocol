@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <cstdlib>
+#include <ctime>
 
 #ifndef WOW
 bool debug_mode = false;
@@ -18,11 +20,12 @@ bool debug_mode = true;
 #include "characters/QuestGiver.hpp"
 #include "enchantments/Enchantment.hpp"
 #include "enchantments/Flame.hpp"
-#include "items/Item.hpp"
+#include "items/Chest.hpp"
+#include "items/Consumable.hpp"
 #include "items/IronArmor.hpp"
 #include "items/IronSword.hpp"
+#include "items/Item.hpp"
 #include "items/ItemFactory.hpp"
-#include "items/Consumable.hpp"
 #include "libs/json.hpp"
 #include "server/PlayerConnection.hpp"
 #include "server/Server.hpp"
@@ -52,8 +55,10 @@ static void	pruebitas(PlayerConnection& player_connection)
 	std::map<Enchantment*, unsigned int>	enchantments = {{enchantment, 10}};
 	Enchanter	*enchanter = new Enchanter("Rocio", "She sucks so much.", enchantments);
 
-	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, item_list_1);
-	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", nullptr, item_list_2);
+	Chest	*chest_1 = new Chest();
+
+	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, nullptr, item_list_1);
+	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", nullptr, chest_1, item_list_2);
 
 	room1->add_player(player);
 
@@ -90,6 +95,22 @@ static void	pruebitas(PlayerConnection& player_connection)
 			player->obtain_item("Iron Sword");
 		else if (answer == "DROP")
 			player->drop_item("Iron Sword");
+		else if (answer == "OPEN")
+		{
+			Chest	*chest = player->get_current_room()->get_chest();
+			if (chest && !chest->is_opened())
+			{
+				std::list<Item*> result = chest->interact(*player);
+				if (result.size() == 0)
+					std::cout << "No tienes llave picha (o el cofre ya está abierto o no ha salido nada.)\n";
+				for (Item *item: result)
+					player->get_current_room()->add_item(item);
+			}
+			else if (chest && chest->is_opened())
+				std::cout << "El cofre está abierto, máquina\n";
+			else
+				std::cout << "No hay cofre en esta sala, tonto\n";
+		}
 		else if (answer == "QUIT")
 			break ;
 		else
@@ -103,6 +124,7 @@ int main(void)
 	// SHORT IDEA OF HOW TO MANAGE DEBUG, flag in top of this file
 	PlayerConnection player_connection("Juanpi", -1, nullptr);
 
+	srand(time(nullptr));
 	if (debug_mode)
 		pruebitas(player_connection);
 	else

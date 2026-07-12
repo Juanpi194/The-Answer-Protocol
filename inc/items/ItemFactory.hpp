@@ -2,6 +2,8 @@
 #include <map>
 
 class Item;
+class IronArmor;
+class IronShield;
 class IronSword;
 
 class ItemFactory
@@ -9,8 +11,9 @@ class ItemFactory
 	public:
 		/**
 		 * @brief	Creates a default pool with a chance related to each Item.
-		 * 			The sum of the numbers must be 100.
 		 */
-		static std::map<Item*, unsigned int>	create_default_pool(void);
-		static IronSword						*create_iron_sword(void);
+		static std::map<Item*, unsigned int>	create_default_pool(void) noexcept;
+		static IronArmor						*create_iron_armor(void) noexcept;
+		static IronShield						*create_iron_shield(void) noexcept;
+		static IronSword						*create_iron_sword(void) noexcept;
 };
