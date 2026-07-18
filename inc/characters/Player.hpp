@@ -64,7 +64,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool			obtain_item(Item *item) noexcept __nonnull();
+		bool			obtain_item(Item *item) noexcept __nonnull() __attribute_deprecated__;
 		
 		/**
 		 * @brief	Tries to find an item with the specified name in the
@@ -87,7 +87,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool			drop_item(Item *item) noexcept __nonnull();
+		bool			drop_item(Item *item) noexcept __nonnull() __attribute_deprecated__;
 
 		/**
 		 * @brief	Tries to find an item with the specified name in the
@@ -102,6 +102,15 @@ class Player final: public Fighter
 		bool			drop_item(const std::string& item_name) noexcept;
 
 		void			buy_item(const Merchant& merchant, Item *item);
+
+		/**
+		 * @brief	The provided quest is added to the player's quest list.
+		 * @param	quest	The quest to add.
+		 * @returns	`true` if the player successfully received the quest.
+		 * 			`false` otherwise.
+		 * @note	If the quest is already in the list, it will not be added.
+		 */
+		bool			obtain_quest(Quest& quest) noexcept __COLD;
 
 		// Location --
 

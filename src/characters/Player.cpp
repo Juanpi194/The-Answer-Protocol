@@ -172,6 +172,17 @@ void		Player::buy_item(const Merchant& merchant, Item *item)
 	// TODO: Logic...
 }
 
+bool		Player::obtain_quest(Quest& quest) noexcept
+{
+	for (Quest& quest_in_list: quest_list)
+	{
+		if (quest_in_list.get_name() == quest.get_name())
+			return (log("Player '" + get_name() + "' already has the quest '" + quest.get_name() + "'.", LogLevel::WARNING), false);
+	}
+	quest_list.push_back(quest);
+	return (log("Player '" + get_name() + "' received the quest '" + quest.get_name() + "'.", LogLevel::DEBUG), true);
+}
+
 bool		Player::move(Direction direction) noexcept
 {
 	// ? REVIEW: Needed mutex?
@@ -247,7 +258,7 @@ std::string	Player::receive_command(void)
 void		Player::send_to_client(const std::string& msg) const
 {
 	std::string	cleared_msg = msg;
-	
+
 	trim_str(cleared_msg, false);
 	if (cleared_msg.empty())
 		throw std::invalid_argument("Cannot send an empty message to the client.");

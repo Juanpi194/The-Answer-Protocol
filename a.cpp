@@ -10,8 +10,9 @@
 // __attribute__((__hot__))
 // __attribute__((warn_unused_result))
 // __attribute_nonnull__((1))
-
-int	func(char *str) __attribute_warn_unused_result__;
+// __attribute_deprecated__
+// __attribute_warn_unused_result__
+int	func(char *str);
 
 int	func(char *str)
 {

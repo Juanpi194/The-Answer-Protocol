@@ -28,6 +28,7 @@ bool debug_mode = true;
 #include "items/Item.hpp"
 #include "items/ItemFactory.hpp"
 #include "libs/json.hpp"
+#include "quests/Quest.hpp"
 #include "server/PlayerConnection.hpp"
 #include "server/Server.hpp"
 #include "server/ServerOwner.hpp"
@@ -50,24 +51,29 @@ static void	pruebitas(PlayerConnection& player_connection)
 
 	std::list<Item*>	item_list_1 = {item1, item2};
 	std::list<Item*>	item_list_2 = {item3};
+	std::list<Item*>	item_list_3 = {};
 
 	Enchantment	*enchantment = new Flame();
 	std::map<Enchantment*, unsigned int>	enchantments = {{enchantment, 10}};
 
 	// TODO: SHOW THIS SHIT
-	NPC		*enchanter = new Enchanter("Rocio", "She sucks so much.", enchantments);
-	Goblin	*goblin = new Goblin();
+	NPC			*enchanter = new Enchanter("Rocio", "She sucks so much.", enchantments);
+	Goblin		*goblin = new Goblin();
+	Quest		quest("The great great quest", "This quest is only a test.");
+	QuestGiver	*quest_giver = new QuestGiver("Chrystian", "Que pereza no?", quest, {"Papu papu, tienes una llamada de la grasa", "En proceso", "Fin"}, 100, nullptr);
 
 	Chest	*chest_1 = new Chest();
 
 	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, nullptr, item_list_1);
 	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", goblin, chest_1, item_list_2);
+	Room	*room3 = new Room("room.quest", "Habitacion Quest", "Aqui te dan una quest jeje", quest_giver, nullptr, item_list_3);
 
 	room1->add_player(player);
 
 	std::cout << current_level << std::endl;
 	world.get_rooms().push_back(room1);
 	world.add_room(room2, room1, Direction::NORTH);
+	world.add_room(room3, room2, Direction::NORTH);
 
 	while (true)
 	{
