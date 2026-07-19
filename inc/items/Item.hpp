@@ -26,12 +26,10 @@ class Item
 	public:
 		// Constructors -------------------------------------------------------
 
-		/**
-		 * @brief
-		 */
 		Item(const std::string& id, const std::string& name, const std::string& description);
 		Item(const Item& item) = delete;
-		virtual ~Item(void) = default;
+		virtual	~Item(void) = default;
+		virtual Item*	clone(void) const noexcept = 0;
 
 		// Operators ----------------------------------------------------------
 

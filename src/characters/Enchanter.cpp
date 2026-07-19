@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "utils/utils.hpp"
 #include "enchantments/Enchantment.hpp"
 #include "items/Gear.hpp"
 #include "characters/Player.hpp"
@@ -77,6 +78,30 @@ void	Enchanter::enchant(Gear& gear, Enchantment *enchantment)
 
 void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
 {
-	// TODO: Logic...
+	Enchantment		*enchantment_found;
+	unsigned int	price;
+
+	enchantment_found = nullptr;
+	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
+	{
+		if (enchantment_and_price.first->get_name() == product)
+		{
+			enchantment_found = enchantment_and_price.first;
+			price = enchantment_and_price.second;
+		}
+	}
+	if (!enchantment_found)
+	{
+		log("Enchantment '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
+		player.send_to_client("We don't sell '" + product + "' here.");
+		return ;
+	}
+	if (!player.spend_gold(price))
+		player.send_to_client("You don't have enough money for that.");
+	else
+	{
+		player.send_to_client("Here you go.");
+		// TODO: Logic to apply to a gear.
+	}
 }
 

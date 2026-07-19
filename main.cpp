@@ -19,6 +19,7 @@ bool debug_mode = true;
 #include "characters/Goblin.hpp"
 #include "characters/Merchant.hpp"
 #include "characters/QuestGiver.hpp"
+#include "characters/Vendor.hpp"
 #include "enchantments/Enchantment.hpp"
 #include "enchantments/Flame.hpp"
 #include "items/Chest.hpp"
@@ -120,6 +121,20 @@ static void	pruebitas(PlayerConnection& player_connection)
 				player->talk_with(*npc);
 			else
 				std::cout << "No hay npc en esta sala, tonto\n";
+		}
+		else if (answer == "BUY")
+		{
+			NPC	*npc = player->get_current_room()->get_NPC();
+			if (!npc)
+				std::cout << "No hay npc en esta sala, tonto\n";
+			else
+			{
+				Vendor	*vendor = dynamic_cast<Vendor*>(npc);
+				if (!vendor)
+					std::cout << "El npc de esta sala no es un vendor, tonto\n";
+				else
+					vendor->on_buy(*player, "Iron Sword");
+			}
 		}
 		else if (answer == "TAKE")
 			player->obtain_item("Iron Sword");

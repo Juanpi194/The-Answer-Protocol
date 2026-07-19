@@ -16,6 +16,7 @@ class ChestKey final: public Item
 		ChestKey(void);
 		ChestKey(const ChestKey& chest_key);
 		~ChestKey(void) = default;
+		ChestKey	*clone(void) const noexcept override;
 
 		// Operators ----------------------------------------------------------
 

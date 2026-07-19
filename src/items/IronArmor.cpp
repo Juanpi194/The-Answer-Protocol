@@ -21,3 +21,8 @@ IronArmor::IronArmor(const IronArmor& iron_armor):
 	Armor(Item::PREFIX + PREFIX + std::to_string(available_id++), iron_armor.get_name(), iron_armor.get_description(), iron_armor.get_damage_reduction(), iron_armor.get_gear_type())
 {
 }
+
+IronArmor	*IronArmor::clone(void) const noexcept
+{
+	return (new IronArmor(*this));
+}

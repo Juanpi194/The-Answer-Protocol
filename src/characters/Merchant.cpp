@@ -77,11 +77,11 @@ void	Merchant::on_buy(Player& player, const std::string& product) noexcept
 		player.send_to_client("We don't sell '" + product + "' here.");
 		return ;
 	}
-	if (player.get_gold() < price)
-	{
-		log("Player '" + player.get_name() + "' does not have enough gold for '" + item_found->get_name() + "'.", LogLevel::INFO);
+	if (!player.spend_gold(price))
 		player.send_to_client("You don't have enough money for that.");
-		return ;
+	else
+	{
+		player.send_to_client("Here you go.");
+		player.add_item(item_found->clone());
 	}
-	// TODO: Add item to the list.
 }

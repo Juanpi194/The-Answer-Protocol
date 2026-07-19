@@ -11,6 +11,7 @@ class Merchant;
 class PlayerConnection;
 
 // Server stuff is managed in PlayerConnection class
+
 class Player final: public Fighter
 {
 	private:
@@ -60,7 +61,15 @@ class Player final: public Fighter
 		// Items --
 
 		/**
-		 * @brief		Adds the specified item to the player's item list
+		 * @brief	Simply adds an item to the player's item list,
+		 * 			without any checking.
+		 * @param	item	The item to be added.
+		 */
+		void			add_item(Item *item) noexcept TAP_NONNULL;
+
+		/**
+		 * @brief		Adds the specified item (that MUST be in the player's
+		 * 				current room) to the player's item list
 		 * 				and removes it from the current room.
 		 * @param		item	The item to be obtained by the player.
 		 * @returns		`true` if the item was obtained, `false` otherwise.
@@ -117,15 +126,6 @@ class Player final: public Fighter
 		void			buy_item(const Merchant& merchant, Item *item);
 
 		/**
-		 * @brief	The provided quest is added to the player's quest list.
-		 * @param	quest	The quest to add.
-		 * @returns	`true` if the player successfully received the quest.
-		 * 			`false` otherwise.
-		 * @note	If the quest is already in the list, it will not be added.
-		 */
-		bool			obtain_quest(Quest& quest) noexcept TAP_COLD;
-
-		/**
 		 * @brief	Finds an item from the player list that matches the
 		 * 			specified type.
 		 * @returns	A pointer to the first instance found of that type,
@@ -142,6 +142,38 @@ class Player final: public Fighter
 			}
 			return (nullptr);
 		}
+
+		// Quests --
+
+		/**
+		 * @brief	The provided quest is added to the player's quest list.
+		 * @param	quest	The quest to add.
+		 * @returns	`true` if the player successfully received the quest.
+		 * 			`false` otherwise.
+		 * @note	If the quest is already in the list, it will not be added.
+		 */
+		bool			obtain_quest(Quest& quest) noexcept TAP_COLD;
+
+		// Gold --
+
+		/**
+		 * @brief	Tries to consume a specified ammount of gold. If the player
+		 * 			does not have enough gold, it won't be consumed.
+		 * @param	quantity	The ammount of gold to consume.
+		 * @returns	`true` if the player had enough gold to spend and it was
+		 * 			successfully consumed, `false` if the player does not have
+		 * 			enough gold.
+		 * @note	The value returned by this method MUST be used.
+		 */
+		bool			spend_gold(unsigned int quantity) noexcept TAP_UNUSED_RESULT;
+		
+		/**
+		 * @brief	Unlike the `spend_gold` method, this one will always
+		 * 			consume the specified ammount of gold, setting it to 0
+		 * 			if the player has less gold than the specified one.
+		 * @param	quantity	The ammount of gold to consume.
+		 */
+		void			lose_gold(unsigned int quantity) noexcept;
 
 		// Location --
 
@@ -161,7 +193,7 @@ class Player final: public Fighter
 		void			attack(Fighter& target) noexcept override;
 		FighterType		get_type(void) const noexcept override;
 
-		// Other --
+		// Interactions --
 
 		void			talk_with(Character& character);
 		void			on_talk(Player& player) noexcept override;

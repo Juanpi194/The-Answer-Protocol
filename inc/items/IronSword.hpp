@@ -5,8 +5,6 @@
 class IronSword final: public Weapon
 {
 	private:
-		// TODO: Add attributes
-
 		static unsigned int				available_id;	// Defined in IronSword.cpp
 		static const std::string		PREFIX;	// Defined in IronSword.cpp
 		static constexpr GearType		GEAR_TYPE = GearType::Iron;
@@ -22,6 +20,7 @@ class IronSword final: public Weapon
 		IronSword(void);
 		IronSword(const IronSword& iron_sword);
 		~IronSword(void) = default;
+		IronSword	*clone(void) const noexcept override;
 
 		// Operators ----------------------------------------------------------
 

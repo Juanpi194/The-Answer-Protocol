@@ -17,6 +17,7 @@ class IronShield final: public Shield
 		IronShield(void);
 		IronShield(const IronShield& iron_shield);
 		~IronShield(void) = default;
+		IronShield	*clone(void) const noexcept override;
 
 		// Operators ----------------------------------------------------------
 

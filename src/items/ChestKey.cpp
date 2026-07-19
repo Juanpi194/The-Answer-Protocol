@@ -17,6 +17,11 @@ ChestKey::ChestKey(const ChestKey& chest_key):
 {
 }
 
+ChestKey	*ChestKey::clone(void) const noexcept
+{
+	return (new ChestKey(*this));
+}
+
 // Utils ----------------------------------------------------------------------
 
 void	ChestKey::use(void) noexcept

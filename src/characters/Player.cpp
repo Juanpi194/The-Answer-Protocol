@@ -55,6 +55,14 @@ std::list<std::string>&		Player::get_outbox(void) noexcept
 
 // Utils ----------------------------------------------------------------------
 
+// Items --
+
+void		Player::add_item(Item *item) noexcept
+{
+	item_list.push_back(item);
+	log("Player '" + get_name() + "' received '" + item->get_name() + "'.", LogLevel::INFO);
+}
+
 bool		Player::obtain_item(Item *item) noexcept
 {
 	if (!item)
@@ -195,6 +203,8 @@ void		Player::buy_item(const Merchant& merchant, Item *item)
 	// TODO: Logic...
 }
 
+// Quests --
+
 bool		Player::obtain_quest(Quest& quest) noexcept
 {
 	for (Quest& quest_in_list: quest_list)
@@ -205,6 +215,27 @@ bool		Player::obtain_quest(Quest& quest) noexcept
 	quest_list.push_back(quest);
 	return (log("Player '" + get_name() + "' received the quest '" + quest.get_name() + "'.", LogLevel::DEBUG), true);
 }
+
+// Gold --
+
+bool		Player::spend_gold(unsigned int quantity) noexcept
+{
+	if (quantity > gold)
+		return (log("Player '" + get_name() + "' does not have enough gold to spend.", LogLevel::INFO), false);
+	gold -= quantity;
+	return (log("Player '" + get_name() + "' spent " + std::to_string(quantity) + " gold.", LogLevel::INFO), true);
+}
+
+void		Player::lose_gold(unsigned int quantity) noexcept
+{
+	if (quantity > gold)
+		gold = 0;
+	else
+		gold -= quantity;
+	log("Player '" + get_name() + "' lost " + std::to_string(gold) + " gold.", LogLevel::INFO);
+}
+
+// Location --
 
 bool		Player::move(Direction direction) noexcept
 {
@@ -232,6 +263,8 @@ bool		Player::move(Direction direction) noexcept
 	return (log("Player '" + get_name() + "' entered '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
 }
 
+// Fight --
+
 void		Player::choose_action(void)
 {
 	// TODO: Request the player an action to perform...
@@ -247,6 +280,8 @@ FighterType	Player::get_type(void) const noexcept
 	return (FighterType::Player);
 }
 
+// Interactions --
+
 void		Player::talk_with(Character& character)
 {
 	// TODO: Logic...
@@ -259,24 +294,7 @@ void		Player::on_talk(Player& player) noexcept
 	// TODO: Logic...
 }
 
-// std::string	Player::receive_command(void)
-// {
-// 	std::string	result;
-
-// 	if (client_fd != -1)
-// 	{
-// 		// TODO: Server logic...
-// 	}
-// 	else
-// 	{
-// 		std::getline(std::cin, result);
-// 		if (std::cin.eof())
-// 			throw std::runtime_error("Input stream closed (EOF).");
-// 		if (std::cin.fail())
-// 			throw std::runtime_error("Error reading input.");
-// 	}
-// 	return (result);
-// }
+// User --
 
 void		Player::send_to_client(const std::string& msg)
 {

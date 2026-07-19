@@ -21,3 +21,8 @@ IronSword::IronSword(const IronSword& iron_sword):
 	Weapon(Item::PREFIX + PREFIX + std::to_string(available_id++), iron_sword.get_name(), iron_sword.get_description(), iron_sword.get_extra_damage(), iron_sword.get_gear_type())
 {
 }
+
+IronSword	*IronSword::clone(void) const noexcept
+{
+	return (new IronSword(*this));
+}

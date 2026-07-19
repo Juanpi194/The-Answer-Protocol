@@ -16,3 +16,9 @@ IronShield::IronShield(const IronShield& iron_shield):
 	Shield(Item::PREFIX + PREFIX + std::to_string(available_id++), iron_shield.get_name(), iron_shield.get_description(), iron_shield.get_max_uses())
 {
 }
+
+IronShield	*IronShield::clone(void) const noexcept
+{
+	return (new IronShield(*this));
+}
+
