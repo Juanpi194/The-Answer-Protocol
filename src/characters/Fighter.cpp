@@ -57,10 +57,10 @@ Status					Fighter::get_status(void) const noexcept
 	return (status);
 }
 
-std::list<Item*>&		Fighter::get_item_list(void) noexcept
-{
-	return (item_list);
-}
+// std::list<Item*>&		Fighter::get_item_list(void) noexcept
+// {
+// 	return (item_list);
+// }
 
 const std::list<Item*>&	Fighter::get_item_list(void) const noexcept
 {

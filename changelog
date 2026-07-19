@@ -1,22 +1,23 @@
 TODO --------------
-Items (Keys to open chests and rooms)
+Items
 Enchantments
-Añadir id a los enchantments???
 Review invalid_argument exceptions and maybe set them as boolean functions (returning false in case of error)
-static getters and setters???
 Battle
-Factories for enchantments and NPCs???
 Different types of rooms
+CLONE METHOD FOR ITEMS AND ENCHANTMENTS (abstract classes mainly)
 
 QUESTIONS ---------
 Chest room does not make sense if there can be enemy rooms with chests.
 Should we set a boolean in each room indicating if there is a chest or not?
+Should a npc factory be made (Each npcs has its own name and stuff, automatic factory might not make sense)
+Enchantment ids???
 
 BUGS --------------
 Hola
 
 DONE --------------
 utils
+attributes
 
 CHANGES -----------
 NPCS and items will have their id set automatically. Only rooms will need a manual id.

@@ -22,6 +22,7 @@ bool debug_mode = true;
 #include "enchantments/Enchantment.hpp"
 #include "enchantments/Flame.hpp"
 #include "items/Chest.hpp"
+#include "items/ChestKey.hpp"
 #include "items/Consumable.hpp"
 #include "items/IronArmor.hpp"
 #include "items/IronSword.hpp"
@@ -48,9 +49,10 @@ static void	pruebitas(PlayerConnection& player_connection)
 	Item	*item1 = ItemFactory::create_iron_sword();
 	Item	*item2 = new IronSword();
 	Item	*item3 = new IronArmor();
+	Item	*item4 = new ChestKey();
 
-	std::list<Item*>	item_list_1 = {item1, item2};
-	std::list<Item*>	item_list_2 = {item3};
+	std::list<Item*>	empty_list = {};
+	std::list<Item*>	item_list_2 = {item1, item2, item3, item4};
 	std::list<Item*>	item_list_3 = {};
 
 	Enchantment	*enchantment = new Flame();
@@ -64,21 +66,40 @@ static void	pruebitas(PlayerConnection& player_connection)
 
 	Chest	*chest_1 = new Chest();
 
-	Room	*room1 = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", enchanter, nullptr, item_list_1);
+	Room	*room1 = world.get_spawn_room();
 	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", goblin, chest_1, item_list_2);
 	Room	*room3 = new Room("room.quest", "Habitacion Quest", "Aqui te dan una quest jeje", quest_giver, nullptr, item_list_3);
+	Room	*room4 = new Room("room.enchantment_room", "Magia Jeje", "Aqui encantas las cosas", enchanter, nullptr, empty_list);
 
 	room1->add_player(player);
 
 	std::cout << current_level << std::endl;
-	world.get_rooms().push_back(room1);
-	world.add_room(room2, room1, Direction::NORTH);
-	world.add_room(room3, room2, Direction::NORTH);
+	// These give warning in purpose.
+	if (!world.add_room(room2, room1, Direction::NORTH))
+	{
+		delete (room2);
+		room2 = nullptr;
+	}
+	if (!world.add_room(room3, room2, Direction::NORTH))
+	{
+		delete (room3);
+		room3 = nullptr;
+	}
+	if (!world.add_room(room4, room3, Direction::NORTH))
+	{
+		delete (room4);
+		room4 = nullptr;
+	}
 
 	while (true)
 	{
 		std::string	json_format;
-		std::string	answer = player->receive_command();
+		std::string	answer;
+		std::getline(std::cin, answer);
+		if (std::cin.eof())
+			throw std::runtime_error("Input stream closed (EOF).");
+		if (std::cin.fail())
+			throw std::runtime_error("Error reading input.");
 
 		if (answer == "MOVE NORTH")
 			player->move(Direction::NORTH);
@@ -92,16 +113,18 @@ static void	pruebitas(PlayerConnection& player_connection)
 			result_file << j.dump(4);
 			result_file.close();
 		}
-		else if (answer == "INTERACT")
+		else if (answer == "TALK")
 		{
 			NPC	*npc = player->get_current_room()->get_NPC();
 			if (npc)
-				player->interact_with(*npc);
+				player->talk_with(*npc);
 			else
 				std::cout << "No hay npc en esta sala, tonto\n";
 		}
 		else if (answer == "TAKE")
 			player->obtain_item("Iron Sword");
+		else if (answer == "TAKE KEY")
+			player->obtain_item("Chest Key");
 		else if (answer == "DROP")
 			player->drop_item("Iron Sword");
 		else if (answer == "OPEN")
@@ -124,6 +147,8 @@ static void	pruebitas(PlayerConnection& player_connection)
 			break ;
 		else
 			std::cout << "Tonto\n";
+		for (std::string& s: player->get_outbox())
+			std::cout << s << std::endl;
 	}
 	std::cout << "Adios" << std::endl;
 }

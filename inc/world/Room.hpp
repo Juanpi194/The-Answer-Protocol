@@ -4,6 +4,7 @@
 #include <map>
 
 #include "utils/types.hpp"
+#include "utils/attributes.hpp"
 
 class Player;
 class NPC;
@@ -20,7 +21,7 @@ class Room
 		Chest						*chest;
 		std::list<Item*>			items;
 		std::list<Player*>			player_list;
-		std::map<Direction, Room*>	adyacent_rooms;
+		std::map<Direction, Room*>	adjacent_rooms;
 
 		static const std::string	PREFIX;	// Defined in Room.cpp
 		static constexpr bool		TITLE_NAME = true;
@@ -57,14 +58,14 @@ class Room
 		std::string							get_description(void) const noexcept;
 		NPC									*get_NPC(void) const noexcept;
 		Chest								*get_chest(void) const noexcept;
-		std::list<Item*>&					get_items(void) noexcept;
+		// std::list<Item*>&					get_items(void) noexcept;
 		const std::list<Item*>&				get_items(void) const noexcept;
-		std::list<Player*>&					get_player_list(void) noexcept;
+		// std::list<Player*>&					get_player_list(void) noexcept;
 		const std::list<Player*>& 			get_player_list(void) const noexcept;
-		std::map<Direction, Room*>&			get_adyacent_rooms(void) noexcept;
-		const std::map<Direction, Room*>&	get_adyacent_rooms(void) const noexcept;
+		// std::map<Direction, Room*>&			get_adjacent_rooms(void) noexcept;
+		const std::map<Direction, Room*>&	get_adjacent_rooms(void) const noexcept;
 
-		void	set_adyacent_room(Direction direction, Room *room);
+		void	set_adjacent_room(Direction direction, Room *room);
 
 		// Utils --------------------------------------------------------------
 
@@ -74,7 +75,7 @@ class Room
 		 * @throws	`std::invalid_argument` if `item` is `nullptr` or if
 		 * 			`item` is already in the list.
 		 */
-		void	add_item(Item *item) __nonnull();
+		void	add_item(Item *item) TAP_NONNULL;
 
 		/**
 		 * @brief	Adds a player to the list of players of this room.
@@ -82,7 +83,7 @@ class Room
 		 * @throws	`std::invalid_argument` if `player` is `nullptr` or if
 		 * 			`player` is already in the list.
 		 */
-		void	add_player(Player *player) __nonnull();
+		void	add_player(Player *player) TAP_NONNULL;
 
 		/**
 		 * @brief	Removes an item from the list of items of this room.
@@ -90,7 +91,7 @@ class Room
 		 * @throws	`std::invalid_argument` if `item` is `nullptr` or if
 		 * 			`item` is not in the list.
 		 */
-		void	remove_item(Item *item) __nonnull();
+		void	remove_item(Item *item) TAP_NONNULL;
 
 		/**
 		 * @brief	Removes a player from the list of players of this room.
@@ -100,7 +101,7 @@ class Room
 		 * @throws	`std::invalid_argument` if `player` is `nullptr` or if
 		 * 			`player` is not in the list.
 		 */
-		void	remove_player(Player *player) __nonnull();
+		void	remove_player(Player *player) TAP_NONNULL;
 
 		// ? REVIEW: Should we do these methods?
 

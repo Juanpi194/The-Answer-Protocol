@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "utils/utils.hpp"
 #include "items/Item.hpp"
 #include "characters/Player.hpp"
 
@@ -39,7 +40,7 @@ const std::map<Item*, unsigned int>&	Merchant::get_items_to_sell(void) const noe
 
 // Utils ----------------------------------------------------------------------
 
-void	Merchant::on_interact(Player& player)
+void	Merchant::on_talk(Player& player) noexcept
 {
 	std::string	products;
 
@@ -53,6 +54,34 @@ void	Merchant::on_interact(Player& player)
 	}
 	products += "\n===";
 	player.send_to_client(products);
-	player.receive_command();
 	// TODO: Logic...
+}
+
+void	Merchant::on_buy(Player& player, const std::string& product) noexcept
+{
+	Item			*item_found;
+	unsigned int	price;
+
+	item_found = nullptr;
+	for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
+	{
+		if (item_and_price.first->get_name() == product)
+		{
+			item_found = item_and_price.first;
+			price = item_and_price.second;
+		}
+	}
+	if (!item_found)
+	{
+		log("Item '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
+		player.send_to_client("We don't sell '" + product + "' here.");
+		return ;
+	}
+	if (player.get_gold() < price)
+	{
+		log("Player '" + player.get_name() + "' does not have enough gold for '" + item_found->get_name() + "'.", LogLevel::INFO);
+		player.send_to_client("You don't have enough money for that.");
+		return ;
+	}
+	// TODO: Add item to the list.
 }

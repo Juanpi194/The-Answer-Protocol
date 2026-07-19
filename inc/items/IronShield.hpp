@@ -7,10 +7,11 @@ class IronShield final: public Shield
 	private:
 		static unsigned int				available_id;	// Defined in IronShield.cpp
 		static const std::string		PREFIX;	// Defined in IronShield.cpp
+	public:
 		static const std::string		NAME;	// Defined in IronShield.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronShield.cpp
 		static constexpr unsigned int	MAX_USES = 5;
-	public:
+
 		// Constructors -------------------------------------------------------
 
 		IronShield(void);

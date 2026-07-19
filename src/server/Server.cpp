@@ -69,10 +69,10 @@ World								*Server::get_world(void) const noexcept
 	return (world);
 }
 
-std::list<PlayerConnection>&		Server::get_players(void) noexcept
-{
-	return (players);
-}
+// std::list<PlayerConnection>&		Server::get_players(void) noexcept
+// {
+// 	return (players);
+// }
 
 const std::list<PlayerConnection>&	Server::get_players(void) const noexcept
 {

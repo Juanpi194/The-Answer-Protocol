@@ -7,11 +7,12 @@ class Goblin final: public Enemy
 	private:
 		static unsigned int			available_id;	// Defined in Goblin.cpp
 		static const std::string	PREFIX;	// Definied in Goblin.cpp
+	public:
 		static const std::string	NAME;	// Defined in Goblin.cpp
 		static const std::string	DESCRIPTION;	// Defined in Goblin.cpp
 		static const t_stats		DEFAULT_STATS;	// Defined in Goblin.cpp
 		static const unsigned int	DEFAULT_GOLD = 20;
-	public:
+
 		// Constructors -------------------------------------------------------
 
 		Goblin(void);

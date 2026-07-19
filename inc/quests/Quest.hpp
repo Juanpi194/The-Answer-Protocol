@@ -9,7 +9,7 @@ class Quest
 		bool				completed;
 
 		static constexpr size_t	MIN_NAME_LENGTH = 8;
-		static constexpr size_t	MAX_NAME_LENGTH = 20;
+		static constexpr size_t	MAX_NAME_LENGTH = 30;
 		static constexpr size_t	MIN_DESCRIPTION_LENGTH = 15;
 		static constexpr size_t	MAX_DESCRIPTION_LENGTH = 50;
 	public:

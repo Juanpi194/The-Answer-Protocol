@@ -46,8 +46,6 @@ bool	World::room_in_world(Room *room)
 	bool	found;
 
 	found = false;
-	if (!room)
-		return (false);
 	for (Room *room_in_list: rooms)
 	{
 		if (room_in_list == room)
@@ -59,18 +57,33 @@ bool	World::room_in_world(Room *room)
 // Constructors ---------------------------------------------------------------
 
 World::World(const std::string& name):
-	name(name)
+	name(name),
+	spawn_room(nullptr)
 {
 	if (!validate_name(name))
 		throw std::invalid_argument("World name validation failed.");
 	// TODO: Create default world
+
+	// ! FIXME: Remove this temporal room when the parse is done.
+	std::list<Item*>	item_list;
+	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, nullptr, item_list);
+	rooms.push_back(temp_spawn_room);
+	spawn_room = temp_spawn_room;
 }
 
-World::World(const std::string& name, const std::string& json_path)
+World::World(const std::string& name, const std::string& json_path):
+	name(name),
+	spawn_room(nullptr)
 {
 	if (!validate_name(name) || !validate_json(json_path))
 		throw std::invalid_argument("World validation failed.");
 	// TODO: Create world with json config
+
+	// ! FIXME: Remove this temporal room when the parse is done.
+	std::list<Item*>	item_list;
+	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, nullptr, item_list);
+	rooms.push_back(temp_spawn_room);
+	spawn_room = temp_spawn_room;
 }
 
 World::~World(void)
@@ -86,20 +99,29 @@ std::string				World::get_name(void) const noexcept
 	return (name);
 }
 
-std::list<Room*>&		World::get_rooms(void) noexcept
-{
-	return (rooms);
-}
+// std::list<Room*>&		World::get_rooms(void) noexcept
+// {
+// 	return (rooms);
+// }
 
 const std::list<Room*>&	World::get_rooms(void) const noexcept
 {
 	return (rooms);
 }
 
+Room					*World::get_spawn_room(void) const noexcept
+{
+	if (!spawn_room)
+		log("World has no spawn room yet", LogLevel::INFO);
+	return (spawn_room);
+}
+
 // Utils ----------------------------------------------------------------------
 
-void	World::add_room(Room *new_room, Room *connected_to, Direction direction)
+bool	World::add_room(Room *new_room, Room *connected_to, Direction direction)
 {
+	if (rooms.size() >= MAX_ROOMS)
+		return (log("The world cannot add any more rooms (Limit reached).", LogLevel::WARNING), false);
 	if (!new_room || !connected_to)
 		throw std::invalid_argument("Tried to add a room with not valid parameters.");
 	if (new_room == connected_to)
@@ -108,12 +130,12 @@ void	World::add_room(Room *new_room, Room *connected_to, Direction direction)
 		throw std::invalid_argument("New room to add already exists in the world.");
 	if (!room_in_world(connected_to))
 		throw std::invalid_argument("Room that connects with the new room does not exist in the world.");
-	if (connected_to->get_adyacent_rooms().count(direction) > 0)
+	if (connected_to->get_adjacent_rooms().count(direction) > 0)
 		throw std::invalid_argument("The room that is being connected with the new room already has a room at the specified direction.");
 
 	// Validation passed
 	rooms.push_back(new_room);	
-	connected_to->get_adyacent_rooms()[direction] = new_room;
-	new_room->get_adyacent_rooms()[OPPOSITE_DIRECTIONS.at(direction)] = connected_to;
-	log("New room '" + new_room->get_name() + "' was connected to '" + connected_to->get_name() + "'.", LogLevel::DEBUG);
+	connected_to->set_adjacent_room(direction, new_room);
+	new_room->set_adjacent_room(OPPOSITE_DIRECTIONS.at(direction), connected_to);
+	return (log("New room '" + new_room->get_name() + "' was connected to '" + connected_to->get_name() + "'.", LogLevel::DEBUG), true);
 }

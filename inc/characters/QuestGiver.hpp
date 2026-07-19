@@ -59,5 +59,5 @@ class QuestGiver final: public NPC
 
 		// Utils --------------------------------------------------------------
 
-		void	on_interact(Player& player) override;
+		void	on_talk(Player& player) noexcept override;
 };

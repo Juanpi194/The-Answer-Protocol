@@ -13,7 +13,7 @@ Player::Player(const std::string& name):
 	Fighter(name, {1, 10, 10, 10, 10}),
 	// player_connection(player_connection),
 	// ? REVIEW: Check client fd
-	client_fd(-1),
+	// client_fd(-1),
 	gold(0)
 {
 	// FIXME: Decide if a player must have a PlayerConnection attached to them or not (debug mode)
@@ -28,24 +28,29 @@ unsigned int				Player::get_gold(void) const noexcept
 	return (gold);
 }
 
-std::list<Enemy*>&			Player::get_beaten_enemies(void) noexcept
-{
-	return (beaten_enemies);
-}
+// std::list<Enemy*>&			Player::get_beaten_enemies(void) noexcept
+// {
+// 	return (beaten_enemies);
+// }
 
 const std::list<Enemy*>&	Player::get_beaten_enemies(void) const noexcept
 {
 	return (beaten_enemies);
 }
 
-std::list<Quest>&			Player::get_quest_list(void) noexcept
-{
-	return (quest_list);
-}
+// std::list<Quest>&			Player::get_quest_list(void) noexcept
+// {
+// 	return (quest_list);
+// }
 
 const std::list<Quest>&		Player::get_quest_list(void) const noexcept
 {
 	return (quest_list);
+}
+
+std::list<std::string>&		Player::get_outbox(void) noexcept
+{
+	return (outbox);
 }
 
 // Utils ----------------------------------------------------------------------
@@ -167,6 +172,24 @@ bool		Player::drop_item(const std::string& item_name) noexcept
 	return (log(item_found->get_name() + " was dropped into the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
 }
 
+void		Player::consume_item(Item& item)
+{
+	Item	*item_found;
+
+	item_found = nullptr;
+	for (Item *item_in_list: item_list)
+	{
+		if (item_in_list == &item)
+			item_found = item_in_list;
+	}
+	if (!item_found)
+		throw std::invalid_argument("Item to consume is not in the player's item list.");
+
+	// Removing the item
+	item_list.remove(item_found);
+	delete (item_found);
+}
+
 void		Player::buy_item(const Merchant& merchant, Item *item)
 {
 	// TODO: Logic...
@@ -186,21 +209,21 @@ bool		Player::obtain_quest(Quest& quest) noexcept
 bool		Player::move(Direction direction) noexcept
 {
 	// ? REVIEW: Needed mutex?
-	Room	*adyacent;
+	Room	*adjacent;
 
 	// Checking room
 	if (!current_room)
 		return (log("Player '" + get_name() + "' is not at any room, it cannot move.", LogLevel::INFO), false);
-	if (current_room->get_adyacent_rooms().count(direction) == 0)
+	if (current_room->get_adjacent_rooms().count(direction) == 0)
 		return (log("Player '" + get_name() + "' tried to move to a non existing room.", LogLevel::INFO), false);
 
 	// Moving from one room to another
-	adyacent = current_room->get_adyacent_rooms()[direction];
+	adjacent = current_room->get_adjacent_rooms().at(direction);
 	try
 	{
 		current_room->remove_player(this);
-		adyacent->add_player(this);
-		current_room = adyacent;
+		adjacent->add_player(this);
+		current_room = adjacent;
 	}
 	catch (const std::invalid_argument& e)
 	{
@@ -224,49 +247,43 @@ FighterType	Player::get_type(void) const noexcept
 	return (FighterType::Player);
 }
 
-void		Player::interact_with(Character& character)
+void		Player::talk_with(Character& character)
 {
 	// TODO: Logic...
 	log("Player '" + get_name() + "' interacted with '" + character.get_name() + "'.", LogLevel::DEBUG);
-	character.on_interact(*this);
+	character.on_talk(*this);
 }
 
-void		Player::on_interact(Player& player)
+void		Player::on_talk(Player& player) noexcept
 {
 	// TODO: Logic...
 }
 
-std::string	Player::receive_command(void)
-{
-	std::string	result;
+// std::string	Player::receive_command(void)
+// {
+// 	std::string	result;
 
-	if (client_fd != -1)
-	{
-		// TODO: Server logic...
-	}
-	else
-	{
-		std::getline(std::cin, result);
-		if (std::cin.eof())
-			throw std::runtime_error("Input stream closed (EOF).");
-		if (std::cin.fail())
-			throw std::runtime_error("Error reading input.");
-	}
-	return (result);
-}
+// 	if (client_fd != -1)
+// 	{
+// 		// TODO: Server logic...
+// 	}
+// 	else
+// 	{
+// 		std::getline(std::cin, result);
+// 		if (std::cin.eof())
+// 			throw std::runtime_error("Input stream closed (EOF).");
+// 		if (std::cin.fail())
+// 			throw std::runtime_error("Error reading input.");
+// 	}
+// 	return (result);
+// }
 
-void		Player::send_to_client(const std::string& msg) const
+void		Player::send_to_client(const std::string& msg)
 {
 	std::string	cleared_msg = msg;
 
 	trim_str(cleared_msg, false);
 	if (cleared_msg.empty())
 		throw std::invalid_argument("Cannot send an empty message to the client.");
-	if (client_fd != -1)
-	{
-		// TODO: Server logic...
-	}
-	else
-		std::cout << msg << std::endl;
+	outbox.push_back(msg);
 }
-

@@ -5,10 +5,10 @@
 class Flame final: public Enchantment
 {
 	private:
-		static const std::string			NAME;	// Defined in Flame.cpp
-		static const std::string			DESCRIPTION;	// Defined in Flame.cpp
 		static const std::list<GearType>	ALLOWED_GEAR_TYPES;	// Defined in Flame.cpp
 	public:
+		static const std::string			NAME;	// Defined in Flame.cpp
+		static const std::string			DESCRIPTION;	// Defined in Flame.cpp
 
 		// Constructors -------------------------------------------------------
 

@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
+#include "items/ChestKey.hpp"
 #include "items/ItemFactory.hpp"
 #include "utils/utils.hpp"
 #include "characters/Player.hpp"
@@ -65,10 +66,10 @@ bool									Chest::is_opened(void) const noexcept
 	return (opened);
 }
 
-std::map<Item*, unsigned int>&			Chest::get_pool(void) noexcept
-{
-	return (pool);
-}
+// std::map<Item*, unsigned int>&			Chest::get_pool(void) noexcept
+// {
+// 	return (pool);
+// }
 
 const std::map<Item*, unsigned int>&	Chest::get_pool(void) const noexcept
 {
@@ -80,13 +81,18 @@ const std::map<Item*, unsigned int>&	Chest::get_pool(void) const noexcept
 std::list<Item*>	Chest::interact(Player& player) noexcept
 {
 	std::list<Item*>	result;
+	ChestKey			*chest_key;
 
 	if (opened)
 		return (result);
-	// TODO: Check if player has key, open if so. Return empty list otherwise.
-	// if (no key)
-	// 	return (log("Player '" + player.get_name() + "' has no key to open the chest.", LogLevel::INFO), result);
-	// ? REVIEW: Maybe instead of adding them to the room,
+	chest_key = player.find_item<ChestKey>();
+	if (!chest_key)
+		return (log("Player '" + player.get_name() + "' has no key to open the chest.", LogLevel::INFO), result);
+
+	// Removing the key
+	player.consume_item(*chest_key);
+
+	// ? REVIEW: Maybe instead of adding the items to the room,
 	// ?		 we should add them to the player.
 	result = open();
 	return (result);

@@ -2,12 +2,13 @@
 #include <map>
 
 #include "characters/NPC.hpp"
+#include "characters/Vendor.hpp"
 
 class Item;
 
 constexpr unsigned int	MAX_ITEM_PRICE = 2000;
 
-class Merchant final: public NPC
+class Merchant final: public NPC, public Vendor
 {
 	private:
 		/**
@@ -48,5 +49,7 @@ class Merchant final: public NPC
 
 		// Utils --------------------------------------------------------------
 
-		void	on_interact(Player& player) override;
+		void	on_talk(Player& player) noexcept override;
+
+		void	on_buy(Player& player, const std::string& product) noexcept override;
 };

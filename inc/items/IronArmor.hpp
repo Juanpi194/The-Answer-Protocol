@@ -5,17 +5,16 @@
 class IronArmor final: public Armor
 {
 	private:
-		// TODO: Add attributes
-
 		static unsigned int				available_id;	// Defined in IronArmor.cpp
 		static const std::string		PREFIX;	// Defined in IronArmor.cpp
-		static const std::string		NAME;	// Defined in IronArmor.cpp
-		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp
-		static constexpr unsigned int	DAMAGE_REDUCTION = 3;
 		static constexpr GearType		GEAR_TYPE = GearType::Iron;
 
 		void	special_use(void) noexcept override;
 	public:
+		static const std::string		NAME;	// Defined in IronArmor.cpp
+		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp
+		static constexpr unsigned int	DAMAGE_REDUCTION = 3;
+
 		// Constructors -------------------------------------------------------
 
 		IronArmor(void);

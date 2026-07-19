@@ -24,7 +24,7 @@ class Enemy: public NPC, public Fighter
 
 		// Utils --------------------------------------------------------------
 
-		void			on_interact(Player& player) override;
+		void			on_talk(Player& player) noexcept override;
 		FighterType		get_type(void) const noexcept override;
 
 		/**

@@ -2,6 +2,8 @@
 
 #include "characters/Fighter.hpp"
 #include "quests/Quest.hpp"
+#include "utils/attributes.hpp"
+#include "utils/types.hpp"
 
 class Room;
 class Enemy;
@@ -22,13 +24,14 @@ class Player final: public Fighter
 		 * @note	When the client changes its fd,
 		 * 			this should change with it.
 		 */
-		int					client_fd;
+		// int					client_fd;
 		unsigned int		gold;
 		// ? REVIEW: Is this list now needed that every enemy will be a copy?
 		// ?		 Maybe make it a list of strings,
 		// ?		 or a map with the ammount of each one.
-		std::list<Enemy*>	beaten_enemies;
-		std::list<Quest>	quest_list;
+		std::list<Enemy*>		beaten_enemies;
+		std::list<Quest>		quest_list;
+		std::list<std::string>	outbox;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -46,10 +49,11 @@ class Player final: public Fighter
 
 		// PlayerConnection			*get_player_connection(void) const noexcept;
 		unsigned int				get_gold(void) const noexcept;
-		std::list<Enemy*>&			get_beaten_enemies(void) noexcept;
+		// std::list<Enemy*>&			get_beaten_enemies(void) noexcept;
 		const std::list<Enemy*>&	get_beaten_enemies(void) const noexcept;
-		std::list<Quest>&			get_quest_list(void) noexcept;
+		// std::list<Quest>&			get_quest_list(void) noexcept;
 		const std::list<Quest>&		get_quest_list(void) const noexcept;
+		std::list<std::string>&		get_outbox(void) noexcept;
 
 		// Utils --------------------------------------------------------------
 
@@ -64,7 +68,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool			obtain_item(Item *item) noexcept __nonnull() __attribute_deprecated__;
+		bool			obtain_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
 		
 		/**
 		 * @brief	Tries to find an item with the specified name in the
@@ -87,7 +91,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool			drop_item(Item *item) noexcept __nonnull() __attribute_deprecated__;
+		bool			drop_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
 
 		/**
 		 * @brief	Tries to find an item with the specified name in the
@@ -101,6 +105,15 @@ class Player final: public Fighter
 		 */
 		bool			drop_item(const std::string& item_name) noexcept;
 
+		/**
+		 * @brief	Removes an item from the player's item list, removing it
+		 * 			from the list and deleting it.
+		 * @param	item	The item to delete.
+		 * @throws	`std::invalid_argument` if the item is not in the player's
+		 * 			item list.
+		 */
+		void			consume_item(Item& item);
+
 		void			buy_item(const Merchant& merchant, Item *item);
 
 		/**
@@ -110,7 +123,25 @@ class Player final: public Fighter
 		 * 			`false` otherwise.
 		 * @note	If the quest is already in the list, it will not be added.
 		 */
-		bool			obtain_quest(Quest& quest) noexcept __COLD;
+		bool			obtain_quest(Quest& quest) noexcept TAP_COLD;
+
+		/**
+		 * @brief	Finds an item from the player list that matches the
+		 * 			specified type.
+		 * @returns	A pointer to the first instance found of that type,
+		 * 			`nullptr` if no item of the specified type in the list.
+		 * @note	It is defined in the .hpp because it uses templates.
+		 */
+		template<typename T>
+		T				*find_item(void)
+		{
+			for (Item *item_in_list: item_list)
+			{
+				if (is_instance<T>(item_in_list))
+					return (dynamic_cast<T*>(item_in_list));
+			}
+			return (nullptr);
+		}
 
 		// Location --
 
@@ -132,17 +163,12 @@ class Player final: public Fighter
 
 		// Other --
 
-		void			interact_with(Character& character);
-		void			on_interact(Player& player) override;
+		void			talk_with(Character& character);
+		void			on_talk(Player& player) noexcept override;
 
 		// User --
 
 		// TODO: Finish documentation of the methods below.
-
-		/**
-		 * @throws	`std::runtime_error` if input reading fails or EOF.
-		 */
-		std::string		receive_command(void);
 
 		/**
 		 * @brief	Sends a message to the fd of this player. If `client_fd`
@@ -150,5 +176,5 @@ class Player final: public Fighter
 		 * @param	msg	The message to send.
 		 * @throws
 		 */
-		void			send_to_client(const std::string& msg) const;
+		void			send_to_client(const std::string& msg);
 };

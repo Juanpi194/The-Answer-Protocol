@@ -33,5 +33,5 @@ class Character
 
 		// Utils --------------------------------------------------------------
 
-		virtual void	on_interact(Player& player) = 0;
+		virtual void	on_talk(Player& player) noexcept = 0;
 };

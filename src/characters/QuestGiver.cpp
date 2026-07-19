@@ -33,12 +33,12 @@ const t_quest_dialogues&	QuestGiver::get_dialogues(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	QuestGiver::on_interact(Player& player)
+void	QuestGiver::on_talk(Player& player) noexcept
 {
-	Quest	*quest_found;
+	const Quest	*quest_found;
 
 	quest_found = nullptr;
-	for (Quest& quest_in_list: player.get_quest_list())
+	for (const Quest& quest_in_list: player.get_quest_list())
 	{
 		if (quest.get_name() == quest_in_list.get_name())
 			quest_found = &quest_in_list;

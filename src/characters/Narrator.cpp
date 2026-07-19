@@ -22,7 +22,7 @@ std::string	Narrator::get_sentence(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Narrator::on_interact(Player& player)
+void	Narrator::on_talk(Player& player) noexcept
 {
 	// TODO: Logic...
 }

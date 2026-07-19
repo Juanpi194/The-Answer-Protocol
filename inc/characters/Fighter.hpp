@@ -82,7 +82,7 @@ class Fighter: public virtual Character
 		Weapon					*get_weapon(void) const noexcept;
 		t_stats					get_stats(void) const noexcept;
 		Status					get_status(void) const noexcept;
-		std::list<Item*>&		get_item_list(void) noexcept;
+		// std::list<Item*>&		get_item_list(void) noexcept;
 		const std::list<Item*>&	get_item_list(void) const noexcept;
 
 		void	set_armor(Armor *armor) noexcept;

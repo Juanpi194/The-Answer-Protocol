@@ -22,6 +22,17 @@ class ServerError final: public std::exception
 		const char	*what(void) const noexcept override;
 };
 
+/**
+ * @brief	Struct that will be used for the server command list.
+ * @param	sender	Pointer to the client that sent the command.
+ * @param	text	The command sent by the client.
+ */
+struct t_command
+{
+	PlayerConnection	*sender;
+	std::string			text;
+};
+
 class ServerOwner;
 
 class Server
@@ -31,6 +42,7 @@ class Server
 		ServerOwner					*owner;
 		World						*world;
 		std::list<PlayerConnection>	players;
+		std::list<t_command>		command_queue;
 		std::mutex					mtx;
 		bool						on;
 
@@ -64,7 +76,7 @@ class Server
 
 		ServerOwner							*get_server_owner(void) const noexcept;
 		World								*get_world(void) const noexcept;
-		std::list<PlayerConnection>&		get_players(void) noexcept;
+		// std::list<PlayerConnection>&		get_players(void) noexcept;
 		const std::list<PlayerConnection>&	get_players(void) const noexcept;
 		bool								is_on(void) const noexcept;
 

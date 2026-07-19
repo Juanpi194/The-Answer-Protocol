@@ -1,12 +1,14 @@
 #pragma once
 
 #include "world/Room.hpp"
+#include "utils/attributes.hpp"
 
 class World
 {
 	private:
 		const std::string	name;
 		std::list<Room*>	rooms;
+		Room				*spawn_room;
 
 		static constexpr size_t	MIN_NAME_LENGTH = 4;
 		static constexpr size_t	MAX_NAME_LENGTH = 40;
@@ -34,10 +36,10 @@ class World
 		 * @brief	Checks if a room exists in the world.
 		 * @param	room	The room to evaluate.
 		 * @returns	`true` if `room` exists in the world. `false` if
-		 * 			`room` is not in the world list of rooms or if it
-		 * 			is `nullptr`.
+		 * 			`room` is not in the world list of rooms.
+		 * @note	`room` must not be `nullptr`.
 		 */
-		bool	room_in_world(Room *room) __nonnull();
+		bool	room_in_world(Room *room) TAP_NONNULL;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -66,8 +68,11 @@ class World
 		// Getters and setters ------------------------------------------------
 
 		std::string				get_name(void) const noexcept;
-		std::list<Room*>&		get_rooms(void) noexcept;
+		// std::list<Room*>&		get_rooms(void) noexcept;
 		const std::list<Room*>&	get_rooms(void) const noexcept;
+		Room					*get_spawn_room(void) const noexcept;
+
+		void	set_spawn_room(Room *room) noexcept TAP_NONNULL;
 
 		// Utils --------------------------------------------------------------
 
@@ -79,17 +84,18 @@ class World
 		 * 			existing room in the world in a specified direction from
 		 * 			that room. The room must not exist in the world.
 		 * @param	new_room	Pointer to the new room to add.
-		 * @param	connected_to	Pointer to the room that `new_room` is
+		 * @param	connected_to	Pointer to the room that `new_room` will be
 		 * 							connected to.
 		 * @param	direction	The direction that connects `connected_to` to
 		 * 						`new_room`.
+		 * @returns	`true` if the room was successfully added.
+		 * 			`false` otherwise.
 		 * @throws	`std::invalid_argument` if any of the pointers are
 		 * 			`nullptr`, if `new_room` and `connected_to` are the same,
 		 * 			if `new_room` is already in the world,
-		 * 			if the room it is `connected to` has another room
-		 * 			in the specified direction, or if any of
-		 * 			the pointers are `nullptr`.
-		 * @example	direction = EAST -> `connected_to` has `new_room` at east
+		 * 			or if the room it is `connected to` has another room
+		 * 			in the specified direction.
+		 * @example	direction = EAST -> `connected_to` has `new_room` at east.
 		 */
-		void	add_room(Room *new_room, Room *connected_to, Direction direction) __nonnull((1, 2));
+		bool	add_room(Room *new_room, Room *connected_to, Direction direction) TAP_NONNULL TAP_UNUSED_RESULT;
 };

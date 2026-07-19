@@ -2,11 +2,13 @@
 #include <map>
 
 #include "characters/NPC.hpp"
+#include "characters/Vendor.hpp"
+#include "utils/attributes.hpp"
 
 class Gear;
 class Enchantment;
 
-class Enchanter final: public NPC
+class Enchanter final: public NPC, public Vendor
 {
 	private:
 		/**
@@ -48,7 +50,7 @@ class Enchanter final: public NPC
 		// Utils --------------------------------------------------------------
 		// TODO: Throws exception if enchantment doesn't work for gear.
 
-		void	on_interact(Player& player) override;
+		void	on_talk(Player& player) noexcept override;
 
 		/**
 		 * @brief	Applies the specified enchantment to a gear item if the item can
@@ -57,5 +59,7 @@ class Enchanter final: public NPC
 		 * @param	enchantment	Pointer to the enchant to be set to the item.
 		 * @throws	`std::invalid_argument` if `enchantment` is `nullptr`.
 		 */
-		void	enchant(Gear& gear, Enchantment *enchantment) __nonnull();
+		void	enchant(Gear& gear, Enchantment *enchantment) TAP_NONNULL;
+
+		void	on_buy(Player& player, const std::string& product) noexcept override;
 };

@@ -133,37 +133,37 @@ Chest								*Room::get_chest(void) const noexcept
 	return (chest);
 }
 
-std::list<Item *>&					Room::get_items(void) noexcept
-{
-	return (items);
-}
+// std::list<Item *>&					Room::get_items(void) noexcept
+// {
+// 	return (items);
+// }
 
 const std::list<Item*>&				Room::get_items(void) const noexcept
 {
 	return (items);
 }
 
-std::list<Player*>&					Room::get_player_list(void) noexcept
-{
-	return (player_list);
-}
+// std::list<Player*>&					Room::get_player_list(void) noexcept
+// {
+// 	return (player_list);
+// }
 
 const std::list<Player*>&			Room::get_player_list(void) const noexcept
 {
 	return (player_list);
 }
 
-std::map<Direction, Room*>&			Room::get_adyacent_rooms(void) noexcept
+// std::map<Direction, Room*>&			Room::get_adjacent_rooms(void) noexcept
+// {
+// 	return (adjacent_rooms);
+// }
+
+const std::map<Direction, Room*>&	Room::get_adjacent_rooms(void) const noexcept
 {
-	return (adyacent_rooms);
+	return (adjacent_rooms);
 }
 
-const std::map<Direction, Room*>&	Room::get_adyacent_rooms(void) const noexcept
-{
-	return (adyacent_rooms);
-}
-
-void	Room::set_adyacent_room(Direction direction, Room *room)
+void	Room::set_adjacent_room(Direction direction, Room *room)
 {
 	// ? REVIEW: Is this method really needed? There is a method in World that connects two rooms.
 	// ?		 It can be used as a short and dangerous way to connect rooms. Make docstring if so.
@@ -172,7 +172,7 @@ void	Room::set_adyacent_room(Direction direction, Room *room)
 		log("Tried to connect a nullptr room to '" + name + "'.", LogLevel::WARNING);
 		return ;
 	}
-	this->adyacent_rooms[direction] = room;
+	this->adjacent_rooms[direction] = room;
 }
 
 // Utils ----------------------------------------------------------------------
@@ -254,13 +254,13 @@ const std::string	Room::look(void) const noexcept
 	result += "\"name\": \"" + name + "\", ";
 	result += "\"description\": \"" + description + "\", ";
 	result += "\"exits\": ";
-	if (adyacent_rooms.size() == 0)
+	if (adjacent_rooms.size() == 0)
 		result += "\"None\"";
 	else
 	{
 		first = true;
 		result += "{";
-		for (std::pair<Direction, Room*> direction_and_room: adyacent_rooms)
+		for (std::pair<Direction, Room*> direction_and_room: adjacent_rooms)
 		{
 			// ? REVIEW: Leave it in uppercase, or make a to_lower function for the direction.
 			if (!first)

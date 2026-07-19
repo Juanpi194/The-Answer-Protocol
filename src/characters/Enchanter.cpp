@@ -40,7 +40,7 @@ const std::map<Enchantment*, unsigned int>&	Enchanter::get_enchantments_to_sell(
 
 // Utils ----------------------------------------------------------------------
 
-void	Enchanter::on_interact(Player& player)
+void	Enchanter::on_talk(Player& player) noexcept
 {
 	std::string	products;
 
@@ -54,7 +54,6 @@ void	Enchanter::on_interact(Player& player)
 	}
 	products += "\n===";
 	player.send_to_client(products);
-	player.receive_command();
 	// TODO: Logic...
 }
 
@@ -75,3 +74,9 @@ void	Enchanter::enchant(Gear& gear, Enchantment *enchantment)
 		return ;	// ! FIXME: Logic if the gear type is not allowed in this enchantment.
 	gear.set_enchantment(enchantment);
 }
+
+void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
+{
+	// TODO: Logic...
+}
+

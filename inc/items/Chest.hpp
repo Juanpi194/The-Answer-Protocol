@@ -2,6 +2,8 @@
 #include <list>
 #include <map>
 
+#include "utils/attributes.hpp"
+
 class Item;
 class Player;
 
@@ -21,7 +23,7 @@ class Chest
 		 * 			That means that it will always generate at least
 		 * 			one item.
 		 */
-		std::list<Item*>	open(void) noexcept __COLD __attribute_warn_unused_result__;
+		std::list<Item*>	open(void) noexcept TAP_COLD TAP_UNUSED_RESULT;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -36,7 +38,7 @@ class Chest
 		// Getters and setters ------------------------------------------------
 
 		bool									is_opened(void) const noexcept;
-		std::map<Item*, unsigned int>&			get_pool(void) noexcept;
+		// std::map<Item*, unsigned int>&			get_pool(void) noexcept;
 		const std::map<Item*, unsigned int>&	get_pool(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
@@ -44,11 +46,11 @@ class Chest
 		/**
 		 * @brief	Checks if the player has a key. If so,
 		 * 			the `open` method will be used,
-		 * 			generating a list of random items.
+		 * 			generating a list of random items and consuming a key.
 		 * @param	player	The player that interacted with the chest.
 		 * @returns	If the chest is already opened, an empty list.
 		 * 			If not, the list of the items if the player had a key,
 		 * 			an empty list otherwise.
 		 */
-		std::list<Item*>	interact(Player& player) noexcept __attribute_warn_unused_result__;
+		std::list<Item*>	interact(Player& player) noexcept TAP_UNUSED_RESULT;
 };

@@ -19,7 +19,7 @@ unsigned int	Enemy::get_gold(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Enemy::on_interact(Player& player)
+void	Enemy::on_talk(Player& player) noexcept
 {
 	// TODO: Logic ...
 }
