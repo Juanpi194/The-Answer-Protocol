@@ -9,7 +9,7 @@ class IronSword final: public Weapon
 		static const std::string		PREFIX;	// Defined in IronSword.cpp
 		static constexpr GearType		GEAR_TYPE = GearType::Iron;
 		
-		void	special_use(void) noexcept override;
+		// void	special_use(void) noexcept override;
 	public:
 		static const std::string		NAME;	// Defined in IronSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronSword.cpp

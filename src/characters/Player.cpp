@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "utils/utils.hpp"
+#include "battle/Battle.hpp"
 #include "server/PlayerConnection.hpp"
 #include "world/Room.hpp"
 #include "characters/Enemy.hpp"
@@ -15,6 +16,12 @@ Player::Player(const std::string& name):
 	gold(0),
 	battle(nullptr)
 {
+}
+
+Player::~Player(void)
+{
+	if (battle)
+		delete (battle);
 }
 
 // Getters and setters --------------------------------------------------------

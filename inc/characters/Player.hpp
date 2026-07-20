@@ -32,7 +32,7 @@ class Player final: public Fighter
 
 		explicit Player(const std::string& name);
 		Player(const Player& player) = delete;
-		~Player(void) = default;
+		~Player(void);
 
 		// Operators ----------------------------------------------------------
 
@@ -115,6 +115,7 @@ class Player final: public Fighter
 		 */
 		void			consume_item(Item& item);
 
+		// TODO
 		void			buy_item(const Merchant& merchant, Item *item);
 
 		/**
@@ -134,6 +135,18 @@ class Player final: public Fighter
 			}
 			return (nullptr);
 		}
+
+		/**
+		 * @brief	Tries to find an item in the player's item list that
+		 * 			matches the specified name.
+		 * @param	item_name	The name of the item to search.
+		 * @returns	The item found with that name, `nullptr` if no item
+		 * 			was found with the specified name.
+		 */
+		Item			*find_item_by_name(const std::string& item_name) TAP_UNUSED_RESULT;
+
+		// TODO
+		Enchantment		*find_enchantment_by_name(const std::string& enchantment_name) TAP_UNUSED_RESULT;
 
 		// Quests --
 

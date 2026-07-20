@@ -2,6 +2,8 @@
 
 #include "items/Item.hpp"
 
+class Fighter;
+
 class Consumable: public Item
 {
 	private:
@@ -23,5 +25,5 @@ class Consumable: public Item
 
 		// Utils --------------------------------------------------------------
 
-		void	use(void) noexcept override;
+		virtual void	consume(Fighter& user) noexcept = 0;
 };

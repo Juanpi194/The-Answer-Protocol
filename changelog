@@ -1,10 +1,11 @@
 TODO --------------
+FINISH ENCHANTER AND FIND_ENCHANTMENT/ITEM BY NAME METHODS (Redo them if needed)
 Items
 Enchantments
 Review invalid_argument exceptions and maybe set them as boolean functions (returning false in case of error)
 Battle
 Different types of rooms
-CLONE METHOD FOR ITEMS AND ENCHANTMENTS (abstract classes mainly)
+Timer para mensajes por usuario (Limitado a x mensajes en x tiempo?)
 
 QUESTIONS ---------
 Chest room does not make sense if there can be enemy rooms with chests.

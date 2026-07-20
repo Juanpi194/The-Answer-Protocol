@@ -2,6 +2,8 @@
 
 #include "items/Gear.hpp"
 
+class Fighter;
+
 /**
  * @brief	Abstract class that represents the armor cathegory of equipment.
  */
@@ -34,5 +36,7 @@ class Armor: public Gear
 
 		// Utils --------------------------------------------------------------
 
-		void	use(void) noexcept override;
+		// void	use(void) noexcept override;
+
+		virtual void	reduce_damage(Fighter& armor_user, Fighter& attacker, unsigned int incoming_damage) noexcept;
 };

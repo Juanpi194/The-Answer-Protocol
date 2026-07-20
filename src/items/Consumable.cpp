@@ -8,8 +8,3 @@ Consumable::Consumable(const std::string& id, const std::string& name, const std
 }
 
 // Utils ----------------------------------------------------------------------
-
-void	Consumable::use(void) noexcept
-{
-	// TODO: Logic...
-}

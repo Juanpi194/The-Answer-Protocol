@@ -95,5 +95,7 @@ std::list<Item*>	Chest::interact(Player& player) noexcept
 	// ? REVIEW: Maybe instead of adding the items to the room,
 	// ?		 we should add them to the player.
 	result = open();
+	for (Item *item: result)
+		player.add_item(item);
 	return (result);
 }

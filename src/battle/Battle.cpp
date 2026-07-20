@@ -3,6 +3,8 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
+#include "characters/Enemy.hpp"
+#include "characters/Player.hpp"
 
 void	Battle::execute_turn(void)
 {
@@ -22,6 +24,12 @@ Battle::Battle(Fighter& blue, Fighter& red):
 	// ? REVIEW: Check this logic.
 	if (&blue == &red)
 		throw std::invalid_argument("Cannot start a battle with the same two fighters.");
+	// * NOTE: For now, only a player (as the blue) and an enemy (as the red) will be accepted.
+	if (!is_instance<Player>(&blue))
+		throw std::invalid_argument("Blue (Battle side) must be a Player.");
+	if (!is_instance<Enemy>(&red))
+		throw std::invalid_argument("Red (Battle side) must be a Player.");
+
 	log("Battle between '" + blue.get_name() + "' and '" + red.get_name() + "' starts!", LogLevel::INFO);
 }
 

@@ -24,7 +24,7 @@ ChestKey	*ChestKey::clone(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	ChestKey::use(void) noexcept
-{
-	// TODO: Logic...
-}
+// void	ChestKey::use(void) noexcept
+// {
+// 	// TODO: Logic...
+// }

@@ -153,8 +153,6 @@ static void	pruebitas(PlayerConnection& player_connection)
 				std::list<Item*> result = chest->interact(*player);
 				if (result.size() == 0)
 					std::cout << "No tienes llave picha.\n";
-				for (Item *item: result)
-					player_room->add_item(item);
 			}
 			else if (chest && chest->is_opened())
 				std::cout << "El cofre está abierto, máquina\n";
@@ -192,8 +190,11 @@ static void	pruebitas(PlayerConnection& player_connection)
 			break ;
 		else
 			std::cout << "Tonto\n";
+
+		// Cleaning player's outbox
 		for (std::string& s: player->get_outbox())
 			std::cout << s << std::endl;
+		player->get_outbox().clear();
 	}
 	std::cout << "Adios" << std::endl;
 }

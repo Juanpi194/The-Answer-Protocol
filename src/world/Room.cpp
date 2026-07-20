@@ -311,6 +311,17 @@ const std::string	Room::look(void) const noexcept
 		result += "\"None\"";
 	else
 		result += "\"" + npc->get_id() + "\"";
+	
+	// Extra
+	if (chest)
+	{
+		result += ", ";
+		result += "\"chest\": ";
+		if (chest->is_opened())
+			result += "\"Opened\"";
+		else
+			result += "\"Closed\"";
+	}
 	result += " }";
 	return (result);
 }

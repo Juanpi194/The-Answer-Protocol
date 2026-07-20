@@ -9,7 +9,7 @@ class IronArmor final: public Armor
 		static const std::string		PREFIX;	// Defined in IronArmor.cpp
 		static constexpr GearType		GEAR_TYPE = GearType::Iron;
 
-		void	special_use(void) noexcept override;
+		// void	special_use(void) noexcept override;
 	public:
 		static const std::string		NAME;	// Defined in IronArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp

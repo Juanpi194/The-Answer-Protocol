@@ -21,6 +21,15 @@ class Enchanter final: public NPC, public Vendor
 
 		static unsigned int			available_id;	// Defined in Enchanter.cpp
 		static const std::string	PREFIX;	// Definied in Enchanter.cpp
+		
+		/**
+		 * @brief	Applies the specified enchantment to a gear item if the item can
+		 * 			get the provided enchantment.
+		 * @param	gear	The gear item to enchant.
+		 * @param	enchantment	Pointer to the enchant to be set to the item.
+		 * @throws	`std::invalid_argument` if `enchantment` is `nullptr`.
+		 */
+		bool	enchant(Gear& gear, Enchantment& enchantment) TAP_UNUSED_RESULT;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -52,14 +61,7 @@ class Enchanter final: public NPC, public Vendor
 
 		void	on_talk(Player& player) noexcept override;
 
-		/**
-		 * @brief	Applies the specified enchantment to a gear item if the item can
-		 * 			get the provided enchantment.
-		 * @param	gear	The gear item to enchant.
-		 * @param	enchantment	Pointer to the enchant to be set to the item.
-		 * @throws	`std::invalid_argument` if `enchantment` is `nullptr`.
-		 */
-		void	enchant(Gear& gear, Enchantment *enchantment) TAP_NONNULL;
+		void	on_enchant(Player& player, const std::string& gear, const std::string& enchantment);
 
 		void	on_buy(Player& player, const std::string& product) noexcept override;
 };

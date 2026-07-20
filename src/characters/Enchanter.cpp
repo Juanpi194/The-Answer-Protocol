@@ -10,6 +10,22 @@
 unsigned int		Enchanter::available_id = 0;
 const std::string	Enchanter::PREFIX = "enchanter.";
 
+bool	Enchanter::enchant(Gear& gear, Enchantment& enchantment)
+{
+	bool	allowed;
+
+	allowed = false;
+	for (GearType gear_type: enchantment.get_allowed_gear_types())
+	{
+		if (gear_type == gear.get_gear_type())
+			allowed = true;
+	}
+	if (!allowed)
+		return (log("Cannot apply '" + enchantment.get_name() + "' to '" + gear.get_name() + "'.", LogLevel::INFO), false);
+	gear.set_enchantment(&enchantment);
+	return (true);
+}
+
 // Constructors ---------------------------------------------------------------
 
 Enchanter::Enchanter(const std::string& name, const std::string& description, const std::map<Enchantment*, unsigned int>& enchantments_to_sell):
@@ -58,22 +74,38 @@ void	Enchanter::on_talk(Player& player) noexcept
 	// TODO: Logic...
 }
 
-void	Enchanter::enchant(Gear& gear, Enchantment *enchantment)
+void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::string& enchantment)
 {
-	// ? REVIEW: Check this method logic (probably redo it).
-	bool	allowed;
+	Item		*found_item;
+	Gear		*found_gear;
+	Enchantment	*found_enchantment;
 
-	allowed = false;
-	if (!enchantment)
-		throw std::invalid_argument("Enchantment cannot be nullptr.");
-	for (GearType gear_type: enchantment->get_allowed_gear_types())
+	found_gear = nullptr;
+	found_item = player.find_item_by_name(gear);
+	if (!found_item)
 	{
-		if (gear_type == gear.get_gear_type())
-			allowed = true;
+		log("Couldn't find the item '" + gear + "' in '" + player.get_name() + "' item list.", LogLevel::WARNING);
+		player.send_to_client("You do not have that item in your bag.");
+		return ;
 	}
-	if (!allowed)
-		return ;	// ! FIXME: Logic if the gear type is not allowed in this enchantment.
-	gear.set_enchantment(enchantment);
+	if (!dynamic_cast<Gear*>(found_item))
+	{
+		log("Item '" + gear + "' from '" + player.get_name() + "' is not a gear, couldn't be enchanted.", LogLevel::WARNING);
+		player.send_to_client("The item you specified is not gear.");
+		return ;
+	}
+	found_enchantment = player.find_enchantment_by_name(enchantment);
+	if (!found_enchantment)
+	{
+		log("Couldn't find the enchantment '" + enchantment + "' in '" + player.get_name() + "' enchantment list.", LogLevel::WARNING);
+		player.send_to_client("You do not have that enchantment in your bag.");
+		return ;
+	}
+	player.send_to_client("Let's try to apply '" + found_enchantment->get_name() + "' to your '" + found_gear->get_name() + "'.");
+	if (!enchant(*found_gear, *found_enchantment))
+		player.send_to_client("I cannot apply that enchantment to your '" + gear.get_name() + "'.");
+	else
+		player.send_to_client("I applied the enchantment to your '" + gear.get_name() + "'.");
 }
 
 void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
@@ -101,7 +133,6 @@ void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
 	else
 	{
 		player.send_to_client("Here you go.");
-		// TODO: Logic to apply to a gear.
+		// TODO: Logic to apply to a gear. Probably make a list of bought enchantments in the player.
 	}
 }
-

@@ -28,12 +28,12 @@ void	Shield::set_uses(unsigned int uses) noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Shield::use(void) noexcept
-{
-	// TODO: Logic...
-}
+// void	Shield::use(void) noexcept
+// {
+// 	// TODO: Logic...
+// }
 
-void	Shield::protect(void) noexcept
+void	Shield::protect(Fighter& user, Fighter& attacker) noexcept
 {
 	// TODO: Logic...
 	uses--;

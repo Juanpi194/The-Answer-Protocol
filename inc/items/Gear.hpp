@@ -24,7 +24,7 @@ class Gear: public Item
 		/**
 		 * @brief	This method will be called by `use` by each type of gear.
 		 */
-		virtual void	special_use(void) noexcept = 0;
+		// virtual void	special_use(void) noexcept = 0;
 	public:
 		// Operators ----------------------------------------------------------
 

@@ -92,7 +92,7 @@ install:
 	curl -o inc/libs/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp
 
 run:
-	./$(PROGRAM_NAME)
+	valgrind ./$(PROGRAM_NAME) 2>result.txt
 
 $(OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp
 	mkdir -p $(dir $@)

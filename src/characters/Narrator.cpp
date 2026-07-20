@@ -1,5 +1,7 @@
 #include "characters/Narrator.hpp"
 
+#include "characters/Player.hpp"
+
 unsigned int		Narrator::available_id = 0;
 const std::string	Narrator::PREFIX = "narrator.";
 
@@ -24,5 +26,6 @@ std::string	Narrator::get_sentence(void) const noexcept
 
 void	Narrator::on_talk(Player& player) noexcept
 {
-	// TODO: Logic...
+	// ? REVIEW: Is this everything?
+	player.send_to_client(sentence);
 }

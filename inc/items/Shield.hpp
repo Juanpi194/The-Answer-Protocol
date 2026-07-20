@@ -2,8 +2,11 @@
 
 #include "items/Item.hpp"
 
-// TODO: Make this class abstract.
+class Fighter;
 
+/**
+ * @brief	Abstract class that represents the shield category of items.
+ */
 class Shield: public Item
 {
 	private:
@@ -32,6 +35,7 @@ class Shield: public Item
 
 		// Utils --------------------------------------------------------------
 
-		void	use(void) noexcept override;
-		void	protect(void) noexcept;
+		// void	use(void) noexcept override;
+
+		virtual void	protect(Fighter& user, Fighter& attacker) noexcept;
 };
