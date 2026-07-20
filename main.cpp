@@ -12,6 +12,7 @@ bool debug_mode = true;
 
 #include "utils/utils.hpp"
 #include "quests/Quest.hpp"
+#include "battle/Battle.hpp"
 #include "characters/Character.hpp"
 #include "characters/Enchanter.hpp"
 #include "characters/Player.hpp"
@@ -94,6 +95,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 
 	while (true)
 	{
+		Room		*player_room;
 		std::string	json_format;
 		std::string	answer;
 		std::getline(std::cin, answer);
@@ -101,6 +103,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 			throw std::runtime_error("Input stream closed (EOF).");
 		if (std::cin.fail())
 			throw std::runtime_error("Error reading input.");
+		player_room = player->get_current_room();
 
 		if (answer == "MOVE NORTH")
 			player->move(Direction::NORTH);
@@ -108,7 +111,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 			player->move(Direction::SOUTH);
 		else if (answer == "LOOK")
 		{
-			json_format = player->get_current_room()->look();
+			json_format = player_room->look();
 			nlohmann::json	j = nlohmann::json::parse(json_format);
 			std::ofstream	result_file("datos.json");
 			result_file << j.dump(4);
@@ -116,7 +119,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 		}
 		else if (answer == "TALK")
 		{
-			NPC	*npc = player->get_current_room()->get_NPC();
+			NPC	*npc = player_room->get_NPC();
 			if (npc)
 				player->talk_with(*npc);
 			else
@@ -124,7 +127,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 		}
 		else if (answer == "BUY")
 		{
-			NPC	*npc = player->get_current_room()->get_NPC();
+			NPC	*npc = player_room->get_NPC();
 			if (!npc)
 				std::cout << "No hay npc en esta sala, tonto\n";
 			else
@@ -144,19 +147,46 @@ static void	pruebitas(PlayerConnection& player_connection)
 			player->drop_item("Iron Sword");
 		else if (answer == "OPEN")
 		{
-			Chest	*chest = player->get_current_room()->get_chest();
+			Chest	*chest = player_room->get_chest();
 			if (chest && !chest->is_opened())
 			{
 				std::list<Item*> result = chest->interact(*player);
 				if (result.size() == 0)
 					std::cout << "No tienes llave picha.\n";
 				for (Item *item: result)
-					player->get_current_room()->add_item(item);
+					player_room->add_item(item);
 			}
 			else if (chest && chest->is_opened())
 				std::cout << "El cofre está abierto, máquina\n";
 			else
 				std::cout << "No hay cofre en esta sala, tonto\n";
+		}
+		else if (answer == "ATTACK")
+		{
+			NPC	*npc = player_room->get_NPC();
+			if (!npc)
+				"No hay npc en esta sala, tonto\n";
+			else
+			{
+				Fighter	*fighter = dynamic_cast<Fighter*>(npc);
+				if (!fighter)
+					std::cout << "El npc no es un fighter, tonto\n";
+				else
+				{
+					if (!player->get_battle())
+						player->set_battle(new Battle(*player, *fighter));
+				}
+			}
+		}
+		else if (answer == "FLEE")
+		{
+			if (!player->get_battle())
+				std::cout << "No estás en ningún combate, tonto\n";
+			else
+			{
+				delete (player->get_battle());
+				player->set_battle(nullptr);
+			}
 		}
 		else if (answer == "QUIT")
 			break ;

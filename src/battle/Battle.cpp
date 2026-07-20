@@ -22,6 +22,7 @@ Battle::Battle(Fighter& blue, Fighter& red):
 	// ? REVIEW: Check this logic.
 	if (&blue == &red)
 		throw std::invalid_argument("Cannot start a battle with the same two fighters.");
+	log("Battle between '" + blue.get_name() + "' and '" + red.get_name() + "' starts!", LogLevel::INFO);
 }
 
 // Getters and setters --------------------------------------------------------
@@ -58,12 +59,3 @@ bool			Battle::is_finished(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Battle::start_battle(void) noexcept
-{
-	// TODO: Battle logic
-	log("Battle between '" + blue.get_name() + "' and '" + red.get_name() + "' starts!", LogLevel::INFO);
-	while (true)
-	{
-		break ;
-	}
-}

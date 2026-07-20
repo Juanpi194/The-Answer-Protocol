@@ -2,11 +2,14 @@
 
 #include "characters/Fighter.hpp"
 
+class Enemy;
+
 class Battle
 {
 	private:
 		Fighter&		blue;
 		Fighter&		red;
+		Enemy*			original_enemy;
 		unsigned int	turns;
 		bool			finished;
 
@@ -33,5 +36,4 @@ class Battle
 
 		// Utils --------------------------------------------------------------
 
-		void	start_battle(void) noexcept;
 };

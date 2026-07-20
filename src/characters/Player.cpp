@@ -5,52 +5,50 @@
 #include "utils/utils.hpp"
 #include "server/PlayerConnection.hpp"
 #include "world/Room.hpp"
+#include "characters/Enemy.hpp"
 
 // Constructors ---------------------------------------------------------------
 
 Player::Player(const std::string& name):
 	Character(name),
 	Fighter(name, {1, 10, 10, 10, 10}),
-	// player_connection(player_connection),
-	// ? REVIEW: Check client fd
-	// client_fd(-1),
-	gold(0)
+	gold(0),
+	battle(nullptr)
 {
-	// FIXME: Decide if a player must have a PlayerConnection attached to them or not (debug mode)
-	// if (!player_connection)
-	// 	throw std::invalid_argument("Each player must have a player connection.");
 }
 
 // Getters and setters --------------------------------------------------------
 
-unsigned int				Player::get_gold(void) const noexcept
+unsigned int					Player::get_gold(void) const noexcept
 {
 	return (gold);
 }
 
-// std::list<Enemy*>&			Player::get_beaten_enemies(void) noexcept
-// {
-// 	return (beaten_enemies);
-// }
-
-const std::list<Enemy*>&	Player::get_beaten_enemies(void) const noexcept
+const std::list<std::string>&	Player::get_beaten_enemies(void) const noexcept
 {
-	return (beaten_enemies);
+	return (beaten_enemies_id);
 }
 
-// std::list<Quest>&			Player::get_quest_list(void) noexcept
-// {
-// 	return (quest_list);
-// }
-
-const std::list<Quest>&		Player::get_quest_list(void) const noexcept
+const std::list<Quest>&			Player::get_quest_list(void) const noexcept
 {
 	return (quest_list);
 }
 
-std::list<std::string>&		Player::get_outbox(void) noexcept
+std::list<std::string>&			Player::get_outbox(void) noexcept
 {
 	return (outbox);
+}
+
+Battle							*Player::get_battle(void) const noexcept
+{
+	return (battle);
+}
+
+void	Player::set_battle(Battle *battle) noexcept
+{
+	if (!battle)
+		log("Player '" + get_name() + "'s battle set to nullptr.", LogLevel::INFO);
+	this->battle = battle;
 }
 
 // Utils ----------------------------------------------------------------------
@@ -263,7 +261,25 @@ bool		Player::move(Direction direction) noexcept
 	return (log("Player '" + get_name() + "' entered '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
 }
 
+void		Player::respawn(Room *destination) noexcept
+{
+	this->current_room = destination;
+	stats.current_hp = (stats.hp / 2);
+}
+
 // Fight --
+
+bool		Player::is_enemy_beaten(Enemy *enemy) noexcept
+{
+	if (!enemy)
+		return (log("Cannot check nullptr enemy.", LogLevel::ERROR), false);
+	for (const std::string& beaten_enemy_id: beaten_enemies_id)
+	{
+		if (beaten_enemy_id == enemy->get_id())
+			return (true);
+	}
+	return (false);
+}
 
 void		Player::choose_action(void)
 {

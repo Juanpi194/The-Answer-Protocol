@@ -9,35 +9,27 @@ class Room;
 class Enemy;
 class Merchant;
 class PlayerConnection;
+class Battle;
 
 // Server stuff is managed in PlayerConnection class
 
 class Player final: public Fighter
 {
 	private:
-		// PlayerConnection	*player_connection;
-		// ! REVIEW: Check if this is the best way to access the fd.
+		unsigned int			gold;
 
 		/**
-		 * @brief	fd of the client that is playing
-		 * 			with this Player. If no client is created with
-		 * 			this Player, it will be set to -1.
-		 * @note	When the client changes its fd,
-		 * 			this should change with it.
+		 * @brief	Register of all enemies that were defeated by
+		 * 			the player (their ids). Each player will only
+		 * 			be able to defeat each enemy once per game.
 		 */
-		// int					client_fd;
-		unsigned int		gold;
-		// ? REVIEW: Is this list now needed that every enemy will be a copy?
-		// ?		 Maybe make it a list of strings,
-		// ?		 or a map with the ammount of each one.
-		std::list<Enemy*>		beaten_enemies;
+		std::list<std::string>	beaten_enemies_id;
 		std::list<Quest>		quest_list;
 		std::list<std::string>	outbox;
+		Battle					*battle;
 	public:
 		// Constructors -------------------------------------------------------
 
-		// ! REVIEW: Is it needed to have a pointer to the player_connection?
-		// Player(const std::string& name, PlayerConnection *player_connection);
 		explicit Player(const std::string& name);
 		Player(const Player& player) = delete;
 		~Player(void) = default;
@@ -48,13 +40,13 @@ class Player final: public Fighter
 
 		// Getters and setters ------------------------------------------------
 
-		// PlayerConnection			*get_player_connection(void) const noexcept;
-		unsigned int				get_gold(void) const noexcept;
-		// std::list<Enemy*>&			get_beaten_enemies(void) noexcept;
-		const std::list<Enemy*>&	get_beaten_enemies(void) const noexcept;
-		// std::list<Quest>&			get_quest_list(void) noexcept;
-		const std::list<Quest>&		get_quest_list(void) const noexcept;
-		std::list<std::string>&		get_outbox(void) noexcept;
+		unsigned int					get_gold(void) const noexcept;
+		const std::list<std::string>&	get_beaten_enemies(void) const noexcept;
+		const std::list<Quest>&			get_quest_list(void) const noexcept;
+		std::list<std::string>&			get_outbox(void) noexcept;
+		Battle							*get_battle(void) const noexcept;
+
+		void								set_battle(Battle *battle) noexcept;
 
 		// Utils --------------------------------------------------------------
 
@@ -187,8 +179,17 @@ class Player final: public Fighter
 		 */
 		bool			move(Direction direction) noexcept;
 
+		/**
+		 * @brief	Changes the player's current room to the spawn room,
+		 * 			and sets his current hp to half.
+		 * @param	destination	The room to set as the current room. It cannot
+		 * 			be `nullptr`.
+		 */
+		void			respawn(Room *destination) noexcept TAP_NONNULL;
+
 		// Fight --
 
+		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL TAP_UNUSED_RESULT;
 		void			choose_action(void) override;
 		void			attack(Fighter& target) noexcept override;
 		FighterType		get_type(void) const noexcept override;

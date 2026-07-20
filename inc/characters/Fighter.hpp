@@ -28,6 +28,10 @@ struct t_stats
 	unsigned int	strength;
 	unsigned int	defense;
 	unsigned int	speed;
+	unsigned int	current_hp;
+	unsigned int	current_strength;
+	unsigned int	current_defense;
+	unsigned int	current_speed;
 };
 
 // ? REVIEW: Is this the best way to make this?
