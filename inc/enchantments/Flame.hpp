@@ -15,6 +15,7 @@ class Flame final: public Enchantment
 		Flame(void);
 		Flame(const Flame& flame);
 		~Flame(void) = default;
+		Flame	*clone(void) const noexcept override;
 
 		// Operators ----------------------------------------------------------
 	

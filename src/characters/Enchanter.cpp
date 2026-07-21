@@ -22,7 +22,7 @@ bool	Enchanter::enchant(Gear& gear, Enchantment& enchantment)
 	}
 	if (!allowed)
 		return (log("Cannot apply '" + enchantment.get_name() + "' to '" + gear.get_name() + "'.", LogLevel::INFO), false);
-	gear.set_enchantment(&enchantment);
+	gear.set_enchantment(enchantment.clone());
 	return (true);
 }
 
@@ -80,7 +80,6 @@ void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::s
 	Gear		*found_gear;
 	Enchantment	*found_enchantment;
 
-	found_gear = nullptr;
 	found_item = player.find_item_by_name(gear);
 	if (!found_item)
 	{
@@ -88,10 +87,17 @@ void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::s
 		player.send_to_client("You do not have that item in your bag.");
 		return ;
 	}
-	if (!dynamic_cast<Gear*>(found_item))
+	found_gear = dynamic_cast<Gear*>(found_item);
+	if (!found_gear)
 	{
 		log("Item '" + gear + "' from '" + player.get_name() + "' is not a gear, couldn't be enchanted.", LogLevel::WARNING);
 		player.send_to_client("The item you specified is not gear.");
+		return ;
+	}
+	if (found_gear->get_enchantment())
+	{
+		log("Gear '" + gear + "' already has an enchantment. " + enchantment + " was not applied.", LogLevel::INFO);
+		player.send_to_client("Your " + gear + " already has an enchantment.");
 		return ;
 	}
 	found_enchantment = player.find_enchantment_by_name(enchantment);
@@ -103,9 +109,12 @@ void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::s
 	}
 	player.send_to_client("Let's try to apply '" + found_enchantment->get_name() + "' to your '" + found_gear->get_name() + "'.");
 	if (!enchant(*found_gear, *found_enchantment))
-		player.send_to_client("I cannot apply that enchantment to your '" + gear.get_name() + "'.");
+		player.send_to_client("I cannot apply that enchantment to your '" + found_gear->get_name() + "'.");
 	else
-		player.send_to_client("I applied the enchantment to your '" + gear.get_name() + "'.");
+	{
+		player.send_to_client("I applied the enchantment to your '" + found_gear->get_name() + "'.");
+		player.consume_enchantment(*found_enchantment);
+	}
 }
 
 void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
@@ -133,6 +142,6 @@ void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
 	else
 	{
 		player.send_to_client("Here you go.");
-		// TODO: Logic to apply to a gear. Probably make a list of bought enchantments in the player.
+		player.add_enchantment(enchantment_found->clone());
 	}
 }

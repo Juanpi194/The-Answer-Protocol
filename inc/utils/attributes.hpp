@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 
 #define TAP_COLD			__attribute__((cold))
 #define TAP_NONNULL			__attribute__((nonnull))

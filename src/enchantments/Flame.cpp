@@ -16,6 +16,13 @@ Flame::Flame(const Flame& flame):
 {
 }
 
+Flame	*Flame::clone(void) const noexcept
+{
+	return (new Flame(*this));
+}
+
+// Utils ----------------------------------------------------------------------
+
 void	Flame::effect(void) noexcept
 {
 	// TODO: Logic...

@@ -44,6 +44,7 @@ class Enchantment
 		Enchantment(const std::string& name, const std::string& description, const std::list<GearType> allowed_gear_types);
 		Enchantment(const Enchantment& enchantment);
 		virtual ~Enchantment(void) = default;
+		virtual Enchantment	*clone(void) const noexcept = 0;
 
 		// Operators ----------------------------------------------------------
 

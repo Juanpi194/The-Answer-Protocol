@@ -125,7 +125,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 			else
 				std::cout << "No hay npc en esta sala, tonto\n";
 		}
-		else if (answer == "BUY")
+		else if (answer == "BUY IRON SWORD")
 		{
 			NPC	*npc = player_room->get_NPC();
 			if (!npc)
@@ -137,6 +137,34 @@ static void	pruebitas(PlayerConnection& player_connection)
 					std::cout << "El npc de esta sala no es un vendor, tonto\n";
 				else
 					vendor->on_buy(*player, "Iron Sword");
+			}
+		}
+		else if (answer == "BUY FLAME")
+		{
+			NPC	*npc = player_room->get_NPC();
+			if (!npc)
+				std::cout << "No hay npc en esta sala, tonto\n";
+			else
+			{
+				Vendor	*vendor = dynamic_cast<Vendor*>(npc);
+				if (!vendor)
+					std::cout << "El npc de esta sala no es un vendor, tonto\n";
+				else
+					vendor->on_buy(*player, "Flame");
+			}
+		}
+		else if (answer  == "ENCHANT IRON SWORD FLAME")
+		{
+			NPC	*npc = player_room->get_NPC();
+			if (!npc)
+				std::cout << "No hay npc en esta sala, tonto\n";
+			else
+			{
+				Enchanter	*enchanter_npc = dynamic_cast<Enchanter*>(npc);
+				if (!enchanter_npc)
+					std::cout << "El npc de esta sala no es un enchanter, tonto\n";
+				else
+					enchanter_npc->on_enchant(*player, "Iron Sword", "Flame");
 			}
 		}
 		else if (answer == "TAKE")

@@ -16,17 +16,20 @@ class Battle;
 class Player final: public Fighter
 {
 	private:
-		unsigned int			gold;
+		unsigned int					gold;
 
 		/**
 		 * @brief	Register of all enemies that were defeated by
 		 * 			the player (their ids). Each player will only
 		 * 			be able to defeat each enemy once per game.
 		 */
-		std::list<std::string>	beaten_enemies_id;
-		std::list<Quest>		quest_list;
-		std::list<std::string>	outbox;
-		Battle					*battle;
+		std::list<std::string>			beaten_enemies_id;
+		std::list<Quest>				quest_list;
+		std::list<Enchantment*>			enchantment_list;
+		std::list<std::string>			outbox;
+		Battle							*battle;
+
+		static constexpr unsigned int	STARTING_GOLD = 50;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -43,6 +46,7 @@ class Player final: public Fighter
 		unsigned int					get_gold(void) const noexcept;
 		const std::list<std::string>&	get_beaten_enemies(void) const noexcept;
 		const std::list<Quest>&			get_quest_list(void) const noexcept;
+		const std::list<Enchantment*>&	get_enchantment_list(void) const noexcept;
 		std::list<std::string>&			get_outbox(void) noexcept;
 		Battle							*get_battle(void) const noexcept;
 
@@ -143,10 +147,34 @@ class Player final: public Fighter
 		 * @returns	The item found with that name, `nullptr` if no item
 		 * 			was found with the specified name.
 		 */
-		Item			*find_item_by_name(const std::string& item_name) TAP_UNUSED_RESULT;
+		Item			*find_item_by_name(const std::string& item_name) const TAP_UNUSED_RESULT;
 
-		// TODO
-		Enchantment		*find_enchantment_by_name(const std::string& enchantment_name) TAP_UNUSED_RESULT;
+		// Enchantments --
+
+		/**
+		 * @brief	Simply adds an enchantment to the player's enchantment list,
+		 * 			without any checking.
+		 * @param	enchantment	The enchantment to be added.
+		 */
+		void			add_enchantment(Enchantment *enchantment) noexcept TAP_NONNULL;
+
+		/**
+		 * @brief	Removes an enchantment from the player's enchantment list,
+		 * 			removing it from the list and deleting it.
+		 * @param	enchantment	The enchantment to delete.
+		 * @throws	`std::invalid_argument` if the enchantment is not in the player's
+		 * 			enchantment list.
+		 */
+		void			consume_enchantment(Enchantment& enchantment);
+
+		/**
+		 * @brief	Tries to find an enchantment in the player's enchantment
+		 * 			list that matches the specified name.
+		 * @param	enchantment_name	The name of the enchantment to search.
+		 * @returns	The enchantment found with the name, `nullptr` if no
+		 * 			enchantment was found with the specified name.
+		 */
+		Enchantment		*find_enchantment_by_name(const std::string& enchantment_name) const TAP_UNUSED_RESULT;
 
 		// Quests --
 

@@ -4,16 +4,17 @@
 
 #include "utils/utils.hpp"
 #include "battle/Battle.hpp"
+#include "characters/Enemy.hpp"
+#include "enchantments/Enchantment.hpp"
 #include "server/PlayerConnection.hpp"
 #include "world/Room.hpp"
-#include "characters/Enemy.hpp"
 
 // Constructors ---------------------------------------------------------------
 
 Player::Player(const std::string& name):
 	Character(name),
 	Fighter(name, {1, 10, 10, 10, 10}),
-	gold(0),
+	gold(STARTING_GOLD),
 	battle(nullptr)
 {
 }
@@ -22,6 +23,8 @@ Player::~Player(void)
 {
 	if (battle)
 		delete (battle);
+	for (Enchantment *enchantment: enchantment_list)
+		delete (enchantment);
 }
 
 // Getters and setters --------------------------------------------------------
@@ -64,6 +67,7 @@ void	Player::set_battle(Battle *battle) noexcept
 
 void		Player::add_item(Item *item) noexcept
 {
+	assert(item != nullptr && "Cannot add a nullptr to the item list.");
 	item_list.push_back(item);
 	log("Player '" + get_name() + "' received '" + item->get_name() + "'.", LogLevel::INFO);
 }
@@ -206,6 +210,54 @@ void		Player::consume_item(Item& item)
 void		Player::buy_item(const Merchant& merchant, Item *item)
 {
 	// TODO: Logic...
+}
+
+Item		*Player::find_item_by_name(const std::string& item_name) const
+{
+	for (Item *item_in_list: item_list)
+	{
+		if (item_in_list->get_name() == item_name)
+			return (item_in_list);
+	}
+	log("Item with name '" + item_name + "' could not be found in " + get_name() + " item list.", LogLevel::INFO);
+	return (nullptr);
+}
+
+// Enchantments --
+
+void		Player::add_enchantment(Enchantment *enchantment) noexcept
+{
+	assert(enchantment != nullptr && "Cannot add a nullptr to the enchantment list.");
+	enchantment_list.push_back(enchantment);
+	log("Player '" + get_name() + "' received the '" + enchantment->get_name() + "' enchantment.", LogLevel::DEBUG);
+}
+
+void		Player::consume_enchantment(Enchantment& enchantment)
+{
+	Enchantment	*enchantment_found;
+
+	enchantment_found = nullptr;
+	for (Enchantment *enchantment_in_list: enchantment_list)
+	{
+		if (enchantment_in_list == &enchantment)
+			enchantment_found = enchantment_in_list;
+	}
+	if (!enchantment_found)
+		throw std::invalid_argument("Enchantment to consume is not in the player's item list.");
+
+	// Removing the item
+	enchantment_list.remove(enchantment_found);
+	delete (enchantment_found);
+}
+
+Enchantment	*Player::find_enchantment_by_name(const std::string& enchantment_name) const
+{
+	for (Enchantment *enchantment_in_list: enchantment_list)
+	{
+		if (enchantment_in_list->get_name() == enchantment_name)
+			return (enchantment_in_list);
+	}
+	return (nullptr);
 }
 
 // Quests --
