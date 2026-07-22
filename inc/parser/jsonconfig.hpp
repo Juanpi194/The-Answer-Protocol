@@ -1,17 +1,15 @@
-#pragma once //para incluir solo 1 vez el archivo hpp en la compilacion 
+#ifndef JSONCONFIG_HPP
+#define JSONCONFIG_HPP
 
 #include <string>
+#include <libs/json.hpp>
 
 class JsonConfig
 {
 	public:
-		static std::string	load_json(const std::string& path);
-
-	private:
-		static std::string	read_file(const std::string& path);
-		static std::string	remove_comments(const std::string& input);
-		static std::string	remove_trailing_commas(const std::string& input);
-		static void			validate(const std::string& input);
-
-		JsonConfig(void);
+		std::string read_file(const std::string& path);
+		nlohmann::json load_json(const std::string& path);
+		void validate(const nlohmann::json& json_data);
 };
+
+#endif

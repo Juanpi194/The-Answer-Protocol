@@ -23,18 +23,22 @@
 //	return (0);
 //}
 
+#include "parser/jsonconfig.hpp"
 #include <iostream>
 
-#include "parser/jsonconfig.hpp"
-
-int main(void)
+int main()
 {
-	std::string json;
+    try
+    {
+        JsonConfig config;
 
-	json = JsonConfig::load_json("defaultpruebas.json");
+        nlohmann::json data = config.load_json("default.json");
 
-	std::cout << "Contenido del archivo:\n\n";
-	std::cout << json << std::endl;
-
-	return (0);
+        std::cout << "JSON cargado correctamente.\n";
+        std::cout << data.dump(2) << std::endl;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 }

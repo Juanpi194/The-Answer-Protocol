@@ -1,46 +1,95 @@
 #include "parser/jsonconfig.hpp"
 
-#include <fstream> // Libreria que permite trabajar con archivos, sin ella no podemos abrir un .json o .txt
-#include <sstream> // Para pillar cadenas de texto de manera secuencial
-#include <stdexcept> //para indiicar cuando a habido un error
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
-std::string	JsonConfig::read_file(const std::string& path)
+std::string JsonConfig::read_file(const std::string& path)
 {
-	std::ifstream	file(path); //La i viene de input
+	std::ifstream file(path);
 
 	if (!file.is_open())
-		return ("");
+		throw std::runtime_error("Could not open file: " + path);
 
-	std::stringstream	buffer; // El buffer va a ir almacenando todos los datos que se leen en ek archivo
-	buffer << file.rdbuf(); //Devuelve el contenido del archivo
+	std::stringstream buffer;
+	buffer << file.rdbuf();
 
 	return (buffer.str());
 }
 
-std::string	JsonConfig::remove_comments(const std::string& input) //Recibira el contendio completo del archivo y eliminara comentarios
+void JsonConfig::validate(const nlohmann::json& json_data)
 {
-	return (input);
+	//WORLD
+
+	if (!json_data.contains("world"))
+		throw std::runtime_error("Missing 'world' section.");
+
+	if (!json_data["world"].is_object())
+		throw std::runtime_error("'world' must be an object.");
+
+	if (!json_data["world"].contains("name"))
+		throw std::runtime_error("Missing 'world.name'.");
+
+	if (!json_data["world"].contains("spawn"))
+		throw std::runtime_error("Missing 'world.spawn'.");
+
+	//ROOMS 
+
+	if (!json_data.contains("rooms"))
+		throw std::runtime_error("Missing 'rooms' section.");
+
+	if (!json_data["rooms"].is_array())
+		throw std::runtime_error("'rooms' must be an array.");
+
+	//ITEMS
+
+	if (!json_data.contains("items"))
+		throw std::runtime_error("Missing 'items' section.");
+
+	if (!json_data["items"].is_object())
+		throw std::runtime_error("'items' must be an object.");
+ 
+	//ROOM EACH
+	for (const auto& room : json_data["rooms"])
+	{
+		if (!room.is_object())
+			throw std::runtime_error("Each room must be an object.");
+
+		if (!room.contains("id"))
+			throw std::runtime_error("A room is missing its id.");
+
+		if (!room.contains("name"))
+			throw std::runtime_error("Room '" +
+				room.value("id", "unknown") +
+				"' is missing its name.");
+
+		if (!room.contains("description"))
+			throw std::runtime_error("Room '" +
+				room.value("id", "unknown") +
+				"' is missing its description.");
+
+		if (!room.contains("exits"))
+			throw std::runtime_error("Room '" +
+				room.value("id", "unknown") +
+				"' is missing its exits.");
+
+		if (!room["exits"].is_object())
+			throw std::runtime_error("Room '" +
+				room.value("id", "unknown") +
+				"' exits must be an object.");
+	}
 }
 
-std::string	JsonConfig::remove_trailing_commas(const std::string& input) //Eliminara las comas finales
+nlohmann::json JsonConfig::load_json(const std::string& path)
 {
-	return (input);
-}
-
-void	JsonConfig::validate(const std::string& input) //Comprobar que todo el archvio tiene sentido, ejem: {} y debera validar mas cosas como laa comillas o caracteres raros...
-{
-	(void)input;
-}
-
-std::string	JsonConfig::load_json(const std::string& path)
-{
-	std::string	content;
+	std::string content;
+	nlohmann::json json_data;
 
 	content = read_file(path);
-	content = remove_comments(content);
-	content = remove_trailing_commas(content);
 
-	validate(content);
+	json_data = nlohmann::json::parse(content);
 
-	return (content);
+	validate(json_data);
+
+	return (json_data);
 }
