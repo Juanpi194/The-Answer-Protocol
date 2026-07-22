@@ -4,6 +4,7 @@
 
 #include "utils/utils.hpp"
 #include "utils/types.hpp"
+#include "characters/Enemy.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
 #include "items/Chest.hpp"
@@ -61,19 +62,27 @@ bool Room::validate_arguments(const std::string& id, const std::string& name, co
 
 // Constructors ---------------------------------------------------------------
 
-Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Chest *chest, std::list<Item *>& items):
+Room::Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, bool chest, std::list<Item *>& items):
 	id(id),
 	name(name),
 	description(description),
 	npc(npc),
-	chest(chest),
+	chest(nullptr),
 	items(items)
 {
 	if (!validate_arguments(id, name, description))
 		throw std::invalid_argument("Provided room arguments are not valid. Room initialization failed.");
 	if (!npc)
 		log("No npc established in room with id '" + id + "'.", LogLevel::INFO);
-	if (!chest)
+	if (chest)
+	{
+		Enemy	*enemy_npc = dynamic_cast<Enemy*>(npc);
+		if (enemy_npc)
+			this->chest = new Chest(enemy_npc);
+		else
+			this->chest = new Chest();
+	}
+	else
 		log("No chest established in room with id '" + id + "'.", LogLevel::INFO);
 	if (items.size() == 0)
 		log("No items established in room with id '" + id + "'.", LogLevel::INFO);

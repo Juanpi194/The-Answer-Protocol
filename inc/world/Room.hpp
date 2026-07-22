@@ -43,7 +43,7 @@ class Room
 		 * @throws	`std::invalid_argument` if validation failed or
 		 * 			if the item list contains any `nullptr`.
 		 */
-		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, Chest *chest, std::list<Item*>& items);
+		Room(const std::string& id, const std::string& name, const std::string& description, NPC *npc, bool chest, std::list<Item*>& items);
 		Room(const Room& zone) = delete;
 		virtual ~Room(void);
 

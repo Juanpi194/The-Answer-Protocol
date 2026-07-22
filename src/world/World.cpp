@@ -66,7 +66,7 @@ World::World(const std::string& name):
 
 	// ! FIXME: Remove this temporal room when the parse is done.
 	std::list<Item*>	item_list;
-	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, nullptr, item_list);
+	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, false, item_list);
 	rooms.push_back(temp_spawn_room);
 	spawn_room = temp_spawn_room;
 }
@@ -81,7 +81,7 @@ World::World(const std::string& name, const std::string& json_path):
 
 	// ! FIXME: Remove this temporal room when the parse is done.
 	std::list<Item*>	item_list;
-	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, nullptr, item_list);
+	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, false, item_list);
 	rooms.push_back(temp_spawn_room);
 	spawn_room = temp_spawn_room;
 }

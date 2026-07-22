@@ -66,12 +66,10 @@ static void	pruebitas(PlayerConnection& player_connection)
 	Quest		quest("The great great quest", "This quest is only a test.");
 	QuestGiver	*quest_giver = new QuestGiver("Chrystian", "Que pereza no?", quest, {"Papu papu, tienes una llamada de la grasa", "En proceso", "Fin"}, 100, nullptr);
 
-	Chest	*chest_1 = new Chest();
-
 	Room	*room1 = world.get_spawn_room();
-	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", goblin, chest_1, item_list_2);
-	Room	*room3 = new Room("room.quest", "Habitacion Quest", "Aqui te dan una quest jeje", quest_giver, nullptr, item_list_3);
-	Room	*room4 = new Room("room.enchantment_room", "Magia Jeje", "Aqui encantas las cosas", enchanter, nullptr, empty_list);
+	Room	*room2 = new Room("room.adiosss", "Adios", "Pues no tengo ni idea machote", goblin, true, item_list_2);
+	Room	*room3 = new Room("room.quest", "Habitacion Quest", "Aqui te dan una quest jeje", quest_giver, false, item_list_3);
+	Room	*room4 = new Room("room.enchantment_room", "Magia Jeje", "Aqui encantas las cosas", enchanter, true, empty_list);
 
 	room1->add_player(player);
 
