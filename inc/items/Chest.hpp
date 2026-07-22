@@ -13,6 +13,11 @@ class Chest
 	private:
 		bool							opened;
 		std::map<Item*, unsigned int>	pool;
+
+		/**
+		 * @brief	The enemy that protects the chest.
+		 * @note	It is not the chest's responsability to free this pointer.
+		 */
 		Enemy							*guardian;
 
 		/**
@@ -25,17 +30,11 @@ class Chest
 		 * 			That means that it will always generate at least
 		 * 			one item.
 		 */
-		std::list<Item*>	open(void) noexcept TAP_COLD TAP_UNUSED_RESULT;
-
-		/**
-		 * @brief	Checks if the player has beaten the guardian of the chest.
-		 */
-		bool				player_beat_guardian(Player& player) noexcept TAP_UNUSED_RESULT;
+		std::list<Item*>	open(void) TAP_COLD TAP_UNUSED_RESULT;
 	public:
 		// Constructors -------------------------------------------------------
 
-		Chest(void);
-		Chest(Enemy *guardian);
+		Chest(Enemy *guardian = nullptr);
 		Chest(const Chest& chest) = delete;
 		~Chest(void);
 
@@ -61,6 +60,9 @@ class Chest
 		 * 			If not, the list of the items if the player had a key
 		 * 			and if the guardian was beaten (if there was one),
 		 * 			an empty list otherwise.
+		 * @note	The returned list shouldn't be used for adding,
+		 * 			the method itself already adds the items to the player's,
+		 * 			item list.
 		 */
-		std::list<Item*>	interact(Player& player) noexcept TAP_UNUSED_RESULT;
+		std::list<Item*>	interact(Player& player) TAP_UNUSED_RESULT;
 };

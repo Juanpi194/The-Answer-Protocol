@@ -74,7 +74,6 @@ static void	pruebitas(PlayerConnection& player_connection)
 	room1->add_player(player);
 
 	std::cout << current_level << std::endl;
-	// These give warning in purpose.
 	if (!world.add_room(room2, room1, Direction::NORTH))
 	{
 		delete (room2);
