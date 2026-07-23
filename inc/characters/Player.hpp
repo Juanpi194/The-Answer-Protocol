@@ -10,6 +10,7 @@ class Enemy;
 class Merchant;
 class PlayerConnection;
 class Battle;
+class Enchantment;
 
 // Server stuff is managed in PlayerConnection class
 
@@ -50,18 +51,11 @@ class Player final: public Fighter
 		std::list<std::string>&			get_outbox(void) noexcept;
 		Battle							*get_battle(void) const noexcept;
 
-		void								set_battle(Battle *battle) noexcept;
+		void	set_battle(Battle *battle) noexcept;
 
 		// Utils --------------------------------------------------------------
 
 		// Items --
-
-		/**
-		 * @brief	Simply adds an item to the player's item list,
-		 * 			without any checking.
-		 * @param	item	The item to be added.
-		 */
-		void			add_item(Item *item) noexcept TAP_NONNULL;
 
 		/**
 		 * @brief		Adds the specified item (that MUST be in the player's
@@ -74,7 +68,7 @@ class Player final: public Fighter
 		 * 				Use the one that receives a string instead.
 		 */
 		bool			obtain_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
-		
+
 		/**
 		 * @brief	Tries to find an item with the specified name in the
 		 * 			player's room. If it gets find, it will be removed from
@@ -109,45 +103,6 @@ class Player final: public Fighter
 		 * @note	`item_name` can be either a name or an id.
 		 */
 		bool			drop_item(const std::string& item_name) noexcept;
-
-		/**
-		 * @brief	Removes an item from the player's item list, removing it
-		 * 			from the list and deleting it.
-		 * @param	item	The item to delete.
-		 * @throws	`std::invalid_argument` if the item is not in the player's
-		 * 			item list.
-		 */
-		void			consume_item(Item& item);
-
-		// TODO
-		void			buy_item(const Merchant& merchant, Item *item);
-
-		/**
-		 * @brief	Finds an item from the player list that matches the
-		 * 			specified type.
-		 * @returns	A pointer to the first instance found of that type,
-		 * 			`nullptr` if no item of the specified type in the list.
-		 * @note	It is defined in the .hpp because it uses templates.
-		 */
-		template<typename T>
-		T				*find_item(void)
-		{
-			for (Item *item_in_list: item_list)
-			{
-				if (is_instance<T>(item_in_list))
-					return (dynamic_cast<T*>(item_in_list));
-			}
-			return (nullptr);
-		}
-
-		/**
-		 * @brief	Tries to find an item in the player's item list that
-		 * 			matches the specified name.
-		 * @param	item_name	The name of the item to search.
-		 * @returns	The item found with that name, `nullptr` if no item
-		 * 			was found with the specified name.
-		 */
-		Item			*find_item_by_name(const std::string& item_name) const TAP_UNUSED_RESULT;
 
 		// Enchantments --
 
@@ -199,7 +154,7 @@ class Player final: public Fighter
 		 * @note	The value returned by this method MUST be used.
 		 */
 		bool			spend_gold(unsigned int quantity) noexcept TAP_UNUSED_RESULT;
-		
+
 		/**
 		 * @brief	Unlike the `spend_gold` method, this one will always
 		 * 			consume the specified ammount of gold, setting it to 0
@@ -225,8 +180,11 @@ class Player final: public Fighter
 		 * 			and sets his current hp to half.
 		 * @param	destination	The room to set as the current room. It cannot
 		 * 			be `nullptr`.
+		 * @throws	`std::runtime_error` if `current_room` is `nullptr`.
+		 * 			`std::invalid_argument` if `remove_player` or `add_player`
+		 * 			`Room` methods fail.
 		 */
-		void			respawn(Room *destination) noexcept TAP_NONNULL;
+		void			respawn(Room *destination) TAP_NONNULL;
 
 		// Fight --
 
@@ -248,7 +206,6 @@ class Player final: public Fighter
 		 * @brief	Sends a message to the fd of this player. If `client_fd`
 		 * 			is `-1`, the message will be sent to `cout`.
 		 * @param	msg	The message to send.
-		 * @throws
 		 */
-		void			send_to_client(const std::string& msg);
+		void			send_to_client(const std::string& msg) noexcept;
 };

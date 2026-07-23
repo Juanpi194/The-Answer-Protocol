@@ -58,11 +58,8 @@ class Room
 		std::string							get_description(void) const noexcept;
 		NPC									*get_NPC(void) const noexcept;
 		Chest								*get_chest(void) const noexcept;
-		// std::list<Item*>&					get_items(void) noexcept;
 		const std::list<Item*>&				get_items(void) const noexcept;
-		// std::list<Player*>&					get_player_list(void) noexcept;
 		const std::list<Player*>& 			get_player_list(void) const noexcept;
-		// std::map<Direction, Room*>&			get_adjacent_rooms(void) noexcept;
 		const std::map<Direction, Room*>&	get_adjacent_rooms(void) const noexcept;
 
 		void	set_adjacent_room(Direction direction, Room *room);
@@ -121,7 +118,7 @@ class Room
 
 		void			clear(void);
 
-		void			connect_room();
+		// void			connect_room();
 
 		/**
 		 * @brief	Generates the room information in json format.

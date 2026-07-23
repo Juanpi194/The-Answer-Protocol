@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include "items/Armor.hpp"
+#include "items/Weapon.hpp"
 #include "utils/utils.hpp"
 
 bool	Fighter::validate_stats(t_stats stats)
@@ -27,8 +29,6 @@ Fighter::Fighter(const std::string& name, t_stats stats):
 
 Fighter::~Fighter(void)
 {
-	for (Item *item: item_list)
-		delete (item);
 	if (armor)
 		delete (armor);
 	if (weapon)
@@ -37,29 +37,29 @@ Fighter::~Fighter(void)
 
 // Getters and setters --------------------------------------------------------
 
-Armor					*Fighter::get_armor(void) const noexcept
+Armor				*Fighter::get_armor(void) const noexcept
 {
 	return (armor);
 }
 
-Weapon					*Fighter::get_weapon(void) const noexcept
+Weapon				*Fighter::get_weapon(void) const noexcept
 {
 	return (weapon);
 }
 
-t_stats					Fighter::get_stats(void) const noexcept
+t_stats				Fighter::get_stats(void) const noexcept
 {
 	return (stats);
 }
 
-Status					Fighter::get_status(void) const noexcept
+Status				Fighter::get_status(void) const noexcept
 {
 	return (status);
 }
 
-const std::list<Item*>&	Fighter::get_item_list(void) const noexcept
+Inventory&	Fighter::get_inventory(void) noexcept
 {
-	return (item_list);
+	return (inventory);
 }
 
 void	Fighter::set_armor(Armor *armor) noexcept

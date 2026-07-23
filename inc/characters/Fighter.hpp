@@ -1,8 +1,10 @@
 #pragma once
 
 #include "characters/Character.hpp"
-#include "items/Armor.hpp"
-#include "items/Weapon.hpp"
+#include "items/Inventory.hpp"
+
+class Armor;
+class Weapon;
 
 enum Status
 {
@@ -64,9 +66,9 @@ class Fighter: public virtual Character
 		 */
 		static bool	validate_stats(t_stats stats);
 	protected:
-		t_stats				stats;
-		Status				status;
-		std::list<Item*>	item_list;
+		t_stats		stats;
+		Status		status;
+		Inventory	inventory;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -82,12 +84,11 @@ class Fighter: public virtual Character
 
 		// Getters and setters ------------------------------------------------
 
-		Armor					*get_armor(void) const noexcept;
-		Weapon					*get_weapon(void) const noexcept;
-		t_stats					get_stats(void) const noexcept;
-		Status					get_status(void) const noexcept;
-		// std::list<Item*>&		get_item_list(void) noexcept;
-		const std::list<Item*>&	get_item_list(void) const noexcept;
+		Armor				*get_armor(void) const noexcept;
+		Weapon				*get_weapon(void) const noexcept;
+		t_stats				get_stats(void) const noexcept;
+		Status				get_status(void) const noexcept;
+		Inventory&			get_inventory(void) noexcept;
 
 		void	set_armor(Armor *armor) noexcept;
 		void	set_weapon(Weapon *weapon) noexcept;

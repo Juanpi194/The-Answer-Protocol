@@ -6,6 +6,7 @@ Review invalid_argument exceptions and maybe set them as boolean functions (retu
 Battle
 Different types of rooms
 Timer para mensajes por usuario (Limitado a x mensajes en x tiempo?)
+Install dependencies (json.h, gui.h....)
 
 QUESTIONS ---------
 Chest room does not make sense if there can be enemy rooms with chests.

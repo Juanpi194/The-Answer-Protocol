@@ -8,6 +8,7 @@
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
 #include "items/Chest.hpp"
+#include "items/Item.hpp"
 
 const std::string Room::PREFIX = "room.";
 
@@ -142,30 +143,15 @@ Chest								*Room::get_chest(void) const noexcept
 	return (chest);
 }
 
-// std::list<Item *>&					Room::get_items(void) noexcept
-// {
-// 	return (items);
-// }
-
 const std::list<Item*>&				Room::get_items(void) const noexcept
 {
 	return (items);
 }
 
-// std::list<Player*>&					Room::get_player_list(void) noexcept
-// {
-// 	return (player_list);
-// }
-
 const std::list<Player*>&			Room::get_player_list(void) const noexcept
 {
 	return (player_list);
 }
-
-// std::map<Direction, Room*>&			Room::get_adjacent_rooms(void) noexcept
-// {
-// 	return (adjacent_rooms);
-// }
 
 const std::map<Direction, Room*>&	Room::get_adjacent_rooms(void) const noexcept
 {

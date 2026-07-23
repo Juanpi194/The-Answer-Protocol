@@ -80,7 +80,7 @@ void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::s
 	Gear		*found_gear;
 	Enchantment	*found_enchantment;
 
-	found_item = player.find_item_by_name(gear);
+	found_item = player.get_inventory().find_item_by_name(gear);
 	if (!found_item)
 	{
 		log("Couldn't find the item '" + gear + "' in '" + player.get_name() + "' item list.", LogLevel::WARNING);

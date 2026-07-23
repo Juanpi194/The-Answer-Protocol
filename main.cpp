@@ -26,6 +26,7 @@ bool debug_mode = true;
 #include "items/Chest.hpp"
 #include "items/ChestKey.hpp"
 #include "items/Consumable.hpp"
+#include "items/Inventory.hpp"
 #include "items/IronArmor.hpp"
 #include "items/IronSword.hpp"
 #include "items/Item.hpp"

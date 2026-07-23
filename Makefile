@@ -23,7 +23,7 @@ ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp Gear.cpp \
-				IronArmor.cpp IronShield.cpp IronSword.cpp \
+				Inventory.cpp IronArmor.cpp IronShield.cpp IronSword.cpp \
 				ItemFactory.cpp Item.cpp Shield.cpp Weapon.cpp)
 
 PARSER_FOLDER = parser
@@ -105,10 +105,10 @@ compile-debug: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) $(DEBUG_FLAG) -o $(PROGRAM_NAME)
 
 clean:
-	rm $(OBJS)
+	rm -rf $(OBJS)
 
 fclean: clean
-	rm $(PROGRAM_NAME)
+	rm -rf $(PROGRAM_NAME)
 
 re: clean all
 

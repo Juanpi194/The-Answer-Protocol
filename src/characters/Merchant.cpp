@@ -82,6 +82,6 @@ void	Merchant::on_buy(Player& player, const std::string& product) noexcept
 	else
 	{
 		player.send_to_client("Here you go.");
-		player.add_item(item_found->clone());
+		player.get_inventory().add_item(item_found->clone());
 	}
 }

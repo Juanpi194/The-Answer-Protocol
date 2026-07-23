@@ -93,17 +93,17 @@ std::list<Item*>	Chest::interact(Player& player)
 		return (result);
 	if (guardian && !player.is_enemy_beaten(guardian))
 		return (log("Player '" + player.get_name() + "' has to beat '" + guardian->get_name() + "' before opening the chest.", LogLevel::WARNING), result);
-	chest_key = player.find_item<ChestKey>();
+	chest_key = player.get_inventory().find_item<ChestKey>();
 	if (!chest_key)
 		return (log("Player '" + player.get_name() + "' has no key to open the chest.", LogLevel::INFO), result);
 
 	// Removing the key
-	player.consume_item(*chest_key);
+	player.get_inventory().consume_item(*chest_key);
 
 	// ? REVIEW: Maybe instead of adding the items to the room,
 	// ?		 we should add them to the player.
 	result = open();
 	for (Item *item: result)
-		player.add_item(item);
+		player.get_inventory().add_item(item);
 	return (result);
 }
