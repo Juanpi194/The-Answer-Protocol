@@ -9,8 +9,6 @@ Timer para mensajes por usuario (Limitado a x mensajes en x tiempo?)
 Install dependencies (json.h, gui.h....)
 
 QUESTIONS ---------
-Chest room does not make sense if there can be enemy rooms with chests.
-Should we set a boolean in each room indicating if there is a chest or not?
 Should a npc factory be made (Each npcs has its own name and stuff, automatic factory might not make sense)
 Enchantment ids???
 

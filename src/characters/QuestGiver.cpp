@@ -44,12 +44,12 @@ void	QuestGiver::on_talk(Player& player) noexcept
 			quest_found = &quest_in_list;
 	}
 	if (quest_found && quest_found->is_completed())
-		player.send_to_client(dialogues.finished);
+		player.send_to_outbox(dialogues.finished);
 	else if (quest_found && !quest_found->is_completed())
-		player.send_to_client(dialogues.already_given);
+		player.send_to_outbox(dialogues.already_given);
 	else
 	{
-		player.send_to_client(dialogues.intro);
+		player.send_to_outbox(dialogues.intro);
 		player.obtain_quest(quest);
 	}
 }

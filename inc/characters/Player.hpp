@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 #include "characters/Fighter.hpp"
 #include "quests/Quest.hpp"
@@ -28,6 +29,7 @@ class Player final: public Fighter
 		std::list<Quest>				quest_list;
 		std::list<Enchantment*>			enchantment_list;
 		std::list<std::string>			outbox;
+		std::mutex						outbox_mtx;
 		Battle							*battle;
 
 		static constexpr unsigned int	STARTING_GOLD = 50;
@@ -48,7 +50,6 @@ class Player final: public Fighter
 		const std::list<std::string>&	get_beaten_enemies(void) const noexcept;
 		const std::list<Quest>&			get_quest_list(void) const noexcept;
 		const std::list<Enchantment*>&	get_enchantment_list(void) const noexcept;
-		std::list<std::string>&			get_outbox(void) noexcept;
 		Battle							*get_battle(void) const noexcept;
 
 		void	set_battle(Battle *battle) noexcept;
@@ -207,5 +208,7 @@ class Player final: public Fighter
 		 * 			is `-1`, the message will be sent to `cout`.
 		 * @param	msg	The message to send.
 		 */
-		void			send_to_client(const std::string& msg) noexcept;
+		void					send_to_outbox(const std::string& msg);
+
+		std::list<std::string>	drain_outbox(void) TAP_UNUSED_RESULT;
 };

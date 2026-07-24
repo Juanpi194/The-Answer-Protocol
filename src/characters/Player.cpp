@@ -45,11 +45,6 @@ const std::list<Quest>&			Player::get_quest_list(void) const noexcept
 	return (quest_list);
 }
 
-std::list<std::string>&			Player::get_outbox(void) noexcept
-{
-	return (outbox);
-}
-
 Battle							*Player::get_battle(void) const noexcept
 {
 	return (battle);
@@ -333,13 +328,23 @@ void		Player::on_talk(Player& player) noexcept
 
 // User --
 
-void		Player::send_to_client(const std::string& msg) noexcept
+void					Player::send_to_outbox(const std::string& msg)
 {
-	std::string	cleared_msg = msg;
+	std::string					cleared_msg = msg;
 
 	trim_str(cleared_msg, false);
+	std::lock_guard<std::mutex>	lock(outbox_mtx);
 	if (!cleared_msg.empty())
 		outbox.push_back(msg);
 	else
 		log("Empty message sent from '" + get_name() + "'.", LogLevel::WARNING);
+}
+
+std::list<std::string>	Player::drain_outbox(void)
+{
+	std::lock_guard<std::mutex>	lock(outbox_mtx);
+
+	std::list<std::string>	out;
+	std::swap(out, outbox);
+	return (out);
 }
