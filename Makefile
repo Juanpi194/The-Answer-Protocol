@@ -16,6 +16,10 @@ CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
 					Fighter.cpp Goblin.cpp Merchant.cpp Narrator.cpp \
 					NPC.cpp Player.cpp QuestGiver.cpp)
 
+COMMANDS_FOLDER = commands
+COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/$(COMMANDS_FOLDER)/, \
+				CommandHandler.cpp)
+
 ENCHANTMENTS_FOLDER = enchantments
 ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
 						Enchantment.cpp EnchantmentFactory.cpp Flame.cpp)
@@ -47,7 +51,7 @@ WORLD_FOLDER = world
 WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
-SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 

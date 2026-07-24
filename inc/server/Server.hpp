@@ -1,6 +1,8 @@
 #pragma once
 #include <mutex>
 #include <sys/socket.h>
+#include <atomic>
+#include <thread>
 
 #include "server/PlayerConnection.hpp"
 #include "world/World.hpp"
@@ -42,20 +44,33 @@ class Server
 		ServerOwner					*owner;
 		World						*world;
 		std::list<PlayerConnection>	players;
-		std::list<t_command>		command_queue;
-		std::mutex					mtx;
-		bool						on;
+		std::mutex					players_mtx;
+		std::list<t_command>		cmd_queue;
+		std::mutex					cmd_mtx;
+		std::atomic<bool>			on;
+		std::thread					accept_thread;
 
 		// static constexpr int		DOMAIN = AF_INET;
 		// static constexpr int		TYPE = SOCK_STREAM;
 		static constexpr int			DEFAULT_PORT = 8080;
 		static constexpr unsigned int	MAX_USERS = 20;
+		static constexpr size_t			MAX_MSG_LENGTH = 1024;
 
 		/**
 		 * @brief	Initializes the server socket.
 		 * @returns	The socket fd. -1 if any problem happened.
 		 */
 		int	init(void);
+
+		/**
+		 * @brief	Thread that will simulate each client.	
+		 */
+		void	client_thread(int fd);
+
+		/**
+		 * @brief	Thread that will be accepting new clients.
+		 */
+		void	accept_loop(void);
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -91,4 +106,5 @@ class Server
 		void	broadcast(const std::string& msg);
 		void	connect_player(PlayerConnection& player);
 		void	disconnect_player(PlayerConnection& player);
+		void	push_command(const t_command& cmd);
 };

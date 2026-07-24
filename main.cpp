@@ -26,7 +26,6 @@ bool debug_mode = true;
 #include "items/Chest.hpp"
 #include "items/ChestKey.hpp"
 #include "items/Consumable.hpp"
-#include "items/Inventory.hpp"
 #include "items/IronArmor.hpp"
 #include "items/IronSword.hpp"
 #include "items/Item.hpp"
@@ -218,9 +217,8 @@ static void	pruebitas(PlayerConnection& player_connection)
 			std::cout << "Tonto\n";
 
 		// Cleaning player's outbox
-		for (std::string& s: player->get_outbox())
+		for (std::string& s: player->drain_outbox())
 			std::cout << s << std::endl;
-		player->get_outbox().clear();
 	}
 	std::cout << "Adios" << std::endl;
 }

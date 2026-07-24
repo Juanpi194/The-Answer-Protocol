@@ -2,77 +2,91 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/time.h>
-#include <cstring>
 #include <cerrno>
+#include <iostream>
 
 #include "utils/utils.hpp"
+#include "commands/CommandHandler.hpp"
 #include "server/PlayerConnection.hpp"
+#include "server/Server.hpp"
+#include "server/ServerOwner.hpp"
+#include "world/World.hpp"
 
-const std::string	DEFAULT_CLIENT = "Alberto";
-constexpr size_t	MAX_MSG_LENGTH = 1024;
+const std::string	DEFAULT_CLIENT_NAME = "Alberto";
+const std::string	DEFAULT_WORLD_NAME = "The Amazing World Of Gumball";
+const std::string	DEFAULT_WORLD_JSON = "default.json";
 
-static void	client_thread(PlayerConnection& client)
+static void	debug_mode(void)
 {
-	struct timeval			timeout;
-	char					msg[MAX_MSG_LENGTH];
-	ssize_t					bytes;
+	World					world(DEFAULT_WORLD_NAME, DEFAULT_WORLD_JSON);
+	PlayerConnection		client(DEFAULT_CLIENT_NAME, -1, nullptr);
+	std::string				msg;
 	std::list<std::string>	outbox_msgs;
-	const int				client_fd = client.get_client_fd();
 
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 100000;
-	setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+	world.get_spawn_room()->add_player(&client.get_player());
+	client.connect();
 	while (client.is_connected())
 	{
-		memset(msg, 0, MAX_MSG_LENGTH);
-		bytes = recv(client_fd, msg, MAX_MSG_LENGTH, 0);
-		if (bytes == 0)
+		std::getline(std::cin, msg);
+		if (std::cin.eof())
 		{
 			client.disconnect();
 			break ;
 		}
-		else if (bytes > 0)
-		{
-			// Send to server...
-		}
-		else
-		{
-			if (errno != EAGAIN && errno != EWOULDBLOCK)
-			{
-				client.disconnect();
-				break ;
-			}
-		}
+		if (std::cin.fail())
+			throw std::runtime_error("Error reading input.");
+		CommandHandler::handle(client.get_player(), world, msg);
 		outbox_msgs = client.get_player().drain_outbox();
 		for (const std::string& outbox_msg: outbox_msgs)
-		{
-			bytes = send(client_fd, outbox_msg.c_str(), outbox_msg.size(), MSG_NOSIGNAL);
-			if (bytes == -1)
-			{
-				client.disconnect();
-				break;
-			}
-		}
+			std::cout << outbox_msg << std::endl;
 	}
-}
-
-static void	debug_mode(void)
-{
-	PlayerConnection	client(DEFAULT_CLIENT, -1, nullptr);
-
-	// TODO
 }
 
 static void	normal_mode(void)
 {
-	// TODO
+	// TODO: Initiate server, server owner, accept clients, reconnect them if they exist, ...
+	Server		server;
+	ServerOwner	owner("Yanpi", &server);
+
+	// Create owner here, ask for name, then instantiate, ...
+	std::thread	owner_thread(&ServerOwner::owner_thread, owner, server);
+	// TODO: Loop reading the server commands received
+
+	owner_thread.join();
 }
 
 int	main(void)
 {
-	if (current_level == LogLevel::DEBUG)
-		debug_mode();
-	else
-		normal_mode();
+	try
+	{
+		if (current_level == LogLevel::DEBUG)
+			debug_mode();
+		else
+			normal_mode();
+	}
+	catch (const std::invalid_argument& e)
+	{
+		// TODO: Specific behavior
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
+	catch (const std::runtime_error& e)
+	{
+		// TODO: Specific behavior
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
+	catch (const std::bad_alloc& e)
+	{
+		// TODO: Specific behavior
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
+	catch (const std::exception& e)
+	{
+		// TODO: Specific behavior
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
 	return (0);
 }

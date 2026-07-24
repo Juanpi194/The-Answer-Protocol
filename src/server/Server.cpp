@@ -1,6 +1,9 @@
 #include "server/Server.hpp"
 
 #include <netinet/in.h>
+#include <cstring>
+#include <thread>
+#include <unistd.h>
 
 #include "utils/utils.hpp"
 
@@ -39,6 +42,78 @@ int	Server::init(void)
 	if (listen(sock, MAX_USERS) == -1)
 		return (log("Error preparing socket connection.", LogLevel::ERROR), -1);
 	return (sock);
+}
+
+void	Server::client_thread(int fd)
+{
+	PlayerConnection		*client;
+	struct timeval			timeout;
+	char					msg[MAX_MSG_LENGTH];
+	ssize_t					bytes;
+	std::list<std::string>	outbox_msgs;
+
+	// TODO: Reconnect player or make a new connection by reading its name.
+	// This is just a small example of a new player connected.
+	{
+		std::lock_guard<std::mutex>	lock(players_mtx);
+		players.emplace_back("Juanpi", fd, this);
+		client = &players.back();
+	}
+
+	// After the PlayerConnection is initiated, all this is correct.
+	const int				client_fd = client->get_client_fd();
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 100000;
+	setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+	while (client->is_connected())
+	{
+		memset(msg, 0, MAX_MSG_LENGTH);
+		bytes = recv(client_fd, msg, MAX_MSG_LENGTH - 1, 0);
+		if (bytes == 0)
+		{
+			client->disconnect();
+			break ;
+		}
+		else if (bytes > 0)
+			client->get_server()->push_command({client, std::string(msg, bytes)});
+		else
+		{
+			if (errno != EAGAIN && errno != EWOULDBLOCK)
+			{
+				client->disconnect();
+				break ;
+			}
+		}
+		outbox_msgs = client->get_player().drain_outbox();
+		for (const std::string& outbox_msg: outbox_msgs)
+		{
+			bytes = send(client_fd, outbox_msg.c_str(), outbox_msg.size(), MSG_NOSIGNAL);
+			if (bytes == -1)
+			{
+				client->disconnect();
+				break;
+			}
+		}
+	}
+}
+
+void	Server::accept_loop(void)
+{
+	int	fd;
+
+	while (true)
+	{
+		fd = accept(sock, nullptr, nullptr);
+		if (fd < 0)
+		{
+			if (!on)
+				break ;	// Server was closed.
+			continue ;	// Error while accepting.
+		}
+		std::thread	thread(&Server::client_thread, this, fd);
+		log("New thread with fd " + std::to_string(fd) + " launched.", LogLevel::DEBUG);
+		thread.detach();
+	}
 }
 
 // Constructors ---------------------------------------------------------------
@@ -111,6 +186,7 @@ void	Server::start(void)
 	if (sock == -1)
 		throw ServerError("Server initialization error.");
 	on = true;
+	accept_thread = std::thread(&Server::accept_loop, this);
 }
 
 void	Server::stop(void)
@@ -121,6 +197,10 @@ void	Server::stop(void)
 		return ;
 	}
 	// TODO: Close fd, set it to -1, set 'on' to false, ...
+	on = false;
+	close(sock);
+	sock = -1;
+	accept_thread.join();
 }
 
 void	Server::send_msg_to(int dst, const std::string& msg)
@@ -141,4 +221,11 @@ void	Server::connect_player(PlayerConnection& player)
 void	Server::disconnect_player(PlayerConnection& player)
 {
 	// TODO: Disconnect a specific player
+}
+
+void	Server::push_command(const t_command& cmd)
+{
+	std::lock_guard<std::mutex>	lock(cmd_mtx);
+
+	cmd_queue.push_back(cmd);
 }

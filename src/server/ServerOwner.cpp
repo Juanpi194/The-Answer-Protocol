@@ -23,6 +23,24 @@ static void	reject_password(const std::string& reason, const std::string& detail
 	password.clear();
 }
 
+bool	ServerOwner::handle_cmd(const std::string& cmd)
+{
+	// TODO: Parse cmd.
+
+	if (cmd == "EXIT")
+	{
+		// TODO: Shutdown server, close server socket, and free it.
+		shutdown_server();
+		return (false);
+	}
+	else if (cmd == "INIT")
+		init_server();
+	else if (cmd == "SHUTDOWN")
+		shutdown_server();
+	// TODO: More commands
+	return (true);
+}
+
 std::string	ServerOwner::ask_password(void)
 {
 	std::string	password;
@@ -68,6 +86,52 @@ std::string	ServerOwner::ask_password(void)
 		break ;
 	}
 	return (password);
+}
+
+void	ServerOwner::change_password(void)
+{
+	log("Request to change password received.", LogLevel::INFO);
+	try
+	{
+		password = ask_password();
+	}
+	catch (const std::runtime_error& e)
+	{
+		std::cout << "\n" << std::endl;
+		std::cout << e.what() << std::endl;
+		std::cout << "The password did not change." << std::endl;
+	}
+}
+
+void	ServerOwner::init_server(void)
+{
+	if (!server || server->is_on())
+		return ;
+
+	// TODO: Try catch
+	server->start();
+	log("Server initiated.", LogLevel::INFO);
+}
+
+void	ServerOwner::shutdown_server(void)
+{
+	if (!server || !server->is_on())
+		return ;
+
+	// TODO: Try catch
+	server->stop();
+	log("Server closed.", LogLevel::INFO);
+}
+
+void	ServerOwner::reset_server(void)
+{
+	if (!server)
+		return ;
+
+	// TODO: Try catch
+	shutdown_server();
+	init_server();
+	log("Server reset.", LogLevel::INFO);
 }
 
 // Constructors ---------------------------------------------------------------
@@ -134,48 +198,18 @@ void		ServerOwner::set_server(Server *server)
 
 // Utils ----------------------------------------------------------------------
 
-void	ServerOwner::change_password(void)
+void	ServerOwner::owner_thread(Server& server)
 {
-	log("Request to change password received.", LogLevel::INFO);
-	try
+	std::string	msg;
+
+	while (true)
 	{
-		password = ask_password();
+		std::getline(std::cin, msg);
+		if (std::cin.eof())
+			std::cout << "Cannot close the server owner console. Use EXIT." << std::endl;
+		else if (std::cin.fail())
+			std::cout << "Error reading input. Try again." << std::endl;
+		else if (!handle_cmd(msg))
+			break ;
 	}
-	catch (const std::runtime_error& e)
-	{
-		std::cout << "\n" << std::endl;
-		std::cout << e.what() << std::endl;
-		std::cout << "The password did not change." << std::endl;
-	}
-}
-
-void	ServerOwner::init_server(void)
-{
-	if (!server || server->is_on())
-		return ;
-
-	// TODO: Try catch
-	server->start();
-	log("Server initiated.", LogLevel::INFO);
-}
-
-void	ServerOwner::shutdown_server(void)
-{
-	if (!server || !server->is_on())
-		return ;
-
-	// TODO: Try catch
-	server->stop();
-	log("Server closed.", LogLevel::INFO);
-}
-
-void	ServerOwner::reset_server(void)
-{
-	if (!server)
-		return ;
-
-	// TODO: Try catch
-	shutdown_server();
-	init_server();
-	log("Server reset.", LogLevel::INFO);
 }
