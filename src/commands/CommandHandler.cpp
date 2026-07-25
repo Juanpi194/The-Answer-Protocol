@@ -1,6 +1,9 @@
 #include "commands/CommandHandler.hpp"
 
+#include "utils/utils.hpp"
 #include "characters/Player.hpp"
+#include "characters/Enemy.hpp"
+#include "world/Room.hpp"
 
 void	CommandHandler::handle(Player& player, World& world, std::string text)
 {
@@ -13,6 +16,26 @@ void	CommandHandler::handle(Player& player, World& world, std::string text)
 		player.move(Direction::SOUTH);
 	else if (text == "MOVE WEST")
 		player.move(Direction::WEST);
+	else if (text == "ATTACK")
+	{
+		// ? REVIEW: All this logic.
+		NPC		*npc;
+		Enemy	*enemy;
 
+		npc = player.get_current_room()->get_NPC();
+		if (!npc)
+		{
+			player.send_to_outbox("There is no enemy in this room.");
+			return ;
+		}
+		enemy = dynamic_cast<Enemy*>(npc);
+		if (!enemy)
+		{
+			player.send_to_outbox("There is no enemy in this room.");
+			return ;
+		}
+		log("'" + player.get_name() + "' attacks '" + enemy->get_name() + "'.", LogLevel::INFO);
+		player.attack(*enemy);
+	}
 	// TODO: Game logic...
 }

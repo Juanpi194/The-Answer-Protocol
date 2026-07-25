@@ -31,6 +31,7 @@ bool	ServerOwner::handle_cmd(const std::string& cmd)
 	{
 		// TODO: Shutdown server, close server socket, and free it.
 		shutdown_server();
+		server->set_running(false);
 		return (false);
 	}
 	else if (cmd == "INIT")
@@ -206,7 +207,10 @@ void	ServerOwner::owner_thread(Server& server)
 	{
 		std::getline(std::cin, msg);
 		if (std::cin.eof())
+		{
+			std::cin.clear();
 			std::cout << "Cannot close the server owner console. Use EXIT." << std::endl;
+		}
 		else if (std::cin.fail())
 			std::cout << "Error reading input. Try again." << std::endl;
 		else if (!handle_cmd(msg))

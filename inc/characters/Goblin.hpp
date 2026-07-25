@@ -30,5 +30,4 @@ class Goblin final: public Enemy
 		// Utils --------------------------------------------------------------
 
 		void	choose_action(void) override;
-		void	attack(Fighter& target) noexcept override;
 };

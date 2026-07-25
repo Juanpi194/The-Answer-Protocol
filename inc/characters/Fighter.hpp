@@ -97,7 +97,8 @@ class Fighter: public virtual Character
 		// Utils --------------------------------------------------------------
 
 		virtual void		choose_action(void) = 0;
-		virtual void		attack(Fighter& target) noexcept = 0;
 		virtual FighterType	get_type() const noexcept = 0;
+		void				attack(Fighter& target) noexcept;
+		void				receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept;
 		void				apply_status(Status status) noexcept;
 };

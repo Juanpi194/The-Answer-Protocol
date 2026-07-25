@@ -27,8 +27,3 @@ void	Goblin::choose_action(void)
 {
 	// TODO: Logic...
 }
-
-void	Goblin::attack(Fighter& target) noexcept
-{
-	// TODO: Logic...
-}

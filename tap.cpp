@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <cerrno>
 #include <iostream>
+#include <functional>
 
 #include "utils/utils.hpp"
 #include "commands/CommandHandler.hpp"
@@ -30,6 +31,7 @@ static void	debug_mode(void)
 		std::getline(std::cin, msg);
 		if (std::cin.eof())
 		{
+			std::cin.clear();
 			client.disconnect();
 			break ;
 		}
@@ -44,14 +46,14 @@ static void	debug_mode(void)
 
 static void	normal_mode(void)
 {
-	// TODO: Initiate server, server owner, accept clients, reconnect them if they exist, ...
 	Server		server;
+	World		world(DEFAULT_WORLD_NAME, DEFAULT_WORLD_JSON);
 	ServerOwner	owner("Yanpi", &server);
 
-	// Create owner here, ask for name, then instantiate, ...
-	std::thread	owner_thread(&ServerOwner::owner_thread, owner, server);
-	// TODO: Loop reading the server commands received
-
+	server.set_world(&world);
+	// TODO: Create owner here, ask for name, then instantiate, ...
+	std::thread	owner_thread(&ServerOwner::owner_thread, &owner, std::ref(server));
+	server.game_loop();
 	owner_thread.join();
 }
 

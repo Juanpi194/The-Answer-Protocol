@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "utils/utils.hpp"
+#include "commands/CommandHandler.hpp"
 
 const std::string	ServerError::DEFAULT_MSG = "Server initialization failed.";
 
@@ -122,7 +123,8 @@ Server::Server(void):
 	sock(-1),
 	owner(nullptr),
 	world(nullptr),
-	on(false)
+	on(false),
+	running(true)
 {
 	// TODO: Give json_path so a specific World can be created
 }
@@ -143,11 +145,6 @@ World								*Server::get_world(void) const noexcept
 {
 	return (world);
 }
-
-// std::list<PlayerConnection>&		Server::get_players(void) noexcept
-// {
-// 	return (players);
-// }
 
 const std::list<PlayerConnection>&	Server::get_players(void) const noexcept
 {
@@ -171,6 +168,11 @@ void	Server::set_world(World *world) noexcept
 	if (!world)
 		log("World established as nullptr.", LogLevel::INFO);
 	this->world = world;
+}
+
+void	Server::set_running(bool running) noexcept
+{
+	this->running = running;
 }
 
 // Utils ----------------------------------------------------------------------
@@ -228,4 +230,31 @@ void	Server::push_command(const t_command& cmd)
 	std::lock_guard<std::mutex>	lock(cmd_mtx);
 
 	cmd_queue.push_back(cmd);
+}
+
+void	Server::game_loop(void)
+{
+	t_command	cmd;
+	bool		got_one;
+
+	while (running)
+	{
+		got_one = false;
+		{
+			std::lock_guard<std::mutex>	lock(cmd_mtx);
+			if (!cmd_queue.empty())
+			{
+				cmd = cmd_queue.front();
+				cmd_queue.pop_front();
+				got_one = true;
+			}
+		}
+		if (got_one && cmd.sender->is_connected())
+		{
+			assert(world != nullptr && "World cannot be nullptr.");
+			CommandHandler::handle(cmd.sender->get_player(), *world, cmd.text);
+		}
+		else
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
 }

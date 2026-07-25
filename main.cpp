@@ -97,7 +97,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 		std::string	answer;
 		std::getline(std::cin, answer);
 		if (std::cin.eof())
-			throw std::runtime_error("Input stream closed (EOF).");
+			throw std::runtime_error("Input stream closed ().");
 		if (std::cin.fail())
 			throw std::runtime_error("Error reading input.");
 		player_room = player->get_current_room();

@@ -302,11 +302,6 @@ void		Player::choose_action(void)
 	// TODO: Request the player an action to perform...
 }
 
-void		Player::attack(Fighter& target) noexcept
-{
-	// TODO: Attack logic...
-}
-
 FighterType	Player::get_type(void) const noexcept
 {
 	return (FighterType::Player);

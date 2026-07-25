@@ -50,6 +50,11 @@ class Server
 		std::atomic<bool>			on;
 		std::thread					accept_thread;
 
+		/**
+		 * @brief	Variable used to check if the program is running.
+		 */
+		std::atomic<bool>			running;
+
 		// static constexpr int		DOMAIN = AF_INET;
 		// static constexpr int		TYPE = SOCK_STREAM;
 		static constexpr int			DEFAULT_PORT = 8080;
@@ -98,6 +103,12 @@ class Server
 		void	set_owner(ServerOwner *owner) noexcept;
 		void	set_world(World *world) noexcept;
 
+		/**
+		 * @note	This method should only be used ONCE in the entire
+		 * 			program, swapping the value to `false`.
+		 */
+		void	set_running(bool running) noexcept TAP_COLD;
+
 		// Utils --------------------------------------------------------------
 
 		void	start(void);
@@ -107,4 +118,5 @@ class Server
 		void	connect_player(PlayerConnection& player);
 		void	disconnect_player(PlayerConnection& player);
 		void	push_command(const t_command& cmd);
+		void	game_loop(void);
 };

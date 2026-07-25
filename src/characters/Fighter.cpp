@@ -83,6 +83,40 @@ void	Fighter::set_status(Status status) noexcept
 
 // Utils ----------------------------------------------------------------------
 
+void	Fighter::attack(Fighter& target) noexcept
+{
+	unsigned int	final_strength;
+
+	// Attack
+	final_strength = (stats.current_strength / 2);
+	if (weapon)
+		final_strength += weapon->get_extra_damage() / 3;
+	target.receive_damage(*this, final_strength);
+}
+
+void	Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept
+{
+	unsigned int	final_defense;
+
+	// Defense
+	final_defense = (stats.current_defense / 2);
+	if (armor)
+		final_defense += armor->get_damage_reduction() / 3;
+
+	// Final damage
+	if (incoming_damage > final_defense)
+		incoming_damage -= final_defense;
+	else
+		incoming_damage = 1;
+
+	// Setting hp
+	if (stats.current_hp > incoming_damage)
+		stats.current_hp -= incoming_damage;
+	else
+		stats.current_hp = 0;
+	log("'" + attacker.get_name() + "' hit '" + get_name() + "' for " + std::to_string(incoming_damage) + " damage.", LogLevel::INFO);
+}
+
 void	Fighter::apply_status(Status status) noexcept
 {
 	// TODO: Logic...
