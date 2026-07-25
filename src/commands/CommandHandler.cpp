@@ -8,6 +8,8 @@
 void	CommandHandler::handle(Player& player, World& world, std::string text)
 {
 	// TODO: Parse...
+	// TODO: Add specific errors in case something wrong happens.
+	// ? REVIEW: Recheck messages sent to the user.
 	if (text == "MOVE NORTH")
 		player.move(Direction::NORTH);
 	else if (text == "MOVE EAST")
