@@ -4,6 +4,8 @@
 #include "items/Inventory.hpp"
 
 class Armor;
+class Consumable;
+class Shield;
 class Weapon;
 
 enum Status
@@ -43,12 +45,43 @@ enum class FighterType
 	Enemy
 };
 
+enum class FightAction
+{
+	NONE,
+	ATTACK,
+	DEFEND,
+	FLEE,
+	CONSUME
+};
+
+/**
+ * @brief	Struct with an action to perform and a possible item to consume.
+ * @param	action	The action to perform.
+ * @param	consumable	The item to consume in case the action is `CONSUME`.
+ */
+struct FightChoice
+{
+    FightAction action;
+    Consumable	*consumable = nullptr;   // Only used if action == CONSUME
+};
+
+enum class Stat
+{
+	HP,
+	STRENGTH,
+	DEFENSE,
+	SPEED
+};
+
 // Mixin / Abstract class with just pure virtual methods and attributes (not an interface)
 class Fighter: public virtual Character
 {
 	private:
-		Armor	*armor;
-		Weapon	*weapon;
+		Armor		*armor;
+		Shield		*shield;
+		Weapon		*weapon;
+		FightAction	last_action;
+		bool		defending;
 
 		static constexpr unsigned int	MIN_HP = 10;
 		static constexpr unsigned int	MAX_HP = 100;
@@ -85,20 +118,72 @@ class Fighter: public virtual Character
 		// Getters and setters ------------------------------------------------
 
 		Armor				*get_armor(void) const noexcept;
+		Shield				*get_shield(void) const noexcept;
 		Weapon				*get_weapon(void) const noexcept;
+		FightAction			get_last_action(void) const noexcept;
+		bool				is_defending(void) const noexcept;
 		t_stats				get_stats(void) const noexcept;
 		Status				get_status(void) const noexcept;
 		Inventory&			get_inventory(void) noexcept;
 
 		void	set_armor(Armor *armor) noexcept;
+		void	set_shield(Shield *shield) noexcept;
 		void	set_weapon(Weapon *weapon) noexcept;
+		void	set_last_action(FightAction last_action) noexcept;
+		void	set_defending(bool defending) noexcept;
 		void	set_status(Status status) noexcept;
 
 		// Utils --------------------------------------------------------------
 
-		virtual void		choose_action(void) = 0;
 		virtual FighterType	get_type() const noexcept = 0;
+
+		/**
+		 * @brief	Performs the selected action, done by the user. Only
+		 * 			`ATTACK`, `DEFEND`, `CONSUME` are supported. `FLEE`
+		 * 			is not checked here.
+		 * @param	opponent	`user`'s opponent.
+		 * @param	choice		
+		 * @throws	`std::invalid_argument` if the action to perform is not available.
+		 */
+		void				perform_action(Fighter& opponent, FightChoice choice);
+
+		/**
+		 * @brief	Logic to perform when `CONSUME` action is selected.
+		 * @param	opponent	The user's opponent.
+		 * @param	consumable	The consumable item to consume.
+		 */
 		void				attack(Fighter& target) noexcept;
+		void				defend(void) noexcept;
+		bool				flee(Fighter& opponent) noexcept;
 		void				receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept;
 		void				apply_status(Status status) noexcept;
+		void				consume(Fighter& opponent, Consumable& consumable) noexcept;
+
+		/**
+		 * @brief	Heals the fighter for the specified ammount.
+		 * @param	ammount	The healing points to heal.
+		 */
+		void				heal(unsigned int ammount) noexcept;
+
+		// TODO: Work in this docstring
+		/**
+		 * @brief	Changes the specified stat depending on the provided stage.
+		 * @param	stat	The stat to change.
+		 * @param	stage	Indicates how much the stat is going to change.
+		 */
+		void				change_stat(Stat stat, int stage) noexcept;
+
+		/**
+		 * @brief	Restores the specified stat. That means that the
+		 * 			current specified stat will get to its initial value.
+		 * @param	stat	The stat to restore.
+		 */
+		void				restore_stat(Stat stat) noexcept;
+
+		/**
+		 * @brief	Resets all current stats to their original.
+		 * 			Mainly used after each battle.
+		 * @param	hp	If set to `true`, hp will be reset too.
+		 */
+		void				reset_stats(bool hp = false) noexcept;
 };

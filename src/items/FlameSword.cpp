@@ -5,11 +5,6 @@ const std::string	FlameSword::PREFIX = "flame_sword.";
 const std::string	FlameSword::NAME = "Flame Sword";
 const std::string	FlameSword::DESCRIPTION = "Applies extra damage, and applies burn to the target.";
 
-// void	IronSword::special_use(void) noexcept
-// {
-// 	// TODO: Logic...
-// }
-
 // Constructors ---------------------------------------------------------------
 
 FlameSword::FlameSword(void):
@@ -25,4 +20,11 @@ FlameSword::FlameSword(const FlameSword& flame_sword):
 FlameSword	*FlameSword::clone(void) const noexcept
 {
 	return (new FlameSword(*this));
+}
+
+// Utils ----------------------------------------------------------------------
+
+void	FlameSword::special_effect(Fighter& user, Fighter& opponent) noexcept
+{
+	// TODO: Apply burn to opponent, ...
 }

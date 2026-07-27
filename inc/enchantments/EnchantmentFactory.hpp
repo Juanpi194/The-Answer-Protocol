@@ -5,6 +5,7 @@
 
 class Enchantment;
 class Flame;
+class Freeze;
 
 class EnchantmentFactory
 {
@@ -14,4 +15,5 @@ class EnchantmentFactory
 		// Specific enchantments ----------------------------------------------
 
 		static Flame		*create_flame(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Freeze		*create_freeze(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 };

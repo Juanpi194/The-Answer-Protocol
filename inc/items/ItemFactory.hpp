@@ -5,10 +5,13 @@
 #include "utils/attributes.hpp"
 
 class Item;
+class Apple;
 class ChestKey;
+class FlameSword;
 class IronArmor;
 class IronShield;
 class IronSword;
+class SpikeArmor;
 
 class ItemFactory
 {
@@ -31,8 +34,11 @@ class ItemFactory
 
 		// Specific items -----------------------------------------------------
 
+		static Apple		*create_apple(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static ChestKey		*create_chest_key(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static FlameSword	*create_flame_sword(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static IronArmor	*create_iron_armor(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static IronShield	*create_iron_shield(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static IronSword	*create_iron_sword(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static SpikeArmor	*create_spike_armor(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 };

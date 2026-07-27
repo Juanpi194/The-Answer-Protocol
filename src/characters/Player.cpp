@@ -14,7 +14,7 @@
 
 Player::Player(const std::string& name):
 	Character(name),
-	Fighter(name, {1, 10, 10, 10, 10}),
+	Fighter(name, {1, 10, 10, 10, 10, 10, 10, 10, 10}),
 	gold(STARTING_GOLD),
 	battle(nullptr)
 {
@@ -295,11 +295,6 @@ bool		Player::is_enemy_beaten(Enemy *enemy) noexcept
 			return (true);
 	}
 	return (false);
-}
-
-void		Player::choose_action(void)
-{
-	// TODO: Request the player an action to perform...
 }
 
 FighterType	Player::get_type(void) const noexcept

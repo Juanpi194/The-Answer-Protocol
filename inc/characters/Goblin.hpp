@@ -18,6 +18,7 @@ class Goblin final: public Enemy
 		Goblin(void);
 		Goblin(const Goblin& goblin);
 		~Goblin(void) = default;
+		Goblin	*clone(void) const noexcept override TAP_RETURNS_NONNULL;
 
 		// Operators ----------------------------------------------------------
 
@@ -29,5 +30,5 @@ class Goblin final: public Enemy
 
 		// Utils --------------------------------------------------------------
 
-		void	choose_action(void) override;
+		FightChoice	choose_action(void) const noexcept override;
 };

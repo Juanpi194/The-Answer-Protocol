@@ -20,7 +20,7 @@ class IronArmor final: public Armor
 		IronArmor(void);
 		IronArmor(const IronArmor& iron_armor);
 		~IronArmor(void) = default;
-		IronArmor	*clone(void) const noexcept override;
+		IronArmor	*clone(void) const noexcept override TAP_RETURNS_NONNULL;
 
 		// Operators ----------------------------------------------------------
 

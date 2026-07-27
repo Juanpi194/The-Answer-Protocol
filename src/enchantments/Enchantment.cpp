@@ -67,8 +67,3 @@ void	Enchantment::apply_to(Gear& gear)
 	else
 		log("Tried to enchant '" + gear.get_name() + "' with '" + name + "', but failed", LogLevel::WARNING);
 }
-
-void	Enchantment::effect(void) noexcept
-{
-	// TODO: Logic ...
-}

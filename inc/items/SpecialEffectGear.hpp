@@ -15,5 +15,5 @@ class SpecialEffectGear
 
 		// Utils --------------------------------------------------------------
 
-		void	special_effect(Fighter& user, Fighter& affected);
+		virtual void	special_effect(Fighter& user, Fighter& opponent) noexcept = 0;
 };

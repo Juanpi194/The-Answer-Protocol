@@ -35,7 +35,5 @@ class Shield: public Item
 
 		// Utils --------------------------------------------------------------
 
-		// void	use(void) noexcept override;
-
 		virtual void	protect(Fighter& user, Fighter& attacker) noexcept;
 };

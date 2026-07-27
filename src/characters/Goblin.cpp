@@ -21,9 +21,18 @@ Goblin::Goblin(const Goblin& goblin):
 {
 }
 
+Goblin	*Goblin::clone(void) const noexcept
+{
+	return (new Goblin());
+}
+
 // Utils ----------------------------------------------------------------------
 
-void	Goblin::choose_action(void)
+FightChoice	Goblin::choose_action(void) const noexcept
 {
 	// TODO: Logic...
+
+	// Dumb example
+	FightChoice	choice = {FightAction::ATTACK};
+	return (choice);
 }

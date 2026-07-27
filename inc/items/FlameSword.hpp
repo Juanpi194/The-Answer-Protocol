@@ -1,8 +1,9 @@
 #pragma once
 
+#include "items/SpecialEffectGear.hpp"
 #include "items/Weapon.hpp"
 
-class FlameSword final: public Weapon
+class FlameSword final: public Weapon, public SpecialEffectGear
 {
 	private:
 		static unsigned int				available_id;	// Defined in FlameSword.cpp
@@ -18,7 +19,7 @@ class FlameSword final: public Weapon
 		FlameSword(void);
 		FlameSword(const FlameSword& flame_sword);
 		~FlameSword(void) = default;
-		FlameSword	*clone(void) const noexcept override;
+		FlameSword	*clone(void) const noexcept override TAP_RETURNS_NONNULL;
 
 		// Operators ----------------------------------------------------------
 
@@ -29,4 +30,6 @@ class FlameSword final: public Weapon
 		// TODO: Add getters and setters for future attributes.
 
 		// Utils --------------------------------------------------
+
+		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;
 };

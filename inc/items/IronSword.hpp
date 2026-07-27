@@ -20,7 +20,7 @@ class IronSword final: public Weapon
 		IronSword(void);
 		IronSword(const IronSword& iron_sword);
 		~IronSword(void) = default;
-		IronSword	*clone(void) const noexcept override;
+		IronSword	*clone(void) const noexcept override TAP_RETURNS_NONNULL;
 
 		// Operators ----------------------------------------------------------
 

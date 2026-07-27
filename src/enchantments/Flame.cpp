@@ -23,7 +23,7 @@ Flame	*Flame::clone(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Flame::effect(void) noexcept
+void	Flame::effect(Fighter& user, Fighter& affected) const noexcept
 {
 	// TODO: Logic...
 }

@@ -190,7 +190,6 @@ class Player final: public Fighter
 		// Fight --
 
 		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL TAP_UNUSED_RESULT;
-		void			choose_action(void) override;
 		FighterType		get_type(void) const noexcept override;
 
 		// Interactions --

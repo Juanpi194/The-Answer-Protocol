@@ -2,24 +2,24 @@
 
 #include "enchantments/Enchantment.hpp"
 
-class Flame final: public Enchantment
+class Freeze final: public Enchantment
 {
 	private:
-		static const std::list<GearType>	ALLOWED_GEAR_TYPES;	// Defined in Flame.cpp
+		static const std::list<GearType>	ALLOWED_GEAR_TYPES;	// Defined in Freeze.cpp
 	public:
-		static const std::string			NAME;	// Defined in Flame.cpp
-		static const std::string			DESCRIPTION;	// Defined in Flame.cpp
+		static const std::string			NAME;	// Defined in Freeze.cpp
+		static const std::string			DESCRIPTION;	// Defined in Freeze.cpp
 
 		// Constructors -------------------------------------------------------
 
-		Flame(void);
-		Flame(const Flame& flame);
-		~Flame(void) = default;
-		Flame	*clone(void) const noexcept override;
+		Freeze(void);
+		Freeze(const Freeze& flame);
+		~Freeze(void) = default;
+		Freeze	*clone(void) const noexcept override;
 
 		// Operators ----------------------------------------------------------
 	
-		Flame&	operator=(const Flame& other) = delete;
+		Freeze&	operator=(const Freeze& other) = delete;
 
 		// Getters and setters ------------------------------------------------
 

@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include "utils/attributes.hpp"
+
 class Item
 {
 	private:
@@ -29,7 +31,7 @@ class Item
 		Item(const std::string& id, const std::string& name, const std::string& description);
 		Item(const Item& item) = delete;
 		virtual	~Item(void) = default;
-		virtual Item*	clone(void) const noexcept = 0;
+		virtual Item	*clone(void) const noexcept TAP_RETURNS_NONNULL = 0;
 
 		// Operators ----------------------------------------------------------
 

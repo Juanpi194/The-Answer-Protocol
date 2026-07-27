@@ -22,13 +22,15 @@ COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/$(COMMANDS_FOLDER)/, \
 
 ENCHANTMENTS_FOLDER = enchantments
 ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
-						Enchantment.cpp EnchantmentFactory.cpp Flame.cpp)
+						Enchantment.cpp EnchantmentFactory.cpp Flame.cpp \
+						Freeze.cpp)
 
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
-				Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp Gear.cpp \
-				Inventory.cpp IronArmor.cpp IronShield.cpp IronSword.cpp \
-				ItemFactory.cpp Item.cpp Shield.cpp Weapon.cpp)
+				Apple.cpp Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp FlameSword.cpp \
+				Gear.cpp Inventory.cpp IronArmor.cpp IronShield.cpp \
+				IronSword.cpp ItemFactory.cpp Item.cpp Shield.cpp \
+				SpikeArmor.cpp Weapon.cpp )
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \

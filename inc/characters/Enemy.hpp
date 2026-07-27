@@ -13,6 +13,7 @@ class Enemy: public NPC, public Fighter
 		Enemy(const std::string& id, const std::string& name, const std::string& description, t_stats stats, unsigned int gold);
 		Enemy(const Enemy& enemy) = delete;
 		virtual	~Enemy(void) = default;
+		virtual Enemy	*clone(void) const noexcept TAP_RETURNS_NONNULL = 0;
 
 		// Operators ----------------------------------------------------------
 
@@ -24,15 +25,15 @@ class Enemy: public NPC, public Fighter
 
 		// Utils --------------------------------------------------------------
 
-		void			on_talk(Player& player) noexcept override;
-		FighterType		get_type(void) const noexcept override;
+		void				on_talk(Player& player) noexcept override;
+		FighterType			get_type(void) const noexcept override;
 
 		/**
-		 * @deprecated	No default behavior for enemy, each enemy MUST
-		 * 				have its own way of attacking.
-		 * @brief	Default behavior for attacking. Some enemies will override
-		 * 			this method to have their unique way of attacking.
-		 * @param	target	Pointer to the target that will be attacked.
+		 * @brief	Each enemy type chooses which action to perform their own
+		 * 			way, but will never be `FLEE`.
+		 * @returns	The choice, with the action to perform and a possible item
+		 * 			to consume.
 		 */
-		// virtual void	attack(Fighter *target) noexcept override;
+		virtual FightChoice	choose_action(void) const noexcept = 0;
+
 };
