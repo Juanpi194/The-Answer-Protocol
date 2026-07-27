@@ -1,6 +1,7 @@
 #include "parser/itemparser.hpp"
 
 #include "items/Consumable.hpp"
+#include "items/ItemFactory.hpp"
 #include "utils/utils.hpp"
 
 static Item *build_item(const std::string& id,

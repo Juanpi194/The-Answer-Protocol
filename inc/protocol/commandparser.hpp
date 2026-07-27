@@ -8,7 +8,7 @@
 class CommandParser
 {
 	public:
-		Command	parse(const std::string& line) const;
+		static Command	parse(const std::string& line);
 };
 
 #endif

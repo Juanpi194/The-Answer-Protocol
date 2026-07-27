@@ -34,7 +34,11 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \
-				parser.cpp)
+				enemyparser.cpp itemparser.cpp jsonconfig.cpp npcparser.cpp roomparser.cpp)
+
+PROTOCOLFOLDER = parser
+PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
+				command.cpp commandparser.cpp)
 
 QUESTS_FOLDER = quests
 QUESTS_SRC = $(addprefix $(SRC_FOLDER)/$(QUESTS_FOLDER)/, \
@@ -53,7 +57,7 @@ WORLD_FOLDER = world
 WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
-SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(PARSER_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 

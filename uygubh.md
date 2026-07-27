@@ -52,3 +52,11 @@ Puntos nuevos a coemntar:
    https://excalidraw.com/#json=AjDlYJg0chlU4lVVBuc9F,Zpo8Y-DYAYE3p353psM5AQ
 
 
+5. a añadir:
+- De mi comado attack que no pueda recibir mas args (Solo attack ya sirve jiij)
+- Commando defend no recibe parametros
+- flee (huir) no recibe parametros
+- consume recibe 1 parametro 
+- fight no recibe nada jiji
+- Quitar Type
+- Ideas de items, encantamientos. 
