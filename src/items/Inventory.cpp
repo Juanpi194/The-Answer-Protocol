@@ -40,10 +40,8 @@ void	Inventory::consume_item(Item& item)
 
 	item_found = nullptr;
 	for (Item *item_in_list: items)
-	{
 		if (item_in_list == &item)
 			item_found = item_in_list;
-	}
 	if (!item_found)
 		throw std::invalid_argument("Item to consume is not in the player's item list.");
 
@@ -55,9 +53,7 @@ void	Inventory::consume_item(Item& item)
 Item	*Inventory::find_item_by_name(const std::string& item_name) const
 {
 	for (Item *item_in_list: items)
-	{
 		if (item_in_list->get_name() == item_name)
 			return (item_in_list);
-	}
 	return (nullptr);
 }

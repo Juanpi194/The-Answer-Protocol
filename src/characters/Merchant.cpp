@@ -19,10 +19,8 @@ Merchant::Merchant(const std::string& name, const std::string& description, cons
 	if (items_to_sell.empty())
 		throw std::invalid_argument("Merchant's item list to sell cannot be empty.");
 	for (const std::pair<Item*, unsigned int>& item_and_price: items_to_sell)
-	{
 		if (!item_and_price.first)
 			throw std::invalid_argument("Merchant's item list to sell cannot have any nullptr in it.");
-	}
 }
 
 Merchant::~Merchant(void)

@@ -1,8 +1,9 @@
 #pragma once
+#include <atomic>
 #include <mutex>
 #include <sys/socket.h>
-#include <atomic>
 #include <thread>
+#include <vector>
 
 #include "server/PlayerConnection.hpp"
 #include "world/World.hpp"
@@ -43,12 +44,21 @@ class Server
 		int							sock;
 		ServerOwner					*owner;
 		World						*world;
-		std::list<PlayerConnection>	players;
-		std::mutex					players_mtx;
+		std::list<PlayerConnection>	clients;
+		std::mutex					clients_mtx;
 		std::list<t_command>		cmd_queue;
 		std::mutex					cmd_mtx;
 		std::atomic<bool>			on;
 		std::thread					accept_thread;
+
+		/**
+		 * @brief	When shutting down the server, we need to know
+		 * 			about all threads. This vector helps us that way.
+		 * 			Mutex is not needed because before joining all of
+		 * 			them accept_thread will be joined, so the list will
+		 * 			not be modified anywhere.
+		 */
+		std::vector<std::thread>	thread_list;
 
 		/**
 		 * @brief	Variable used to check if the program is running.
@@ -58,7 +68,7 @@ class Server
 		// static constexpr int		DOMAIN = AF_INET;
 		// static constexpr int		TYPE = SOCK_STREAM;
 		static constexpr int			DEFAULT_PORT = 8080;
-		static constexpr unsigned int	MAX_USERS = 20;
+		static constexpr unsigned int	MAX_CLIENTS = 20;
 		static constexpr size_t			MAX_MSG_LENGTH = 1024;
 
 		/**
@@ -66,6 +76,15 @@ class Server
 		 * @returns	The socket fd. -1 if any problem happened.
 		 */
 		int	init(void);
+
+		/**
+		 * @brief	Connects a new user or reconnects if it already exists
+		 * 			to the given fd.
+		 * @param	fd	The file descriptor the user will be using.
+		 * @returns	A new account or one that already exists. `nullptr` if
+		 * 			any error happens during the connection.
+		 */
+		PlayerConnection	*setup_client(int fd);
 
 		/**
 		 * @brief	Thread that will simulate each client.	
@@ -76,6 +95,11 @@ class Server
 		 * @brief	Thread that will be accepting new clients.
 		 */
 		void	accept_loop(void);
+
+		/**
+		 * @note	This method will not lock `clients_mtx`.
+		 */
+		PlayerConnection	*search_client_by_name(const std::string& name) noexcept;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -96,8 +120,7 @@ class Server
 
 		ServerOwner							*get_server_owner(void) const noexcept;
 		World								*get_world(void) const noexcept;
-		// std::list<PlayerConnection>&		get_players(void) noexcept;
-		const std::list<PlayerConnection>&	get_players(void) const noexcept;
+		const std::list<PlayerConnection>&	get_clients(void) const noexcept;
 		bool								is_on(void) const noexcept;
 
 		void	set_owner(ServerOwner *owner) noexcept;
@@ -111,12 +134,42 @@ class Server
 
 		// Utils --------------------------------------------------------------
 
+		/**
+		 * @throws	`ServerError` if `init` failed.
+		 */
 		void	start(void);
+
 		void	stop(void);
 		void	send_msg_to(int dst, const std::string& msg);
-		void	broadcast(const std::string& msg);
-		void	connect_player(PlayerConnection& player);
-		void	disconnect_player(PlayerConnection& player);
+
+		/**
+		 * @brief				Sends a message to all clients.
+		 * @param	msg			The message to send.
+		 * @param	fd_excluded	The file descriptor that won't receive this
+		 * 						message. If `-1` , all clients will
+		 * 						receive the message.
+		 */
+		void	broadcast(const std::string& msg, int fd_excluded = -1);
+
+		/**
+		 * @brief	Broadcasts that a client connected.
+		 */
+		void	connect_client(PlayerConnection& client);
+
+		/**
+		 * @brief	Broadcasts that a client disconnected.
+		 */
+		void	disconnect_client(PlayerConnection& client);
+
 		void	push_command(const t_command& cmd);
 		void	game_loop(void);
+
+		PlayerConnection	*find_client_by_fd(int fd) noexcept;
+		bool				is_fd_available(int fd) noexcept;
+
+		/**
+		 * @brief	Creates a string with all the client's information.
+		 * @returns	The generated string.
+		 */
+		std::string			list_clients(void) noexcept;
 };

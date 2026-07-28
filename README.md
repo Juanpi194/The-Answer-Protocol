@@ -19,3 +19,6 @@ __attribute_warn_unused_result__ -> Warning por valor de retorno no usado
 
 a
 BAD_ALLOC WILL NOT BE MANAGED THROUGH THE METHODS. So any method that only throws bad alloc in case it happens could be set as noexcept
+
+
+nc -N localhost 8080

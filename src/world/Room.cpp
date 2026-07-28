@@ -90,10 +90,8 @@ Room::Room(const std::string& id, const std::string& name, const std::string& de
 	else
 	{
 		for (Item *item: items)
-		{
 			if (!item)
 				throw std::invalid_argument("Item list cannot contain a nullptr.");
-		}
 	}
 }
 
@@ -177,10 +175,8 @@ void				Room::add_item(Item *item)
 	if (!item)
 		throw std::invalid_argument("Cannot add a nullptr to the item list.");
 	for (Item *item_in_list: items)
-	{
 		if (item_in_list == item)
 			throw std::invalid_argument("Cannot add the same item twice in the same room.");
-	}
 	items.push_back(item);
 }
 
@@ -189,10 +185,8 @@ void				Room::add_player(Player *player)
 	if (!player)
 		throw std::invalid_argument("Cannot add a nullptr to the player list.");
 	for (Player *player_in_list: player_list)
-	{
 		if (player_in_list == player)
 			throw std::invalid_argument("Cannot add the same player twice in the same room.");
-	}
 	player_list.push_back(player);
 	player->set_current_room(this);
 }
@@ -205,10 +199,8 @@ void				Room::remove_item(Item *item)
 	if (!item)
 		throw std::invalid_argument("Cannot remove a nullptr from the item list.");
 	for (Item *item_in_list: items)
-	{
 		if (item_in_list == item)
 			found = true;
-	}
 	if (!found)
 		throw std::invalid_argument("Item to removed must be in the room.");
 	items.remove(item);
@@ -222,10 +214,8 @@ void				Room::remove_player(Player *player)
 	if (!player)
 		throw std::invalid_argument("Cannot remove a nullptr from the player list.");
 	for (Player *player_in_list: player_list)
-	{
 		if (player_in_list == player)
 			found = true;
-	}
 	if (!found)
 		throw std::invalid_argument("Player to remove must be in the room.");
 	player_list.remove(player);

@@ -15,10 +15,8 @@ bool	Enchantment::can_apply(Gear& gear)
 {
 	// ? REVIEW: Maybe there is a more efficient way to check
 	for (GearType gear_type: allowed_gear_types)
-	{
 		if (gear.get_gear_type() == gear_type)
 			return (true);
-	}
 	return (false);
 }
 

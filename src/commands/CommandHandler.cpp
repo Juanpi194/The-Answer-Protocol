@@ -1,9 +1,15 @@
 #include "commands/CommandHandler.hpp"
 
+#include <stdexcept>
+#include <fstream>
+
 #include "utils/utils.hpp"
+#include "utils/types.hpp"
 #include "battle/Battle.hpp"
 #include "characters/Player.hpp"
 #include "characters/Enemy.hpp"
+#include "libs/json.hpp"
+#include "server/PlayerConnection.hpp"
 #include "world/Room.hpp"
 #include "world/World.hpp"
 
@@ -44,6 +50,59 @@ static void		fight_result(Player& player, World& world)
 	player.set_battle(nullptr);
 	if (player.get_stats().current_hp == 0)
 		player.respawn(world.get_spawn_room());
+}
+
+static void		cmd_look(const Command& cmd, Player& player)
+{
+	if (cmd.args.size() != 0)
+	{
+		player.send_to_outbox("Command LOOK does not receive parameters.");
+		return ;
+	}
+	if (!player.get_current_room())
+	{
+		player.send_to_outbox("Player is not located at any room, cannot execute LOOK.");
+		return ;
+	}
+	player.send_to_outbox(player.get_current_room()->look());
+	
+	// TODO: Remove the json test.
+	std::string	json_format;
+	json_format = player.get_current_room()->look();
+	nlohmann::json	j = nlohmann::json::parse(json_format);
+	std::ofstream	result_file("datos.json");
+	result_file << j.dump(4);
+	result_file.close();
+}
+
+static void		cmd_move(const Command& cmd, Player& player)
+{
+	Direction	dir;
+
+	if (cmd.args.size() != 1)
+	{
+		player.send_to_outbox("Command MOVE must receive one parameter, being the direction to move.");
+		return ;
+	}
+	dir = string_to_direction(cmd.args[0]);
+	if (dir == Direction::INVALID)
+	{
+		player.send_to_outbox("Invalid direction.");
+		return ;
+	}
+	if (!player.move(dir))
+		player.send_to_outbox("You cannot move in that direction.");
+}
+
+static void		cmd_quit(const Command& cmd, PlayerConnection& conn)
+{
+	if (cmd.args.size() != 0)
+	{
+		conn.get_player().send_to_outbox("Command QUIT does not receive parameters.");
+		return ;
+	}
+	conn.get_player().send_to_outbox("Bye");
+	conn.set_quitting(true);
 }
 
 static void		cmd_fight(Player& player)
@@ -92,32 +151,30 @@ static void		cmd_in_fight(Player& player, FightChoice choice, World& world)
 		player.send_to_outbox("You are not in a battle.");
 }
 
-void	CommandHandler::handle(Player& player, World& world, std::string text)
+void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, World& world)
 {
-	// TODO: Parse...
 	// TODO: Add specific errors in case something wrong happens.
 	// TODO: Validate if player is in a fight.
 	// ? REVIEW: Recheck messages sent to the user.
-	if (text == "MOVE NORTH")
-		player.move(Direction::NORTH);
-	else if (text == "MOVE EAST")
-		player.move(Direction::EAST);
-	else if (text == "MOVE SOUTH")
-		player.move(Direction::SOUTH);
-	else if (text == "MOVE WEST")
-		player.move(Direction::WEST);
-	else if (text == "FIGHT")
-		cmd_fight(player);
-	else if (text == "ATTACK")
-		cmd_in_fight(player, {FightAction::ATTACK}, world);
-	else if (text == "DEFEND")
-		cmd_in_fight(player, {FightAction::DEFEND}, world);
-	else if (text == "FLEE")
-		cmd_in_fight(player, {FightAction::FLEE}, world);
-	else if (text == "CONSUME APPLE")
+	Player&	player = connection.get_player();
+
+	switch (cmd.type)
 	{
-		// TODO: Find item, send it through the choice...
-		cmd_in_fight(player, {FightAction::CONSUME}, world);
+		case CommandType::CONNECT:
+			// Connection should be done only once in the client_thread.
+			player.send_to_outbox("You are already connected.");
+			break;
+		case CommandType::LOOK:
+			cmd_look(cmd, player);
+			break;
+		case CommandType::MOVE:
+			cmd_move(cmd, player);
+			break;
+		case CommandType::QUIT:
+			cmd_quit(cmd, connection);
+			break;
+		default:
+			player.send_to_outbox("Invalid command.");
 	}
 	// TODO: MORE COMMANDS...
 }

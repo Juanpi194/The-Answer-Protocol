@@ -6,14 +6,15 @@ enum class Direction
 	NORTH,
 	EAST,
 	SOUTH,
-	WEST
+	WEST,
+	INVALID
 };
 
 enum class GearType
 {
-	Iron,
-	Fire,
-	Ice
+	IRON,
+	FIRE,
+	ICE
 };
 
 /**
@@ -23,6 +24,16 @@ enum class GearType
  * @throws	`std::invalid_argument` if unexpected parameter is received.
  */
 std::string	direction_to_string(Direction dir);
+
+/**
+ * @brief	Casts the provided string to Direction. Lowercase strings
+ * 			are supported. The provided string will get uppercased.
+ * @param	str	The string to cast.
+ * @returns	The direction version of `str`. `INVALID` if it does not
+ * 			match any direction.
+ * @note	`trim_str` is not used in this function.
+ */
+Direction	string_to_direction(const std::string& str);
 
 /**
  * @brief	Checks if an instance is a specified class type.

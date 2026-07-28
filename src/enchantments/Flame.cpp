@@ -2,7 +2,7 @@
 
 const std::string			Flame::NAME = "Flame";
 const std::string			Flame::DESCRIPTION = "Applies burn.";
-const std::list<GearType>	Flame::ALLOWED_GEAR_TYPES = {GearType::Iron};
+const std::list<GearType>	Flame::ALLOWED_GEAR_TYPES = {GearType::IRON};
 
 // Constructors ---------------------------------------------------------------
 

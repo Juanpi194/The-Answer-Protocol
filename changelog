@@ -1,12 +1,11 @@
 TODO --------------
-FINISH ENCHANTER AND FIND_ENCHANTMENT/ITEM BY NAME METHODS (Redo them if needed)
 Items
 Enchantments
 Review invalid_argument exceptions and maybe set them as boolean functions (returning false in case of error)
 Battle
-Different types of rooms
 Timer para mensajes por usuario (Limitado a x mensajes en x tiempo?)
 Install dependencies (json.h, gui.h....)
+Input Framing (LOOK\nFIGHT) -> 2 commands in the same line (split by \n)
 
 QUESTIONS ---------
 Should a npc factory be made (Each npcs has its own name and stuff, automatic factory might not make sense)
@@ -18,14 +17,10 @@ Hola
 DONE --------------
 utils
 attributes
+parser
 
 CHANGES -----------
-NPCS and items will have their id set automatically. Only rooms will need a manual id.
-More than one item per room. Only one npc per room.
 NO COMPILATION FLAGS UNTIL END
-Copy constructors of items and npcs abstract classes changed to delete.
-As npcs, only the enemies will be able to be copied. Add copy constructors when
-specific enemies are added.
 
 COMMENT TAGS ------
 TODO

@@ -8,7 +8,7 @@ class SpikeArmor final: public Armor, public SpecialEffectGear
 	private:
 		static unsigned int				available_id;	// Defined in SpikeArmor.cpp
 		static const std::string		PREFIX;	// Defined in SpikeArmor.cpp
-		static constexpr GearType		GEAR_TYPE = GearType::Iron;
+		static constexpr GearType		GEAR_TYPE = GearType::IRON;
 
 		/**
 		 * @brief	Damage dealt by the armor to the attacker.

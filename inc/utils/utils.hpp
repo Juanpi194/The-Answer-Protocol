@@ -111,6 +111,15 @@ bool	has_symbol(const std::string& str);
 bool	has_space(const std::string& str);
 
 /**
+ * @brief	Returns a copy of the given string with every character
+ * 			converted to uppercase. The original string is not modified.
+ * @param	str	The string to convert.
+ * @returns	A new string with all characters in uppercase.
+ * @note	Non-alphabetic characters are left unchanged.
+ */
+std::string	to_upper(const std::string& str);
+
+/**
  * @brief	Colors the given string with the color. 
  * 			`color` is `RESET` by default, which means no color will be used.
  * @param	str		The string to be colored.

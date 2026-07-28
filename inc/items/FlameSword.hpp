@@ -8,7 +8,7 @@ class FlameSword final: public Weapon, public SpecialEffectGear
 	private:
 		static unsigned int				available_id;	// Defined in FlameSword.cpp
 		static const std::string		PREFIX;	// Defined in FlameSword.cpp
-		static constexpr GearType		GEAR_TYPE = GearType::Fire;
+		static constexpr GearType		GEAR_TYPE = GearType::FIRE;
 	public:
 		static const std::string		NAME;	// Defined in FlameSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in FlameSword.cpp

@@ -39,10 +39,8 @@ void	QuestGiver::on_talk(Player& player) noexcept
 
 	quest_found = nullptr;
 	for (const Quest& quest_in_list: player.get_quest_list())
-	{
 		if (quest.get_name() == quest_in_list.get_name())
 			quest_found = &quest_in_list;
-	}
 	if (quest_found && quest_found->is_completed())
 		player.send_to_outbox(dialogues.finished);
 	else if (quest_found && !quest_found->is_completed())

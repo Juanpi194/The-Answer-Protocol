@@ -1,14 +1,16 @@
 #pragma once
 #include <string>
 
-class Player;
+#include "commands/command.hpp"
+
+class PlayerConnection;
 class World;
 
 class CommandHandler
 {
 	public:
 		/**
-		 * @brief	Handles the message sent by the player.
+		 * @brief	Handles the command sent by the player.
 		 */
-		static void	handle(Player& player, World& world, std::string text);
+		static void	handle(const Command& cmd, PlayerConnection& connection, World& world);
 };

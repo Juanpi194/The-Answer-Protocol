@@ -1,4 +1,4 @@
-#include "protocol/commandparser.hpp"
+#include "commands/commandparser.hpp"
 
 #include <cctype>
 
@@ -17,19 +17,6 @@ static const char *GROUP_SUBCOMMANDS[] =
 	"LEAVE",
 	"KICK"
 };
-
-static std::string	to_upper(const std::string& str)
-{
-	std::string	result = str;
-
-	for (size_t i = 0; i < result.size(); ++i)
-	{
-		result[i] = static_cast<char>(
-			std::toupper(static_cast<unsigned char>(result[i])));
-	}
-	return (result);
-}
-//Convierte una cadena de texto a mayúsculas para que los comandos no distingan entre mayúsculas y minúsculas.
 
 static void	split_first_token(const std::string& str,
 	std::string& first,
@@ -171,7 +158,7 @@ static Command	parse_group(const std::string& rest)
 }
 //Valida los subcomandos de GROUP (INVITE, LEAVE o KICK) y sus argumentos
 
-Command	CommandParser::parse(const std::string& line) const
+Command	CommandParser::parse(const std::string& line)
 {
 	std::string	trimmed = line;
 	std::string	keyword;

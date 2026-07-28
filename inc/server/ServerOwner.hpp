@@ -36,11 +36,23 @@ class ServerOwner
 		bool		handle_cmd(const std::string& cmd) TAP_UNUSED_RESULT;
 
 		// Methods called by the command handler --
-
-		void		change_password(void);
-		void		init_server(void);
+		
+		void		exit_server(void);
+		void		init_server(void) noexcept;
+		
+		/**
+		 * @brief	Completely stops the server
+		 * 			(closing fd, kicking players, ...).
+		 */
 		void		shutdown_server(void);
 		void		reset_server(void);
+		void		list_server_clients(void);
+		void		change_password(void);
+
+		/**
+		 * @brief	Short instructions for the supported commands.
+		 */
+		std::string	get_commands_instructions(void) const noexcept TAP_UNUSED_RESULT;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -69,5 +81,5 @@ class ServerOwner
 		 * @brief	The thread that will simulate the owner, working
 		 * 			with the `std::cout`.
 		 */
-		void	owner_thread(Server& server);
+		void	owner_thread(void);
 };

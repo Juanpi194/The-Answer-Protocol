@@ -16,10 +16,8 @@ bool	Enchanter::enchant(Gear& gear, Enchantment& enchantment)
 
 	allowed = false;
 	for (GearType gear_type: enchantment.get_allowed_gear_types())
-	{
 		if (gear_type == gear.get_gear_type())
 			allowed = true;
-	}
 	if (!allowed)
 		return (log("Cannot apply '" + enchantment.get_name() + "' to '" + gear.get_name() + "'.", LogLevel::INFO), false);
 	gear.set_enchantment(enchantment.clone());
@@ -36,10 +34,8 @@ Enchanter::Enchanter(const std::string& name, const std::string& description, co
 	if (enchantments_to_sell.size() == 0)
 		throw std::invalid_argument("Enchanter's enchantments list to sell cannot be empty.");
 	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
-	{
 		if (!enchantment_and_price.first)
 			throw std::invalid_argument("Enchanter's enchantments list to sell cannot have any nullptr in it.");
-	}
 }
 
 Enchanter::~Enchanter(void)
@@ -91,7 +87,7 @@ void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::s
 			if (found_gear && found_gear->get_enchantment())
 				found_gear = nullptr;
 			else if (found_gear)
-				break ;
+				break;
 		}
 	}
 	if (!found_item)
