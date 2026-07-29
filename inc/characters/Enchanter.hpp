@@ -61,6 +61,15 @@ class Enchanter final: public NPC, public Vendor
 
 		void	on_talk(Player& player) noexcept override;
 
+		/**
+		 * @brief	Tries to enchant the specified gear with the specified
+		 * 			enchantment. If the gear is not found, the specified item
+		 * 			is not a gear or the enchantment is not found, nothing
+		 * 			will be done.
+		 * @param	player	The player that tries to enchant the gear.
+		 * @param	gear	The gear being searched to apply the enchantment.
+		 * @param	enchantment	The enchantment searched to apply to `gear`.
+		 */
 		void	on_enchant(Player& player, const std::string& gear, const std::string& enchantment);
 
 		void	on_buy(Player& player, const std::string& product) noexcept override;

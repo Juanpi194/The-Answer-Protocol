@@ -112,10 +112,7 @@ fclean: clean
 
 re: clean all
 
-# MODIFIED: thin passthrough targets to gui/'s own Makefile -- deliberately
-# NOT merged into the SRC/FLAGS above. See gui/Makefile's header comment
-# for why (SDL2/ImGui dependency, and keeping `make`/`make all` here free
-# of network access so grading never depends on internet or SDL2 install).
+# MODIFIED: redireccion al make del gui. Pensando en unificar, pero separado por el momento.
 gui:
 	$(MAKE) -C gui
 

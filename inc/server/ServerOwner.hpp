@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include "utils/attributes.hpp"
+
 class Server;
 
 class ServerOwner
@@ -25,6 +27,32 @@ class ServerOwner
 		 * @returns	The validated password.
 		 */
 		std::string	ask_password(void);
+
+		/**
+		 * @brief	Handles command sent by the owner.
+		 * @param	cmd	The command to execute.
+		 * @returns	`false` if `cmd` is QUIT, `true` otherwise.
+		 */
+		bool		handle_cmd(const std::string& cmd) TAP_UNUSED_RESULT;
+
+		// Methods called by the command handler --
+		
+		void		exit_server(void);
+		void		init_server(void) noexcept;
+		
+		/**
+		 * @brief	Completely stops the server
+		 * 			(closing fd, kicking players, ...).
+		 */
+		void		shutdown_server(void);
+		void		reset_server(void);
+		void		list_server_clients(void);
+		void		change_password(void);
+
+		/**
+		 * @brief	Short instructions for the supported commands.
+		 */
+		std::string	get_commands_instructions(void) const noexcept TAP_UNUSED_RESULT;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -49,8 +77,9 @@ class ServerOwner
 
 		// Utils --------------------------------------------------------------
 
-		void	change_password(void);
-		void	init_server(void);
-		void	shutdown_server(void);
-		void	reset_server(void);
+		/**
+		 * @brief	The thread that will simulate the owner, working
+		 * 			with the `std::cout`.
+		 */
+		void	owner_thread(void);
 };

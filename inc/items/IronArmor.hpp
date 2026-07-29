@@ -7,7 +7,7 @@ class IronArmor final: public Armor
 	private:
 		static unsigned int				available_id;	// Defined in IronArmor.cpp
 		static const std::string		PREFIX;	// Defined in IronArmor.cpp
-		static constexpr GearType		GEAR_TYPE = GearType::Iron;
+		static constexpr GearType		GEAR_TYPE = GearType::IRON;
 
 		// void	special_use(void) noexcept override;
 	public:
@@ -20,7 +20,7 @@ class IronArmor final: public Armor
 		IronArmor(void);
 		IronArmor(const IronArmor& iron_armor);
 		~IronArmor(void) = default;
-		IronArmor	*clone(void) const noexcept override;
+		IronArmor	*clone(void) const noexcept override TAP_RETURNS_NONNULL;
 
 		// Operators ----------------------------------------------------------
 

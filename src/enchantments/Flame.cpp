@@ -2,7 +2,7 @@
 
 const std::string			Flame::NAME = "Flame";
 const std::string			Flame::DESCRIPTION = "Applies burn.";
-const std::list<GearType>	Flame::ALLOWED_GEAR_TYPES = {GearType::Iron};
+const std::list<GearType>	Flame::ALLOWED_GEAR_TYPES = {GearType::IRON};
 
 // Constructors ---------------------------------------------------------------
 
@@ -23,7 +23,7 @@ Flame	*Flame::clone(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Flame::effect(void) noexcept
+void	Flame::effect(Fighter& user, Fighter& affected) const noexcept
 {
 	// TODO: Logic...
 }

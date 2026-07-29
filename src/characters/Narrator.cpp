@@ -27,5 +27,5 @@ std::string	Narrator::get_sentence(void) const noexcept
 void	Narrator::on_talk(Player& player) noexcept
 {
 	// ? REVIEW: Is this everything?
-	player.send_to_client(sentence);
+	player.send_to_outbox(sentence);
 }

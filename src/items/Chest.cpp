@@ -9,7 +9,7 @@
 #include "characters/Enemy.hpp"
 #include "characters/Player.hpp"
 
-std::list<Item*>	Chest::open(void) noexcept
+std::list<Item*>	Chest::open(void)
 {
 	std::list<Item*>	generated_items;
 	int					random;
@@ -22,7 +22,7 @@ std::list<Item*>	Chest::open(void) noexcept
 	// ?		 we could give a default item (maybe a potion) if no item is
 	// ?		 is generated.
 	// Generating items
-    while (generated_items.size() == 0)
+	while (generated_items.size() == 0)
 	{
 		for (std::pair<Item* const, unsigned int>& entry : pool)
 		{
@@ -39,50 +39,29 @@ std::list<Item*>	Chest::open(void) noexcept
 	return (generated_items);
 }
 
-bool				Chest::player_beat_guardian(Player& player) noexcept
-{
-	assert(guardian != nullptr && "Guardian cannot be nullptr in this method.");
-	for (const std::string enemy_name: player.get_beaten_enemies())
-	{
-		if (enemy_name  == guardian->get_name())
-			return (true);
-	}
-	return (false);
-}
-
 // Constructors ---------------------------------------------------------------
-
-Chest::Chest(void):
-	opened(false),
-	pool(ItemFactory::create_default_pool()),
-	guardian(nullptr)
-{
-	for (std::pair<Item*, unsigned int> item_and_chance: pool)
-	{
-		if (!item_and_chance.first)
-			throw std::invalid_argument("The pool cannot have nullptr items.");
-		if (item_and_chance.second == 0)
-			throw std::invalid_argument("The pool cannot have 0 as the chance of any item.");
-	}
-}
 
 Chest::Chest(Enemy *guardian):
 	opened(false),
 	pool(ItemFactory::create_default_pool()),
 	guardian(guardian)
 {
-	for (std::pair<Item*, unsigned int> item_and_chance: pool)
+	if (pool.size() == 0)
+		throw std::runtime_error("The pool cannot be empty. Check ItemFactory.cpp method.");
+	for (const std::pair<Item* const, unsigned int>& item_and_chance: pool)
 	{
 		if (!item_and_chance.first)
 			throw std::invalid_argument("The pool cannot have nullptr items.");
 		if (item_and_chance.second == 0)
 			throw std::invalid_argument("The pool cannot have 0 as the chance of any item.");
+		if (item_and_chance.second > 100)
+			throw std::invalid_argument("The pool cannot have more than 100 as the chance of an item.");
 	}
 }
 
 Chest::~Chest(void)
 {
-	for (std::pair<Item*, unsigned int> item_and_chance: pool)
+	for (std::pair<Item* const, unsigned int> item_and_chance: pool)
 		delete (item_and_chance.first);
 }
 
@@ -105,26 +84,26 @@ Enemy									*Chest::get_guardian(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-std::list<Item*>	Chest::interact(Player& player) noexcept
+std::list<Item*>	Chest::interact(Player& player)
 {
 	std::list<Item*>	result;
 	ChestKey			*chest_key;
 
 	if (opened)
 		return (result);
-	if (guardian && !player_beat_guardian(player))
+	if (guardian && !player.is_enemy_beaten(guardian))
 		return (log("Player '" + player.get_name() + "' has to beat '" + guardian->get_name() + "' before opening the chest.", LogLevel::WARNING), result);
-	chest_key = player.find_item<ChestKey>();
+	chest_key = player.get_inventory().find_item<ChestKey>();
 	if (!chest_key)
 		return (log("Player '" + player.get_name() + "' has no key to open the chest.", LogLevel::INFO), result);
 
 	// Removing the key
-	player.consume_item(*chest_key);
+	player.get_inventory().consume_item(*chest_key);
 
 	// ? REVIEW: Maybe instead of adding the items to the room,
 	// ?		 we should add them to the player.
 	result = open();
 	for (Item *item: result)
-		player.add_item(item);
+		player.get_inventory().add_item(item);
 	return (result);
 }

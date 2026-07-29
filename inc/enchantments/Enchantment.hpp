@@ -5,6 +5,7 @@
 #include "utils/types.hpp"
 
 class Gear;
+class Fighter;
 
 class Enchantment
 {
@@ -63,5 +64,5 @@ class Enchantment
 		 * @param	gear	The gear to enchant.
 		 */
 		void			apply_to(Gear& gear);
-		virtual void	effect(void) noexcept = 0;
+		virtual void	effect(Fighter& user, Fighter& affected) const noexcept = 0;
 };

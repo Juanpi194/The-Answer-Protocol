@@ -19,10 +19,8 @@ Merchant::Merchant(const std::string& name, const std::string& description, cons
 	if (items_to_sell.empty())
 		throw std::invalid_argument("Merchant's item list to sell cannot be empty.");
 	for (const std::pair<Item*, unsigned int>& item_and_price: items_to_sell)
-	{
 		if (!item_and_price.first)
 			throw std::invalid_argument("Merchant's item list to sell cannot have any nullptr in it.");
-	}
 }
 
 Merchant::~Merchant(void)
@@ -46,14 +44,14 @@ void	Merchant::on_talk(Player& player) noexcept
 
 	// ? REVIEW: Logic and format ...
 	products = "===";
-	player.send_to_client("Welcome!");
+	player.send_to_outbox("Welcome!");
 	for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
 	{
 		products += "\n";
 		products += (item_and_price.first->get_name() + " - " + std::to_string(item_and_price.second));
 	}
 	products += "\n===";
-	player.send_to_client(products);
+	player.send_to_outbox(products);
 	// TODO: Logic...
 }
 
@@ -74,14 +72,14 @@ void	Merchant::on_buy(Player& player, const std::string& product) noexcept
 	if (!item_found)
 	{
 		log("Item '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
-		player.send_to_client("We don't sell '" + product + "' here.");
+		player.send_to_outbox("We don't sell '" + product + "' here.");
 		return ;
 	}
 	if (!player.spend_gold(price))
-		player.send_to_client("You don't have enough money for that.");
+		player.send_to_outbox("You don't have enough money for that.");
 	else
 	{
-		player.send_to_client("Here you go.");
-		player.add_item(item_found->clone());
+		player.send_to_outbox("Here you go.");
+		player.get_inventory().add_item(item_found->clone());
 	}
 }

@@ -14,7 +14,8 @@ PlayerConnection::PlayerConnection(const std::string& name, int client_fd, Serve
 	player(Player(name)),
 	client_fd(client_fd),
 	connected(true),
-	server(server)
+	server(server),
+	quitting(false)
 {
 	// if (!server)
 	// 	throw std::invalid_argument("Player connection must be addressed to a server when being created.");
@@ -55,10 +56,20 @@ Server			*PlayerConnection::get_server(void) const noexcept
 	return (server);
 }
 
-void	PlayerConnection::set_client_fd(int client_fd)
+bool			PlayerConnection::is_quitting(void) const noexcept
 {
-	// TODO: Check if is already in use, ...
-	this->client_fd = client_fd;
+	return (quitting);
+} 
+
+void	PlayerConnection::set_client_fd(int client_fd) noexcept
+{
+	if (server && server->is_fd_available(client_fd))
+		this->client_fd = client_fd;
+	else
+	{
+		log("Couldn't set fd " + std::to_string(client_fd) + " to '" + player.get_name() + "'.", LogLevel::WARNING);
+		this->client_fd = -1;
+	}
 }
 
 void	PlayerConnection::set_connected(bool connected) noexcept
@@ -72,6 +83,11 @@ void	PlayerConnection::set_server(Server *server)
 	this->server = server;
 }
 
+void	PlayerConnection::set_quitting(bool quitting) noexcept
+{
+	this->quitting = quitting;
+}
+
 void	PlayerConnection::connect(void)
 {
 	// TODO: Connect to the server, ...
@@ -80,4 +96,9 @@ void	PlayerConnection::connect(void)
 void	PlayerConnection::disconnect(void)
 {
 	// TODO: Disconnect from the server ...
+
+	quitting = false;
+	connected = false;
+	close(client_fd);
+	client_fd = -1;
 }

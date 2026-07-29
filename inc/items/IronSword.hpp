@@ -7,8 +7,8 @@ class IronSword final: public Weapon
 	private:
 		static unsigned int				available_id;	// Defined in IronSword.cpp
 		static const std::string		PREFIX;	// Defined in IronSword.cpp
-		static constexpr GearType		GEAR_TYPE = GearType::Iron;
-		
+		static constexpr GearType		GEAR_TYPE = GearType::IRON;
+
 		// void	special_use(void) noexcept override;
 	public:
 		static const std::string		NAME;	// Defined in IronSword.cpp
@@ -20,7 +20,7 @@ class IronSword final: public Weapon
 		IronSword(void);
 		IronSword(const IronSword& iron_sword);
 		~IronSword(void) = default;
-		IronSword	*clone(void) const noexcept override;
+		IronSword	*clone(void) const noexcept override TAP_RETURNS_NONNULL;
 
 		// Operators ----------------------------------------------------------
 

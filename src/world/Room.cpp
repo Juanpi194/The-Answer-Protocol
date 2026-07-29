@@ -8,6 +8,7 @@
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
 #include "items/Chest.hpp"
+#include "items/Item.hpp"
 
 const std::string Room::PREFIX = "room.";
 
@@ -89,10 +90,8 @@ Room::Room(const std::string& id, const std::string& name, const std::string& de
 	else
 	{
 		for (Item *item: items)
-		{
 			if (!item)
 				throw std::invalid_argument("Item list cannot contain a nullptr.");
-		}
 	}
 }
 
@@ -142,30 +141,15 @@ Chest								*Room::get_chest(void) const noexcept
 	return (chest);
 }
 
-// std::list<Item *>&					Room::get_items(void) noexcept
-// {
-// 	return (items);
-// }
-
 const std::list<Item*>&				Room::get_items(void) const noexcept
 {
 	return (items);
 }
 
-// std::list<Player*>&					Room::get_player_list(void) noexcept
-// {
-// 	return (player_list);
-// }
-
 const std::list<Player*>&			Room::get_player_list(void) const noexcept
 {
 	return (player_list);
 }
-
-// std::map<Direction, Room*>&			Room::get_adjacent_rooms(void) noexcept
-// {
-// 	return (adjacent_rooms);
-// }
 
 const std::map<Direction, Room*>&	Room::get_adjacent_rooms(void) const noexcept
 {
@@ -191,10 +175,8 @@ void				Room::add_item(Item *item)
 	if (!item)
 		throw std::invalid_argument("Cannot add a nullptr to the item list.");
 	for (Item *item_in_list: items)
-	{
 		if (item_in_list == item)
 			throw std::invalid_argument("Cannot add the same item twice in the same room.");
-	}
 	items.push_back(item);
 }
 
@@ -203,10 +185,8 @@ void				Room::add_player(Player *player)
 	if (!player)
 		throw std::invalid_argument("Cannot add a nullptr to the player list.");
 	for (Player *player_in_list: player_list)
-	{
 		if (player_in_list == player)
 			throw std::invalid_argument("Cannot add the same player twice in the same room.");
-	}
 	player_list.push_back(player);
 	player->set_current_room(this);
 }
@@ -219,10 +199,8 @@ void				Room::remove_item(Item *item)
 	if (!item)
 		throw std::invalid_argument("Cannot remove a nullptr from the item list.");
 	for (Item *item_in_list: items)
-	{
 		if (item_in_list == item)
 			found = true;
-	}
 	if (!found)
 		throw std::invalid_argument("Item to removed must be in the room.");
 	items.remove(item);
@@ -236,10 +214,8 @@ void				Room::remove_player(Player *player)
 	if (!player)
 		throw std::invalid_argument("Cannot remove a nullptr from the player list.");
 	for (Player *player_in_list: player_list)
-	{
 		if (player_in_list == player)
 			found = true;
-	}
 	if (!found)
 		throw std::invalid_argument("Player to remove must be in the room.");
 	player_list.remove(player);
