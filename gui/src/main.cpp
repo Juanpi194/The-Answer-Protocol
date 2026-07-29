@@ -4,7 +4,6 @@
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
-
 #include <algorithm>
 #include <iterator>
 #include <map>
@@ -13,7 +12,6 @@
 #include <vector>
 #include <string>
 #include <cstdio>
-
 #include "gui/GuiClient.hpp"
 #include "world/Room.hpp"
 #include "items/Item.hpp"
@@ -34,20 +32,13 @@ static void logMsg(std::vector<std::string>& log, const std::string& msg)
         log.erase(log.begin());
 }
 
-// ---------------------------------------------------------------------------
-// Login screen: captures username/password (password is not validated
-// anywhere yet -- captured and, in Remote mode, sent on to the server as-is,
-// per what was agreed) and which session mode to use.
-// Returns true once the user has successfully connected (client.isConnected()
-// becomes the source of truth after that).
-// ---------------------------------------------------------------------------
 static void drawLoginScreen(GuiClient& client, AppState& state, std::string& errorMsg)
 {
     static char username[64] = "";
     static char password[64] = "";
     static char host[64] = "127.0.0.1";
-    static int  port = 8080; // matches Server::DEFAULT_PORT
-    static int  modeIndex = 0; // 0 = Local, 1 = Remote
+    static int  port = 8080;
+    static int  modeIndex = 0;
 
     ImGuiIO& io = ImGui::GetIO();
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
@@ -91,9 +82,7 @@ static void drawLoginScreen(GuiClient& client, AppState& state, std::string& err
         }
         else
         {
-            // Skeleton remote mode: the server does not read `password` or
-            // even `username` yet (Server::client_thread hardcodes the
-            // player name), but we send it anyway so the wiring is ready.
+            // TODO: SERVER DEBE RECOGER USERNAME Y PASSWORD
             if (client.connectRemote(host, port, username))
                 state = AppState::GAME;
             else
@@ -110,11 +99,6 @@ static void drawLoginScreen(GuiClient& client, AppState& state, std::string& err
     ImGui::End();
 }
 
-// ---------------------------------------------------------------------------
-// Map: only meaningful in LOCAL mode (needs a live Room graph). Tracks which
-// room ids have been visited in `discovered` -- this is UI-only bookkeeping,
-// not game state, so it is fine for it to live here instead of in Player.
-// ---------------------------------------------------------------------------
 static void drawMapWindow(Player* player, std::set<std::string>& discovered)
 {
     ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
@@ -174,10 +158,6 @@ static void drawMapWindow(Player* player, std::set<std::string>& discovered)
     ImVec2 origin = ImGui::GetCursorScreenPos();
     const float cell = 90.0f;
 
-    // We only have Room* for rooms reachable from the current one through
-    // already-discovered neighbors -- good enough for this proxy, since the
-    // player can only ever have discovered rooms by having walked through
-    // adjacent ones anyway.
     for (const auto& [roomId, pos] : coords)
     {
         if (!discovered.count(roomId))
@@ -262,13 +242,6 @@ static void drawStatsWindow(Player* player)
     ImGui::End();
 }
 
-// ---------------------------------------------------------------------------
-// Menu: Actions / Inventory / Stats(brief) / Settings.
-// Buttons only exist for commands CommandHandler actually implements today
-// (MOVE, FIGHT, ATTACK, DEFEND, FLEE, CONSUME APPLE) -- anything else goes
-// through the free-text input below the log, which is the general-purpose
-// way in for whatever CommandHandler grows next.
-// ---------------------------------------------------------------------------
 static void drawMenuWindow(GuiClient& client, std::vector<std::string>& log)
 {
     static int selectedIndex = -1;
@@ -320,8 +293,6 @@ static void drawMenuWindow(GuiClient& client, std::vector<std::string>& log)
             ImGui::SetScrollHereY(1.0f);
             ImGui::EndChild();
 
-            // Free-text command input -- goes straight to
-            // GuiClient::sendCommand(), same path as the buttons above.
             static char commandBuf[256] = "";
             ImGui::PushItemWidth(-70);
             bool submitted = ImGui::InputText("##CommandInput", commandBuf, IM_ARRAYSIZE(commandBuf),
@@ -465,8 +436,6 @@ int main(int, char**)
         }
         else
         {
-            // Pull whatever arrived since last frame (Player's outbox in
-            // Local mode, raw socket text in Remote mode) into the log.
             for (const std::string& msg : client.pollMessages())
                 logMsg(log, msg);
 
