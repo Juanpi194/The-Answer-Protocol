@@ -143,10 +143,11 @@ static void drawMapWindow(Player* player, std::set<std::string>& discovered)
             ImVec2 offset = base;
             switch (dir)
             {
-                case Direction::NORTH: offset.y -= 1; break;
-                case Direction::SOUTH: offset.y += 1; break;
-                case Direction::EAST:  offset.x += 1; break;
-                case Direction::WEST:  offset.x -= 1; break;
+                case Direction::NORTH:   offset.y -= 1; break;
+                case Direction::SOUTH:   offset.y += 1; break;
+                case Direction::EAST:    offset.x += 1; break;
+                case Direction::WEST:    offset.x -= 1; break;
+                case Direction::INVALID: break;
             }
             coords[neighbor->get_id()] = offset;
             visited.insert(neighbor->get_id());
@@ -250,7 +251,7 @@ static void drawMenuWindow(GuiClient& client, std::vector<std::string>& log)
     ImGui::SetNextWindowSize(ImVec2(1160, 240), ImGuiCond_FirstUseEver);
     ImGui::Begin("Menu");
 
-    Player* player = client.getPlayer(); // nullptr in Remote mode
+    Player* player = client.getPlayer();
 
     if (ImGui::BeginTabBar("MenuTabs"))
     {
@@ -272,16 +273,10 @@ static void drawMenuWindow(GuiClient& client, std::vector<std::string>& log)
             ImGui::NewLine();
 
             ImGui::Separator();
-            ImGui::Text("Combat:");
-            const char* combatCmds[] = { "FIGHT", "ATTACK", "DEFEND", "FLEE", "CONSUME APPLE" };
-            for (const char* cmd : combatCmds)
+            if (ImGui::Button("Look"))
             {
-                if (ImGui::Button(cmd))
-                {
-                    client.sendCommand(cmd);
-                    logMsg(log, std::string("> ") + cmd);
-                }
-                ImGui::SameLine();
+                client.sendCommand("LOOK");
+                logMsg(log, "> LOOK");
             }
             ImGui::NewLine();
 
@@ -353,7 +348,7 @@ static void drawMenuWindow(GuiClient& client, std::vector<std::string>& log)
 
         if (ImGui::BeginTabItem("Settings"))
         {
-            // Intentionally empty for now.
+            // TODO
             ImGui::EndTabItem();
         }
 

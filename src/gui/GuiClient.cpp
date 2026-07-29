@@ -1,8 +1,9 @@
 #include "gui/GuiClient.hpp"
-
 #include "commands/CommandHandler.hpp"
+#include "commands/commandparser.hpp"
 #include "utils/utils.hpp"
 
+// Movidas windows
 #ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>
@@ -41,7 +42,7 @@ void GuiClient::connectLocal(const std::string& name)
     world_ = std::make_unique<World>(DEFAULT_WORLD_NAME);
     connection_ = std::make_unique<PlayerConnection>(name, -1, nullptr);
     world_->get_spawn_room()->add_player(&connection_->get_player());
-    connection_->connect(); // currently a no-op in PlayerConnection, called for parity with debug_mode()
+    connection_->connect();
 
     mode_ = SessionMode::LOCAL;
 }
@@ -109,7 +110,17 @@ void GuiClient::sendCommand(const std::string& text)
 {
     if (mode_ == SessionMode::LOCAL)
     {
-        CommandHandler::handle(connection_->get_player(), *world_, text);
+        try
+        {
+            Command cmd = CommandParser::parse(text);
+            CommandHandler::handle(cmd, *connection_, *world_);
+        }
+        catch (const CommandParseError& e)
+        {
+            // Same feedback channel as any other command result, so it
+            // shows up in the log like everything else.
+            connection_->get_player().send_to_outbox(std::string("Parse error: ") + e.what());
+        }
     }
     else if (mode_ == SessionMode::REMOTE && socketFd_ >= 0)
     {
@@ -164,7 +175,7 @@ void GuiClient::remoteRecvLoop(void)
     {
         int bytes = static_cast<int>(recv(socketFd_, buf, sizeof(buf) - 1, 0));
         if (bytes <= 0)
-            break; // connection closed or error -- skeleton, no reconnect logic
+            break; // Error Exit
         buf[bytes] = '\0';
         {
             std::lock_guard<std::mutex> lock(incomingMtx_);
