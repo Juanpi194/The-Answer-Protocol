@@ -9,7 +9,9 @@
 #include "characters/Player.hpp"
 #include "characters/Enemy.hpp"
 #include "libs/json.hpp"
+#include "protocol/responses.hpp"
 #include "server/PlayerConnection.hpp"
+#include "server/Server.hpp"
 #include "world/Room.hpp"
 #include "world/World.hpp"
 
@@ -54,25 +56,23 @@ static void		fight_result(Player& player, World& world)
 
 static void		cmd_look(const Command& cmd, Player& player)
 {
+	std::string	result;
+
 	if (cmd.args.size() != 0)
-	{
-		player.send_to_outbox("Command LOOK does not receive parameters.");
-		return ;
-	}
-	if (!player.get_current_room())
-	{
-		player.send_to_outbox("Player is not located at any room, cannot execute LOOK.");
-		return ;
-	}
-	player.send_to_outbox(player.get_current_room()->look());
-	
+		result = err(ErrorCode::WRONG_ARGUMENTS);
+	else if (!player.get_current_room())
+		result = err(ErrorCode::NO_ROOM);
+	else
+		result = ok(player.get_current_room()->look());
+	player.send_to_outbox(result);
+
 	// TODO: Remove the json test.
-	std::string	json_format;
-	json_format = player.get_current_room()->look();
-	nlohmann::json	j = nlohmann::json::parse(json_format);
-	std::ofstream	result_file("datos.json");
-	result_file << j.dump(4);
-	result_file.close();
+	// std::string	json_format;
+	// json_format = player.get_current_room()->look();
+	// nlohmann::json	j = nlohmann::json::parse(json_format);
+	// std::ofstream	result_file("datos.json");
+	// result_file << j.dump(4);
+	// result_file.close();
 }
 
 static void		cmd_move(const Command& cmd, Player& player)
@@ -81,46 +81,50 @@ static void		cmd_move(const Command& cmd, Player& player)
 
 	if (cmd.args.size() != 1)
 	{
-		player.send_to_outbox("Command MOVE must receive one parameter, being the direction to move.");
-		return ;
+		player.send_to_outbox(err(ErrorCode::WRONG_ARGUMENTS));
+		return;
 	}
 	dir = string_to_direction(cmd.args[0]);
 	if (dir == Direction::INVALID)
 	{
-		player.send_to_outbox("Invalid direction.");
-		return ;
+		player.send_to_outbox(err(ErrorCode::INVALID_ARGUMENT));
+		return;
 	}
 	if (!player.move(dir))
-		player.send_to_outbox("You cannot move in that direction.");
+		player.send_to_outbox(err(ErrorCode::NO_EXIT));
+	else if (player.get_current_room())
+		player.send_to_outbox(ok("room=" + player.get_current_room()->get_name()));
+	else
+		player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 }
 
 static void		cmd_quit(const Command& cmd, PlayerConnection& conn)
 {
 	if (cmd.args.size() != 0)
+		conn.get_player().send_to_outbox(err(ErrorCode::WRONG_ARGUMENTS));
+	else
 	{
-		conn.get_player().send_to_outbox("Command QUIT does not receive parameters.");
-		return ;
+		conn.get_player().send_to_outbox(ok("bye"));
+		conn.set_quitting(true);
 	}
-	conn.get_player().send_to_outbox("Bye");
-	conn.set_quitting(true);
 }
 
 static void		cmd_fight(Player& player)
 {
-	// ? REVIEW: All this logic.
+	// ? REVIEW: All this logic and messages.
 	Room	*player_room;
 	Enemy	*enemy;
 
 	if (player.get_battle())
 	{
 		player.send_to_outbox("You are already in a battle.");
-		return ;
+		return;
 	}
 	player_room = player.get_current_room();
 	if (!player_room)
 	{
 		player.send_to_outbox("You must be in a room with an enemy to start a fight.");
-		return ;
+		return;
 	}
 	enemy = get_enemy_in_room(*player_room);
 	if (!enemy)
@@ -136,6 +140,7 @@ static void		cmd_fight(Player& player)
 
 static void		cmd_in_fight(Player& player, FightChoice choice, World& world)
 {
+	// ? REVIEW: Messages
 	if (player.get_battle())
 	{
 		if (choice.action == FightAction::DEFEND && !player.get_shield())
@@ -151,6 +156,19 @@ static void		cmd_in_fight(Player& player, FightChoice choice, World& world)
 		player.send_to_outbox("You are not in a battle.");
 }
 
+static void		cmd_help(const Command& cmd, PlayerConnection& conn)
+{
+	std::string	result;
+
+	if (!conn.get_server())
+		result = err(ErrorCode::UNEXPECTED_ERROR);
+	else if (cmd.args.size() != 0)
+		result = err(ErrorCode::WRONG_ARGUMENTS);
+	else
+		result = ok(conn.get_server()->get_commands_instructions());
+	conn.get_player().send_to_outbox(result);
+}
+
 void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, World& world)
 {
 	// TODO: Add specific errors in case something wrong happens.
@@ -162,7 +180,7 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 	{
 		case CommandType::CONNECT:
 			// Connection should be done only once in the client_thread.
-			player.send_to_outbox("You are already connected.");
+			player.send_to_outbox(ok("already connected"));
 			break;
 		case CommandType::LOOK:
 			cmd_look(cmd, player);
@@ -174,7 +192,8 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			cmd_quit(cmd, connection);
 			break;
 		default:
-			player.send_to_outbox("Invalid command.");
+			// It should never get to this point, all types should be managed.
+			player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 	}
 	// TODO: MORE COMMANDS...
 }

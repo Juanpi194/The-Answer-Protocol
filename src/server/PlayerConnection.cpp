@@ -88,17 +88,18 @@ void	PlayerConnection::set_quitting(bool quitting) noexcept
 	this->quitting = quitting;
 }
 
-void	PlayerConnection::connect(void)
+void	PlayerConnection::reconnect(int fd)
 {
-	// TODO: Connect to the server, ...
+	set_client_fd(fd);
+	connected = true;
+	quitting = false;
 }
 
 void	PlayerConnection::disconnect(void)
 {
-	// TODO: Disconnect from the server ...
-
 	quitting = false;
 	connected = false;
-	close(client_fd);
+	if (client_fd >= 0)
+		close(client_fd);
 	client_fd = -1;
 }

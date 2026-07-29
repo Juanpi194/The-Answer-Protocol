@@ -57,7 +57,6 @@ class Enchanter final: public NPC, public Vendor
 		const std::map<Enchantment*, unsigned int>&	get_enchantments_to_sell(void) const noexcept;
 
 		// Utils --------------------------------------------------------------
-		// TODO: Throws exception if enchantment doesn't work for gear.
 
 		void	on_talk(Player& player) noexcept override;
 

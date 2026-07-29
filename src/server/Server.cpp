@@ -8,6 +8,7 @@
 #include "utils/utils.hpp"
 #include "commands/CommandHandler.hpp"
 #include "commands/commandparser.hpp"
+#include "protocol/responses.hpp"
 
 const std::string	ServerError::DEFAULT_MSG = "Server initialization failed.";
 
@@ -35,7 +36,7 @@ int	Server::init(void)
 	struct timeval	timeout;
 	const int		opt = 1;
 
-	sock = socket(AF_INET, SOCK_STREAM, 0);
+	sock = socket(DOMAIN, TYPE, 0);
 	if (sock == -1)
 		return (log("Error in the socket creation.", LogLevel::ERROR), -1);
 
@@ -45,7 +46,7 @@ int	Server::init(void)
 	setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));	// To reuse the port.
 
-	address.sin_family = AF_INET;
+	address.sin_family = DOMAIN;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(DEFAULT_PORT);
 	if (bind(sock, (sockaddr *)&address, sizeof(address)) == -1)
@@ -55,18 +56,20 @@ int	Server::init(void)
 	return (sock);
 }
 
-PlayerConnection	*Server::setup_client(int fd)
+PlayerConnection	*Server::setup_client(const int fd)
 {
+	const std::string	welcome_msg = ok("Hello proto=" + std::to_string(fd));
 	char				answer[MAX_MSG_LENGTH];
 	std::string			str_answer;
 	PlayerConnection	*client;
 	Command				cmd;
 	ssize_t				bytes;
 	bool				reconnecting;
+	std::string			msg_for_client;
 
 	if (fd < 0)
 		return (nullptr);
-	if (send(fd, "Hello\n", strlen("Hello\n"), 0) == -1)
+	if (send(fd, welcome_msg.c_str(), welcome_msg.size(), 0) == -1)
 		return (nullptr);
 	client = nullptr;
 	reconnecting = false;
@@ -93,25 +96,38 @@ PlayerConnection	*Server::setup_client(int fd)
 				return (nullptr);
 			continue;
 		}
+		if (cmd.type == CommandType::QUIT)
+		{
+			msg_for_client = ok("bye");
+			send(fd, msg_for_client.c_str(), msg_for_client.size(), 0);
+			return (nullptr);
+		}
 		if (cmd.type != CommandType::CONNECT)
 		{
-			if (send(fd, "CONNECT before any other action\n", strlen("CONNECT before any other action\n"), 0) == -1)
+			msg_for_client = err(ErrorCode::NOT_CONNECTED);
+			if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
 				return (nullptr);
 		}
-		else if (cmd.args.empty())
+		else if (cmd.args.empty() || cmd.args.size() > 1)
 		{
-			if (send(fd, "CONNECT needs the name of the user to connect as an argument.\n", strlen("CONNECT needs the name of the user to connect as an argument.\n"), 0) == -1)
-				return (nullptr);
-		}
-		else if (cmd.args.size() > 1)
-		{
-			if (send(fd, "CONNECT only needs the name of the user to connect as an argument.\n", strlen("CONNECT only needs the name of the user to connect as an argument.\n"), 0) == -1)
+			msg_for_client = err(ErrorCode::WRONG_ARGUMENTS);
+			if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
 				return (nullptr);
 		}
 		else
 		{
 			// Connection
 			{
+				// Checking if client is banned.
+				if (is_client_banned(cmd.args[0]))
+				{
+					msg_for_client = err(ErrorCode::BANNED_PLAYER);
+					if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
+						return (nullptr);
+					continue;
+				}
+
+				// Finding client.
 				std::lock_guard<std::mutex>	lock(clients_mtx);
 				client = search_client_by_name(cmd.args[0]);
 				if (!client)
@@ -121,7 +137,8 @@ PlayerConnection	*Server::setup_client(int fd)
 				}
 				else if (client->is_connected())
 				{
-					if (send(fd, "Name already in use.\n", strlen("Name already in use.\n"), 0) == -1)
+					msg_for_client = err(ErrorCode::NAME_IN_USE);
+					if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
 						return (nullptr);
 					client = nullptr;
 				}
@@ -129,22 +146,19 @@ PlayerConnection	*Server::setup_client(int fd)
 					reconnecting = true;
 			}
 			if (reconnecting)
-			{
-				client->set_client_fd(fd);
-				client->set_connected(true);
-				client->set_quitting(false);
-			}
+				client->reconnect(fd);
 		}
 	}
 	if (!client)
 		return (nullptr);
-	if (send(fd, "Connected\n", strlen("Connected\n"), 0) == -1)
+	msg_for_client = ok("connected");
+	if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
 		return (nullptr);
-	connect_client(*client);
+	announce_connection(*client);
 	return (client);
 }
 
-void	Server::client_thread(int fd)
+void				Server::client_thread(int fd)
 {
 	PlayerConnection		*client;
 	struct timeval			timeout;
@@ -154,13 +168,16 @@ void	Server::client_thread(int fd)
 
 	client = setup_client(fd);
 	if (!client)
-		return ;
+	{
+		close(fd);
+		return;
+	}
 
 	if (!client->get_player().get_current_room())
 		world->get_spawn_room()->add_player(&client->get_player());
 
 	// After the PlayerConnection is initiated, all this is correct.
-	const int				client_fd = client->get_client_fd();
+	const int	client_fd = client->get_client_fd();
 
 	// For timeouts ('recv' function)
 	timeout.tv_sec = 0;
@@ -176,7 +193,7 @@ void	Server::client_thread(int fd)
 			break;
 		}
 		else if (bytes > 0)
-			client->get_server()->push_command({client, std::string(msg, bytes)});
+			push_command({client, std::string(msg, bytes)});
 		else
 		{
 			if (errno != EAGAIN && errno != EWOULDBLOCK)
@@ -188,7 +205,7 @@ void	Server::client_thread(int fd)
 		outbox_msgs = client->get_player().drain_outbox();
 		for (const std::string& outbox_msg: outbox_msgs)
 		{
-			bytes = send(client_fd, (outbox_msg + '\n').c_str(), (outbox_msg + '\n').size(), MSG_NOSIGNAL);
+			bytes = send(client_fd, (outbox_msg).c_str(), (outbox_msg).size(), MSG_NOSIGNAL);
 			if (bytes == -1)
 			{
 				client->disconnect();
@@ -196,16 +213,14 @@ void	Server::client_thread(int fd)
 			}
 		}
 		if (client->is_quitting())
-		{
 			client->disconnect();
-			
-		}
 	}
 	if (on)
-		disconnect_client(*client);
+		announce_disconnection(*client);
+	client->disconnect();
 }
 
-void	Server::accept_loop(void)
+void				Server::accept_loop(void)
 {
 	int	fd;
 
@@ -272,6 +287,11 @@ bool								Server::is_on(void) const noexcept
 	return (on);
 }
 
+const std::list<std::string>&		Server::get_banned_clients(void) const noexcept
+{
+	return (banned_clients);
+}
+
 void	Server::set_owner(ServerOwner *owner) noexcept
 {
 	if (!owner)
@@ -298,7 +318,7 @@ void	Server::start(void)
 	if (on)
 	{
 		log("Tried to start server, but it is already on.", LogLevel::WARNING);
-		return ;
+		return;
 	}
 
 	sock = init();
@@ -313,14 +333,26 @@ void	Server::stop(void)
 	if (!on)
 	{
 		log("Tried to stop server, but it is already off.", LogLevel::WARNING);
-		return ;
+		return;
 	}
 
 	// Shutting down the server...
 	on = false;
+	accept_thread.join();
 	close(sock);
 	sock = -1;
-	accept_thread.join();
+
+	// Setting the players as not connected...
+	{
+		std::lock_guard<std::mutex>	lock(clients_mtx);
+		for (PlayerConnection& client: clients)
+			client.set_connected(false);
+	}
+
+	// Joining client threads...
+	for (std::thread& thread: thread_list)
+		if (thread.joinable())
+			thread.join();
 
 	// Disconnecting players...
 	{
@@ -328,11 +360,6 @@ void	Server::stop(void)
 		for (PlayerConnection& client: clients)
 			client.disconnect();
 	}
-
-	// Joining threads...
-	for (std::thread& thread: thread_list)
-		if (thread.joinable())
-			thread.join();
 }
 
 void	Server::send_msg_to(int dst, const std::string& msg)
@@ -355,12 +382,12 @@ void	Server::broadcast(const std::string& msg, int fd_excluded)
 			client.get_player().send_to_outbox(msg);
 }
 
-void	Server::connect_client(PlayerConnection& player)
+void	Server::announce_connection(PlayerConnection& player)
 {
 	broadcast("Player '" + player.get_player().get_name() + "' connected.", player.get_client_fd());
 }
 
-void	Server::disconnect_client(PlayerConnection& player)
+void	Server::announce_disconnection(PlayerConnection& player)
 {
 	broadcast("Player '" + player.get_player().get_name() + "' disconnected.", player.get_client_fd());
 }
@@ -400,7 +427,10 @@ void	Server::game_loop(void)
 			}
 			catch (const CommandParseError& e)
 			{
-				(*cmd_info.sender).get_player().send_to_outbox(e.what());
+				// TODO: Mandar al error el tipo de error, poniéndole a la excepción un tipo de error en concreto.
+				// TODO: El salto de linea debería venir ya en el e.what, generado al llamar a err(tipo de error)
+				(*cmd_info.sender).get_player().send_to_outbox(std::string(e.what(), strlen(e.what())) + '\n');
+				log(e.what(), LogLevel::ERROR);
 				continue;
 			}
 		}
@@ -435,20 +465,99 @@ std::string			Server::list_clients(void) noexcept
 {
 	const std::string			bars = "=====";
 	std::string					result;
-	std::lock_guard<std::mutex>	lock(clients_mtx);
+	Player						*player;
+	std::list<std::string>		banned_clients_copy;
+	bool						banned;
 
 	result += bars;
 	result += "\n";
+	{
+		// We make a copy so we forget about the mutex.
+		std::lock_guard<std::mutex>	lock(banned_mtx);
+		banned_clients_copy = banned_clients;
+	}
+
+	// Reading clients
+	std::lock_guard<std::mutex>	lock(clients_mtx);
 	if (clients.size() == 0)
 		result += "None\n";
 	for (PlayerConnection& client: clients)
 	{
-		result += client.get_player().get_name() + ": ";
+		// It is not possible to add in-game related information (data races).
+		banned = false;
+		player = &client.get_player();
+		result += player->get_name() + ": ";
 		if (client.is_connected())
 			result += "Connected (fd: " + std::to_string(client.get_client_fd()) + ")\n";
 		else
-			result += "Disconnected\n";
+		{
+			for (const std::string& client_banned: banned_clients_copy)
+				if (client_banned == player->get_name())
+					banned = true;
+			if (banned)
+				result += "Disconnected (Banned)\n";
+			else
+				result += "Disconnected\n";
+		}
 	}
+	result += bars;
+	return (result);
+}
+
+bool				Server::is_client_banned(const std::string& name) noexcept
+{
+	std::lock_guard<std::mutex>	lock(banned_mtx);
+
+	for (const std::string& banned_name: banned_clients)
+		if (banned_name == name)
+			return (true);
+	return (false);
+}
+
+bool				Server::ban_client(const std::string& name) noexcept
+{
+	PlayerConnection			*client;
+
+	// Looking for a client with that name.
+	{
+		std::lock_guard<std::mutex>	lock(clients_mtx);
+		client = search_client_by_name(name);
+	}
+	if (!client)
+		return (false);	// Client not found.
+
+	if (client->is_connected())
+		client->set_connected(false);
+	std::lock_guard<std::mutex>	lock_banned(banned_mtx);
+	for (const std::string& banned: banned_clients)
+		if (banned == name)
+			return (false);	// Client is already banned.
+	banned_clients.push_back(name);
+	return (true);
+}
+
+std::string			Server::get_commands_instructions(void) const noexcept
+{
+	const std::string	bars = "=====";
+	const std::string	connect_instructions = "CONNECT: Receives one argument, the client name.";
+	const std::string	move_instructions = "MOVE: Receives one argument, a direction. Moves the player in the specified direction.";
+	const std::string	look_instructions = "LOOK: Takes no argument. Gives all the information of the player's room in json format.";
+	const std::string	quit_instructions = "QUIT: Takes no argument. Disconnects the client.";
+	const std::string	help_instructions = "HELP: Takes no argument. Shows this command list.";
+	std::string			result;
+
+	result += bars;
+	result += '\n';
+	result += connect_instructions;
+	result += '\n';
+	result += move_instructions;
+	result += '\n';
+	result += look_instructions;
+	result += '\n';
+	result += quit_instructions;
+	result += '\n';
+	result += help_instructions;
+	result += '\n';
 	result += bars;
 	return (result);
 }

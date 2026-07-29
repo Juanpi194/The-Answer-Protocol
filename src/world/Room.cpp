@@ -163,7 +163,7 @@ void	Room::set_adjacent_room(Direction direction, Room *room)
 	if (!room)
 	{
 		log("Tried to connect a nullptr room to '" + name + "'.", LogLevel::WARNING);
-		return ;
+		return;
 	}
 	this->adjacent_rooms[direction] = room;
 }

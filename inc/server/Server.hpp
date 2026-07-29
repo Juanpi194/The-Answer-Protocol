@@ -44,10 +44,13 @@ class Server
 		int							sock;
 		ServerOwner					*owner;
 		World						*world;
+
 		std::list<PlayerConnection>	clients;
 		std::mutex					clients_mtx;
+
 		std::list<t_command>		cmd_queue;
 		std::mutex					cmd_mtx;
+
 		std::atomic<bool>			on;
 		std::thread					accept_thread;
 
@@ -65,8 +68,11 @@ class Server
 		 */
 		std::atomic<bool>			running;
 
-		// static constexpr int		DOMAIN = AF_INET;
-		// static constexpr int		TYPE = SOCK_STREAM;
+		std::list<std::string>		banned_clients;
+		std::mutex					banned_mtx;
+
+		static constexpr int			DOMAIN = AF_INET;
+		static constexpr int			TYPE = SOCK_STREAM;
 		static constexpr int			DEFAULT_PORT = 8080;
 		static constexpr unsigned int	MAX_CLIENTS = 20;
 		static constexpr size_t			MAX_MSG_LENGTH = 1024;
@@ -84,22 +90,23 @@ class Server
 		 * @returns	A new account or one that already exists. `nullptr` if
 		 * 			any error happens during the connection.
 		 */
-		PlayerConnection	*setup_client(int fd);
+		PlayerConnection	*setup_client(const int fd);
 
 		/**
 		 * @brief	Thread that will simulate each client.	
 		 */
-		void	client_thread(int fd);
+		void				client_thread(int fd);
 
 		/**
 		 * @brief	Thread that will be accepting new clients.
 		 */
-		void	accept_loop(void);
+		void				accept_loop(void);
 
 		/**
 		 * @note	This method will not lock `clients_mtx`.
 		 */
 		PlayerConnection	*search_client_by_name(const std::string& name) noexcept;
+
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -122,6 +129,7 @@ class Server
 		World								*get_world(void) const noexcept;
 		const std::list<PlayerConnection>&	get_clients(void) const noexcept;
 		bool								is_on(void) const noexcept;
+		const std::list<std::string>&		get_banned_clients(void) const noexcept;
 
 		void	set_owner(ServerOwner *owner) noexcept;
 		void	set_world(World *world) noexcept;
@@ -139,6 +147,11 @@ class Server
 		 */
 		void	start(void);
 
+		/**
+		 * @brief	Turns the server off: Waits `accept_thread` to finish,
+		 * 			closes the socket, sets it to -1, sets all clients as
+		 * 			disconnected, and joins all client threads.
+		 */
 		void	stop(void);
 		void	send_msg_to(int dst, const std::string& msg);
 
@@ -154,12 +167,12 @@ class Server
 		/**
 		 * @brief	Broadcasts that a client connected.
 		 */
-		void	connect_client(PlayerConnection& client);
+		void	announce_connection(PlayerConnection& client);
 
 		/**
 		 * @brief	Broadcasts that a client disconnected.
 		 */
-		void	disconnect_client(PlayerConnection& client);
+		void	announce_disconnection(PlayerConnection& client);
 
 		void	push_command(const t_command& cmd);
 		void	game_loop(void);
@@ -172,4 +185,24 @@ class Server
 		 * @returns	The generated string.
 		 */
 		std::string			list_clients(void) noexcept;
+
+		/**
+		 * @brief	Checks if a player is in the bans list.
+		 * @param	client	The player to check.
+		 */
+		bool				is_client_banned(const std::string& name) noexcept;
+
+		/**
+		 * @brief	Bans the client with the specified name from the server.
+		 * @param	name	The name of the client to ban.
+		 * @return	`true` if ban was succesfull. `false` otherwise.
+		 */
+		bool				ban_client(const std::string& name) noexcept;
+
+		/**
+		 * @brief	Creates a string with all the available commands and their
+		 * 			information.
+		 * @returns	A string with all commands instructions explained.
+		 */
+		std::string			get_commands_instructions(void) const noexcept;
 };

@@ -73,7 +73,7 @@ void	Merchant::on_buy(Player& player, const std::string& product) noexcept
 	{
 		log("Item '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
 		player.send_to_outbox("We don't sell '" + product + "' here.");
-		return ;
+		return;
 	}
 	if (!player.spend_gold(price))
 		player.send_to_outbox("You don't have enough money for that.");

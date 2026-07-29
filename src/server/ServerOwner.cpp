@@ -24,30 +24,6 @@ static void	reject_password(const std::string& reason, const std::string& detail
 	password.clear();
 }
 
-bool	ServerOwner::handle_cmd(const std::string& cmd)
-{
-	// TODO: Parse cmd.
-
-	if (cmd == "EXIT")
-		return (exit_server(), false);
-	else if (cmd == "INIT")
-		init_server();
-	else if (cmd == "SHUTDOWN")
-		shutdown_server();
-	else if (cmd == "RESET")
-		reset_server();
-	else if (cmd == "LIST")
-		list_server_clients();
-	else if (cmd == "PWDCHANGE")
-		change_password();
-	else if (cmd == "HELP")
-		std::cout << get_commands_instructions() << std::endl;
-	else
-		std::cout << "Invalid command. Write 'HELP' for commands information." << std::endl;
-	// TODO: More commands
-	return (true);
-}
-
 std::string	ServerOwner::ask_password(void)
 {
 	std::string	password;
@@ -97,6 +73,65 @@ std::string	ServerOwner::ask_password(void)
 	return (password);
 }
 
+bool	ServerOwner::handle_cmd(const std::string& cmd)
+{
+	// TODO: Parse cmd.
+
+	if (cmd == "EXIT")
+	{
+		if (confirm_password())
+			return (exit_server(), false);
+	}
+	else if (cmd == "INIT")
+	{
+		if (confirm_password())
+			init_server();
+	}
+	else if (cmd == "SHUTDOWN")
+	{
+		if (confirm_password())
+			shutdown_server();
+	}
+	else if (cmd == "RESET")
+	{
+		if (confirm_password())
+			reset_server();
+	}
+	else if (cmd == "LIST")
+		list_server_clients();
+	else if (cmd == "PWDCHANGE")
+	{
+		if (confirm_password())
+			change_password();
+	}
+	else if (cmd == "BAN")
+		std::cout << "'BAN' requires an argument. Usage: BAN <name>." << std::endl;
+	else if (starts_with(cmd, "BAN "))
+	{
+		if (confirm_password())
+			ban_client(cmd.substr(4));
+	}
+	else if (cmd == "HELP")
+		std::cout << get_server_management_commands_instructions() << std::endl;
+	else
+		std::cout << "Invalid command. Write 'HELP' for commands information." << std::endl;
+	return (true);
+}
+
+bool	ServerOwner::confirm_password(void) noexcept
+{
+	std::string	answer;
+
+	std::cout << "Introduce password to execute action: ";
+	std::getline(std::cin, answer);
+	if (answer != password)
+	{
+		std::cout << "Wrong password. Action denied." << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
 void	ServerOwner::exit_server(void)
 {
 	if (!server)
@@ -109,7 +144,7 @@ void	ServerOwner::exit_server(void)
 void	ServerOwner::init_server(void) noexcept
 {
 	if (!server || server->is_on())
-		return ;
+		return;
 
 	std::cout << "Initializing server..." << std::endl;	
 	try
@@ -127,7 +162,7 @@ void	ServerOwner::init_server(void) noexcept
 void	ServerOwner::shutdown_server(void)
 {
 	if (!server || !server->is_on())
-		return ;
+		return;
 
 	std::cout << "Shutting down server..." << std::endl;
 	server->stop();
@@ -136,9 +171,18 @@ void	ServerOwner::shutdown_server(void)
 
 void	ServerOwner::reset_server(void)
 {
-	if (!server)
-		return ;
+	std::string	answer;
 
+	if (!server)
+		return;
+
+	std::cout << "Introduce password to execute action: ";
+	std::getline(std::cin, answer);
+	if (answer != password)
+	{
+		std::cout << "Wrong password. Action denied." << std::endl;
+		return;
+	}
 	std::cout << "Resetting server..." << std::endl;
 	shutdown_server();
 	init_server();
@@ -152,12 +196,27 @@ void	ServerOwner::list_server_clients(void)
 	std::cout << server->list_clients() << std::endl;
 }
 
+void	ServerOwner::ban_client(std::string name)
+{
+	if (!server)
+		return;
+
+	trim_str(name, false);
+	if (name.empty())
+		std::cout << "Specified name is empty. 'BAN' requires a name. Usage: BAN <name>." << std::endl;
+	else if (!server->ban_client(name))
+		std::cout << "Client not found or already banned." << std::endl;
+	else
+		std::cout << ("'" + name + "' banned.") << std::endl;
+}
+
 void	ServerOwner::change_password(void)
 {
 	log("Request to change password received.", LogLevel::INFO);
 	try
 	{
 		password = ask_password();
+		std::cout << "Password successfully created!" << std::endl;
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -167,13 +226,14 @@ void	ServerOwner::change_password(void)
 	}
 }
 
-std::string	ServerOwner::get_commands_instructions(void) const noexcept
+std::string	ServerOwner::get_server_management_commands_instructions(void) const noexcept
 {
 	const std::string	bars = "=====";
 	const std::string	init_instructions = "INIT: Starts the server.";
 	const std::string	shutdown_instructions = "SHUTDOWN: Stops the server.";
 	const std::string	reset_instructions = "RESET: Stops the server, then starts it.";
 	const std::string	list_clients_instructions = "LIST: Lists all clients and their information.";
+	const std::string	ban_client_instructions = "BAN: Bans the client with the specified name. Usage: 'BAN <name>'";
 	const std::string	password_change_instructions = "PWDCHANGE: Changes the password.";
 	const std::string	exit_instructions = "EXIT: Stops the server and exits the program.";
 	const std::string	help_instructions = "HELP: Shows all the available commands.";
@@ -186,6 +246,8 @@ std::string	ServerOwner::get_commands_instructions(void) const noexcept
 	commands += shutdown_instructions;
 	commands += '\n';
 	commands += list_clients_instructions;
+	commands += '\n';
+	commands += ban_client_instructions;
 	commands += '\n';
 	commands += password_change_instructions;
 	commands += '\n';
@@ -210,11 +272,12 @@ ServerOwner::ServerOwner(const std::string& name, Server *server)
 	std::cout << "Welcome, " << name << "!" << std::endl;
 	std::cout << "From now on, you will be in charge of a server." << std::endl;
 	std::cout << "Here you have all the available commands:" << std::endl;
-	std::cout << get_commands_instructions() << std::endl;;
+	std::cout << get_server_management_commands_instructions() << std::endl;;
 	std::cout << "Good luck :)" << std::endl;
 	try
 	{
 		password = ask_password();
+		std::cout << "Password successfully created!" << std::endl;
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -223,12 +286,6 @@ ServerOwner::ServerOwner(const std::string& name, Server *server)
 		std::cout << "Server's password will be set to '" << default_password << "'." << std::endl;
 		password = default_password;
 	}
-}
-
-ServerOwner::~ServerOwner(void)
-{
-	// if (server)
-		// close
 }
 
 // Getters and setters --------------------------------------------------------

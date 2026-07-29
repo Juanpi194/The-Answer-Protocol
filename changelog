@@ -6,10 +6,15 @@ Battle
 Timer para mensajes por usuario (Limitado a x mensajes en x tiempo?)
 Install dependencies (json.h, gui.h....)
 Input Framing (LOOK\nFIGHT) -> 2 commands in the same line (split by \n)
+Input JSON -> Set enemies with gear, weapons with enchantments, ...
+Quitar jugador de la sala si se desconecta, y volver a meterlo cuando se conecte
+Más información para los usuarios
+Password class for ServerOwner
 
 QUESTIONS ---------
 Should a npc factory be made (Each npcs has its own name and stuff, automatic factory might not make sense)
 Enchantment ids???
+Should all exceptions be in the same file?
 
 BUGS --------------
 Hola
@@ -18,6 +23,11 @@ DONE --------------
 utils
 attributes
 parser
+The main 4 different threads:
+- main (game_loop, reading commands by clients)
+- owner (owner_thread, reading stdin)
+- accept (accept_loop, accepting clients all the time)
+- clients (one for each client, client_thread. Client routine)
 
 CHANGES -----------
 NO COMPILATION FLAGS UNTIL END

@@ -22,3 +22,4 @@ BAD_ALLOC WILL NOT BE MANAGED THROUGH THE METHODS. So any method that only throw
 
 
 nc -N localhost 8080
+sanitize=thread: setarch "$(uname -m)" -R ./tap

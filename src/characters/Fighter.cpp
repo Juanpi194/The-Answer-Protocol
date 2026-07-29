@@ -153,7 +153,7 @@ void	Fighter::attack(Fighter& target) noexcept
 	if (target.is_defending())
 	{
 		target.get_shield()->protect(target, *this);
-		return ;
+		return;
 	}
 
 	// Calculating damage

@@ -35,6 +35,13 @@ class ServerOwner
 		 */
 		bool		handle_cmd(const std::string& cmd) TAP_UNUSED_RESULT;
 
+		/**
+		 * @brief	Asks the user to introduce the password.
+		 * @returns	`true` if test passed. `false` otherwise.
+		 * @note	Method mainly used for executing important actions.
+		 */
+		bool		confirm_password(void) noexcept;
+
 		// Methods called by the command handler --
 		
 		void		exit_server(void);
@@ -47,12 +54,13 @@ class ServerOwner
 		void		shutdown_server(void);
 		void		reset_server(void);
 		void		list_server_clients(void);
+		void		ban_client(std::string name);
 		void		change_password(void);
 
 		/**
 		 * @brief	Short instructions for the supported commands.
 		 */
-		std::string	get_commands_instructions(void) const noexcept TAP_UNUSED_RESULT;
+		std::string	get_server_management_commands_instructions(void) const noexcept;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -61,7 +69,7 @@ class ServerOwner
 		*/
 		ServerOwner(const std::string& name, Server *server);
 		ServerOwner(const ServerOwner& server) = delete;
-		~ServerOwner(void);
+		~ServerOwner(void) = default;
 
 		// Operators ----------------------------------------------------------
 

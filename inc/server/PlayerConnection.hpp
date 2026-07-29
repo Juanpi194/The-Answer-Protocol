@@ -9,7 +9,7 @@ class PlayerConnection final
 {
 	private:
 		Player				player;
-		int					client_fd;
+		std::atomic<int>	client_fd;
 		std::atomic<bool>	connected;
 		Server				*server;
 		std::atomic<bool>	quitting;
@@ -47,7 +47,12 @@ class PlayerConnection final
 
 		// Utils --------------------------------------------------------------
 
-		void		connect(void);
+		/**
+		 * @brief	Reconnects a player and sets the specified file descriptor
+		 * 			as the new one.
+		 * @param	fd	The new client's file descriptor.
+		 */
+		void		reconnect(int fd);
 
 		/**
 		 * @brief	Called when the player is disconnecting.
