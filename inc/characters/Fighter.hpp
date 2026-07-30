@@ -61,8 +61,8 @@ enum class FightAction
  */
 struct FightChoice
 {
-    FightAction action;
-    Consumable	*consumable = nullptr;   // Only used if action == CONSUME
+	FightAction action;
+	Consumable	*consumable = nullptr;	// Only used if action == CONSUME
 };
 
 enum class Stat

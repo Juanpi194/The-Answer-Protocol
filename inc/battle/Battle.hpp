@@ -82,7 +82,7 @@ class Battle
 		 */
 		const Fighter&	get_red(void) const noexcept;
 
-		Fighter			*get_winner(void) const noexcept TAP_UNUSED_RESULT;
+		Fighter			*get_winner(void) const noexcept;
 		unsigned int	get_turns(void) const noexcept;
 		bool			is_finished(void) const noexcept;
 

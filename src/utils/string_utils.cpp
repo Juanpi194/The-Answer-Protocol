@@ -14,7 +14,7 @@ void	trim_str(std::string& s, bool middle)
 		s.erase(0, 1);
 	// Removing duplicated in the middle
 	if (!middle)
-		return ;
+		return;
 	for (char c : s)
 	{
 		if (c != ' ')
@@ -76,49 +76,51 @@ bool	is_title(const std::string& str)
 bool	has_uppercase(const std::string& str)
 {
 	for (const char c: str)
-	{
 		if (std::isupper(c))
 			return (true);
-	}
 	return (false);
 }
 
 bool	has_lowercase(const std::string& str)
 {
 	for (const char c: str)
-	{
 		if (std::islower(c))
 			return (true);
-	}
 	return (false);
 }
 
 bool	has_number(const std::string& str)
 {
 	for (const char c: str)
-	{
 		if (std::isdigit(c))
 			return (true);
-	}
 	return (false);
 }
 
 bool	has_symbol(const std::string& str)
 {
 	for (const char c: str)
-	{
 		if (std::ispunct(c))
 			return (true);
-	}
 	return (false);
 }
 
 bool	has_space(const std::string& str)
 {
 	for (char c: str)
-	{
 		if (std::isspace(c))
 			return (true);
-	}
 	return (false);
+}
+
+std::string	to_upper(const std::string& str)
+{
+	std::string	result = str;
+
+	for (size_t i = 0; i < result.size(); ++i)
+	{
+		result[i] = static_cast<char>(
+			std::toupper(static_cast<unsigned char>(result[i])));
+	}
+	return (result);
 }

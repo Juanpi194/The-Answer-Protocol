@@ -48,10 +48,8 @@ bool	World::room_in_world(Room *room)
 
 	found = false;
 	for (Room *room_in_list: rooms)
-	{
 		if (room_in_list == room)
 			found = true;
-	}
 	return (found);
 }
 
@@ -70,6 +68,11 @@ World::World(const std::string& name):
 	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, false, item_list);
 	rooms.push_back(temp_spawn_room);
 	spawn_room = temp_spawn_room;
+
+	if (rooms.size() < 1)
+		throw std::runtime_error("World does not have any room.");
+	if (!spawn_room)
+		throw std::runtime_error("World MUST have a spawn room.");
 }
 
 World::World(const std::string& name, const std::string& json_path):
@@ -86,6 +89,11 @@ World::World(const std::string& name, const std::string& json_path):
 	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", goblin, false, item_list);
 	rooms.push_back(temp_spawn_room);
 	spawn_room = temp_spawn_room;
+
+	if (rooms.size() < 1)
+		throw std::runtime_error("World does not have any room.");
+	if (!spawn_room)
+		throw std::runtime_error("World MUST have a spawn room.");
 }
 
 World::~World(void)

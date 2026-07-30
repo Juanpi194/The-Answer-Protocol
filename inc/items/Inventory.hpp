@@ -78,6 +78,6 @@ class Inventory
 		 * @returns	The item found with that name, `nullptr` if no item
 		 * 			was found with the specified name.
 		 */
-		Item	*find_item_by_name(const std::string& item_name) const TAP_UNUSED_RESULT;
+		Item	*find_item_by_name(const std::string& item_name) const;
 
 };

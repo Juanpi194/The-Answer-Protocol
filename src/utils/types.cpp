@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include "utils/utils.hpp"
+
 std::string	direction_to_string(Direction dir)
 {
 	std::string	result;
@@ -25,4 +27,19 @@ std::string	direction_to_string(Direction dir)
 			break;
 	}
 	return (result);
+}
+
+Direction	string_to_direction(const std::string& str)
+{
+	std::string	temp = to_upper(str);
+
+	if (temp == "NORTH")
+		return Direction::NORTH;
+	if (temp == "EAST")
+		return Direction::EAST;
+	if (temp == "SOUTH")
+		return Direction::SOUTH;
+	if (temp == "WEST")
+		return Direction::WEST;
+	return Direction::INVALID;
 }

@@ -130,7 +130,7 @@ class Player final: public Fighter
 		 * @returns	The enchantment found with the name, `nullptr` if no
 		 * 			enchantment was found with the specified name.
 		 */
-		Enchantment		*find_enchantment_by_name(const std::string& enchantment_name) const TAP_UNUSED_RESULT;
+		Enchantment		*find_enchantment_by_name(const std::string& enchantment_name) const;
 
 		// Quests --
 
@@ -152,9 +152,9 @@ class Player final: public Fighter
 		 * @returns	`true` if the player had enough gold to spend and it was
 		 * 			successfully consumed, `false` if the player does not have
 		 * 			enough gold.
-		 * @note	The value returned by this method MUST be used.
+		 * @note	The value returned by this method should be used.
 		 */
-		bool			spend_gold(unsigned int quantity) noexcept TAP_UNUSED_RESULT;
+		bool			spend_gold(unsigned int quantity) noexcept;
 
 		/**
 		 * @brief	Unlike the `spend_gold` method, this one will always
@@ -189,7 +189,7 @@ class Player final: public Fighter
 
 		// Fight --
 
-		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL TAP_UNUSED_RESULT;
+		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL;
 		FighterType		get_type(void) const noexcept override;
 
 		// Interactions --

@@ -16,10 +16,8 @@ bool	Enchanter::enchant(Gear& gear, Enchantment& enchantment)
 
 	allowed = false;
 	for (GearType gear_type: enchantment.get_allowed_gear_types())
-	{
 		if (gear_type == gear.get_gear_type())
 			allowed = true;
-	}
 	if (!allowed)
 		return (log("Cannot apply '" + enchantment.get_name() + "' to '" + gear.get_name() + "'.", LogLevel::INFO), false);
 	gear.set_enchantment(enchantment.clone());
@@ -36,10 +34,8 @@ Enchanter::Enchanter(const std::string& name, const std::string& description, co
 	if (enchantments_to_sell.size() == 0)
 		throw std::invalid_argument("Enchanter's enchantments list to sell cannot be empty.");
 	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
-	{
 		if (!enchantment_and_price.first)
 			throw std::invalid_argument("Enchanter's enchantments list to sell cannot have any nullptr in it.");
-	}
 }
 
 Enchanter::~Enchanter(void)
@@ -91,27 +87,27 @@ void	Enchanter::on_enchant(Player &player, const std::string& gear, const std::s
 			if (found_gear && found_gear->get_enchantment())
 				found_gear = nullptr;
 			else if (found_gear)
-				break ;
+				break;
 		}
 	}
 	if (!found_item)
 	{
 		log("Couldn't find the item '" + gear + "' in '" + player.get_name() + "' item list.", LogLevel::WARNING);
 		player.send_to_outbox("You do not have that item in your bag.");
-		return ;
+		return;
 	}
 	if (!found_gear)
 	{
 		log("Item '" + gear + "' from '" + player.get_name() + "' is not a gear, couldn't be enchanted.", LogLevel::WARNING);
 		player.send_to_outbox("The item you specified is not gear.");
-		return ;
+		return;
 	}
 	found_enchantment = player.find_enchantment_by_name(enchantment);
 	if (!found_enchantment)
 	{
 		log("Couldn't find the enchantment '" + enchantment + "' in '" + player.get_name() + "' enchantment list.", LogLevel::WARNING);
 		player.send_to_outbox("You do not have that enchantment in your bag.");
-		return ;
+		return;
 	}
 	player.send_to_outbox("Let's try to apply '" + found_enchantment->get_name() + "' to your '" + found_gear->get_name() + "'.");
 	if (!enchant(*found_gear, *found_enchantment))
@@ -141,7 +137,7 @@ void	Enchanter::on_buy(Player& player, const std::string& product) noexcept
 	{
 		log("Enchantment '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
 		player.send_to_outbox("We don't sell '" + product + "' here.");
-		return ;
+		return;
 	}
 	if (!player.spend_gold(price))
 		player.send_to_outbox("You don't have enough money for that.");

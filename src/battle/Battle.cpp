@@ -134,7 +134,7 @@ void	Battle::execute_turn(FightChoice player_choice) noexcept
 
 		// Finished?
 		if (finished)
-			return ;
+			return;
 
 		// Second fighter acting
 		resolve_action(*second, *first, second_choice);

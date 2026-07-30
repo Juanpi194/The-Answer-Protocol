@@ -212,7 +212,7 @@ static void	pruebitas(PlayerConnection& player_connection)
 			}
 		}
 		else if (answer == "QUIT")
-			break ;
+			break;
 		else
 			std::cout << "Tonto\n";
 

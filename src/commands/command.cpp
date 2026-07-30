@@ -1,4 +1,4 @@
-#include "protocol/command.hpp"
+#include "commands/command.hpp"
 
 CommandParseError::CommandParseError(const std::string& msg)
 	: msg(msg)

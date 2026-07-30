@@ -18,7 +18,7 @@ CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
 
 COMMANDS_FOLDER = commands
 COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/$(COMMANDS_FOLDER)/, \
-				CommandHandler.cpp)
+				command.cpp CommandHandler.cpp commandparser.cpp)
 
 ENCHANTMENTS_FOLDER = enchantments
 ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
@@ -40,6 +40,10 @@ PROTOCOLFOLDER = parser
 PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
 				command.cpp commandparser.cpp)
 
+PROTOCOL_FOLDER = protocol
+PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
+				responses.cpp)
+
 QUESTS_FOLDER = quests
 QUESTS_SRC = $(addprefix $(SRC_FOLDER)/$(QUESTS_FOLDER)/, \
 				Quest.cpp)
@@ -57,11 +61,14 @@ WORLD_FOLDER = world
 WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
-SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(PARSER_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(PROTOCOL_SRC) \
+		$(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
-FLAGS = $(VERSION_FLAG) -I $(INC_FOLDER)
+
+FLAGS = $(VERSION_FLAG) $(FSANITIZE) -I $(INC_FOLDER)
+FSANITIZE = -g -fsanitize=thread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter
 CRAZY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
@@ -106,7 +113,7 @@ run:
 
 $(OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) $(DEBUG_FLAG) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@
 
 all: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) -o $(PROGRAM_NAME)

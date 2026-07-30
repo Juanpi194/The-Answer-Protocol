@@ -19,10 +19,8 @@ Merchant::Merchant(const std::string& name, const std::string& description, cons
 	if (items_to_sell.empty())
 		throw std::invalid_argument("Merchant's item list to sell cannot be empty.");
 	for (const std::pair<Item*, unsigned int>& item_and_price: items_to_sell)
-	{
 		if (!item_and_price.first)
 			throw std::invalid_argument("Merchant's item list to sell cannot have any nullptr in it.");
-	}
 }
 
 Merchant::~Merchant(void)
@@ -75,7 +73,7 @@ void	Merchant::on_buy(Player& player, const std::string& product) noexcept
 	{
 		log("Item '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
 		player.send_to_outbox("We don't sell '" + product + "' here.");
-		return ;
+		return;
 	}
 	if (!player.spend_gold(price))
 		player.send_to_outbox("You don't have enough money for that.");

@@ -2,7 +2,7 @@
 
 const std::string			Freeze::NAME = "Freeze";
 const std::string			Freeze::DESCRIPTION = "Applies freeze.";
-const std::list<GearType>	Freeze::ALLOWED_GEAR_TYPES = {GearType::Iron};
+const std::list<GearType>	Freeze::ALLOWED_GEAR_TYPES = {GearType::IRON};
 
 // Constructors ---------------------------------------------------------------
 

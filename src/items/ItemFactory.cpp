@@ -20,7 +20,7 @@ std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void) noexcept
 	pool[create_flame_sword()] = 10;
 	pool[create_iron_armor()] = 30;
 	pool[create_iron_shield()] = 30;
-    pool[create_iron_sword()] = 30;
+	pool[create_iron_sword()] = 30;
 	pool[create_spike_armor()] = 10;
 	return (pool);
 }

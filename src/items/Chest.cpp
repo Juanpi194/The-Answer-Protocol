@@ -22,7 +22,7 @@ std::list<Item*>	Chest::open(void)
 	// ?		 we could give a default item (maybe a potion) if no item is
 	// ?		 is generated.
 	// Generating items
-    while (generated_items.size() == 0)
+	while (generated_items.size() == 0)
 	{
 		for (std::pair<Item* const, unsigned int>& entry : pool)
 		{

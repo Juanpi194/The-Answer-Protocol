@@ -68,10 +68,8 @@ bool		Player::obtain_item(Item *item) noexcept
 	if (!current_room)
 		return (log("Player '" + get_name() + "' cannot obtain an item with nullptr current room.", LogLevel::WARNING), false);
 	for (Item *item_in_list: inventory.get_items())
-	{
 		if (item_in_list == item)
 			return (log("Player '" + get_name() + "' tried to obtain '" + item->get_id() + "', which is already in its item list.", LogLevel::WARNING), false);
-	}
 
 	// Item found, now it will get removed from the room and added to the player.
 	try
@@ -96,10 +94,8 @@ bool		Player::obtain_item(const std::string& item_name) noexcept
 		return (log("Player '" + get_name() + "' cannot obtain an item with nullptr current room.", LogLevel::WARNING), false);
 	trim_str(cleaned_name, false);
 	for (Item *item: current_room->get_items())
-	{
 		if (cleaned_name == item->get_name() || cleaned_name == item->get_id())
 			item_found = item;
-	}
 	if (!item_found)
 		return (log("Couldn't find '" + item_name + "' in the room.", LogLevel::INFO), false);
 
@@ -127,10 +123,8 @@ bool		Player::drop_item(Item *item) noexcept
 	if (!current_room)
 		return (log("Player '" + get_name() + "' cannot drop an item with nullptr current room.", LogLevel::WARNING), false);
 	for (Item *item_in_list: inventory.get_items())
-	{
 		if (item_in_list == item)
 			found = true;
-	}
 	if (!found)
 		return (log("Item '" + item->get_id() + "' does not exist in player's item list.", LogLevel::WARNING), false);
 
@@ -157,10 +151,8 @@ bool		Player::drop_item(const std::string& item_name) noexcept
 		return (log("Player '" + get_name() + "' cannot drop an item with nullptr current room.", LogLevel::WARNING), false);
 	trim_str(cleaned_name, false);
 	for (Item *item: inventory.get_items())
-	{
 		if (cleaned_name == item->get_name() || cleaned_name == item->get_id())
 			item_found = item;
-	}
 	if (!item_found)
 		return (log("Item '" + item_name + "' does not exist in player's item list.", LogLevel::WARNING), false);
 
@@ -192,10 +184,8 @@ void		Player::consume_enchantment(Enchantment& enchantment)
 
 	enchantment_found = nullptr;
 	for (Enchantment *enchantment_in_list: enchantment_list)
-	{
 		if (enchantment_in_list == &enchantment)
 			enchantment_found = enchantment_in_list;
-	}
 	if (!enchantment_found)
 		throw std::invalid_argument("Enchantment to consume is not in the player's item list.");
 
@@ -207,10 +197,8 @@ void		Player::consume_enchantment(Enchantment& enchantment)
 Enchantment	*Player::find_enchantment_by_name(const std::string& enchantment_name) const
 {
 	for (Enchantment *enchantment_in_list: enchantment_list)
-	{
 		if (enchantment_in_list->get_name() == enchantment_name)
 			return (enchantment_in_list);
-	}
 	return (nullptr);
 }
 
@@ -219,10 +207,8 @@ Enchantment	*Player::find_enchantment_by_name(const std::string& enchantment_nam
 bool		Player::obtain_quest(Quest& quest) noexcept
 {
 	for (Quest& quest_in_list: quest_list)
-	{
 		if (quest_in_list.get_name() == quest.get_name())
 			return (log("Player '" + get_name() + "' already has the quest '" + quest.get_name() + "'.", LogLevel::WARNING), false);
-	}
 	quest_list.push_back(quest);
 	return (log("Player '" + get_name() + "' received the quest '" + quest.get_name() + "'.", LogLevel::DEBUG), true);
 }
@@ -290,10 +276,8 @@ bool		Player::is_enemy_beaten(Enemy *enemy) noexcept
 	if (!enemy)
 		return (log("Cannot check nullptr enemy.", LogLevel::ERROR), false);
 	for (const std::string& beaten_enemy_id: beaten_enemies_id)
-	{
 		if (beaten_enemy_id == enemy->get_id())
 			return (true);
-	}
 	return (false);
 }
 
