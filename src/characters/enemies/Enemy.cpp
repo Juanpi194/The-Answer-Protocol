@@ -1,4 +1,4 @@
-#include "characters/Enemy.hpp"
+#include "characters/enemies/Enemy.hpp"
 
 // Constructors ---------------------------------------------------------------
 

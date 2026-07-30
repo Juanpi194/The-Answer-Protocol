@@ -1,4 +1,4 @@
-#include "items/ItemFactory.hpp"
+#include "factories/ItemFactory.hpp"
 
 #include <stdexcept>
 

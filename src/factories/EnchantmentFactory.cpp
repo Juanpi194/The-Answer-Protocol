@@ -1,4 +1,4 @@
-#include "enchantments/EnchantmentFactory.hpp"
+#include "factories/EnchantmentFactory.hpp"
 
 #include <stdexcept>
 

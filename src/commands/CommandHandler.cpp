@@ -7,7 +7,7 @@
 #include "utils/types.hpp"
 #include "battle/Battle.hpp"
 #include "characters/Player.hpp"
-#include "characters/Enemy.hpp"
+#include "characters/enemies/Enemy.hpp"
 #include "libs/json.hpp"
 #include "protocol/responses.hpp"
 #include "server/PlayerConnection.hpp"

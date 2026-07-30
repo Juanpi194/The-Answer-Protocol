@@ -7,6 +7,7 @@ class NPC: public virtual Character
 	private:
 		const std::string	id;
 		const std::string	description;
+		// const std:: string	 name;
 
 		static constexpr bool	TITLE_NAME = true;
 		static constexpr size_t	MIN_NAME_LENGTH = 3;

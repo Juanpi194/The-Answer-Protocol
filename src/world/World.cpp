@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
-#include "characters/Goblin.hpp"
+#include "characters/enemies/Goblin.hpp"
 
 /**
  * @brief	Obtains the opposite direction of the specified direction.

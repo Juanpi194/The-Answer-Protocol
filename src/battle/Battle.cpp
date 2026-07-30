@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
-#include "characters/Enemy.hpp"
+#include "characters/enemies/Enemy.hpp"
 #include "characters/Player.hpp"
 
 void	Battle::set_winner(Fighter& winner) noexcept

@@ -1,9 +1,9 @@
-#include "characters/EnemyFactory.hpp"
+#include "factories/EnemyFactory.hpp"
 
 #include <stdexcept>
 
 #include "utils/utils.hpp"
-#include "characters/Goblin.hpp"
+#include "characters/enemies/Goblin.hpp"
 
 Enemy	*EnemyFactory::create_from_name(const std::string& enemy_name)
 {

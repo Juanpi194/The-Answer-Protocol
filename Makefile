@@ -12,8 +12,8 @@ BATTLE_SRC = $(addprefix $(SRC_FOLDER)/$(BATTLE_FOLDER)/, \
 
 CHARACTERS_FOLDER = characters
 CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
-					Character.cpp Enchanter.cpp Enemy.cpp EnemyFactory.cpp \
-					Fighter.cpp Goblin.cpp Merchant.cpp Narrator.cpp \
+					Character.cpp Enchanter.cpp enemies/Enemy.cpp \
+					Fighter.cpp enemies/Goblin.cpp Merchant.cpp Narrator.cpp \
 					NPC.cpp Player.cpp QuestGiver.cpp)
 
 COMMANDS_FOLDER = commands
@@ -22,14 +22,17 @@ COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/$(COMMANDS_FOLDER)/, \
 
 ENCHANTMENTS_FOLDER = enchantments
 ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
-						Enchantment.cpp EnchantmentFactory.cpp Flame.cpp \
-						Freeze.cpp)
+						Enchantment.cpp Flame.cpp Freeze.cpp)
+ 
+FACTORIES_FOLDER = factories
+FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/$(FACTORIES_FOLDER)/, \
+					EnchantmentFactory.cpp EnemyFactory.cpp ItemFactory.cpp)
 
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				Apple.cpp Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp FlameSword.cpp \
 				Gear.cpp Inventory.cpp IronArmor.cpp IronShield.cpp \
-				IronSword.cpp ItemFactory.cpp Item.cpp Shield.cpp \
+				IronSword.cpp Item.cpp Shield.cpp \
 				SpikeArmor.cpp Weapon.cpp )
 
 PARSER_FOLDER = parser
@@ -61,13 +64,13 @@ WORLD_FOLDER = world
 WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
-SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(PROTOCOL_SRC) \
-		$(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(FACTORIES_SRC) \
+		$(ITEMS_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
 
-FLAGS = $(VERSION_FLAG) $(FSANITIZE) -I $(INC_FOLDER)
+FLAGS = $(VERSION_FLAG) -I $(INC_FOLDER)
 FSANITIZE = -g -fsanitize=thread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter

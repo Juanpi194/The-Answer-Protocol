@@ -1,4 +1,4 @@
-#include "characters/Goblin.hpp"
+#include "characters/enemies/Goblin.hpp"
 
 unsigned int		Goblin::available_id = 0;
 const std::string	Goblin::PREFIX = "goblin.";

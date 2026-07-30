@@ -4,7 +4,7 @@
 
 #include "utils/utils.hpp"
 #include "utils/types.hpp"
-#include "characters/Enemy.hpp"
+#include "characters/enemies/Enemy.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
 #include "items/Chest.hpp"

@@ -16,11 +16,11 @@ static NPC *build_npc(const std::string& id,
 		return (new QuestGiver(id, name, description, quest));
 	}
 
-	//if (role == "narrator")
-		//return (new Narrator(id, name, description));
+	// if (role == "narrator")
+	// 	return (new Narrator(id, name, description));
 
-	//if (role == "merchant")
-		//return (new Merchant(id, name, description));
+	// if (role == "merchant")
+	// 	return (new Merchant(id, name, description));
 
 	//if (role == "trainer")
 		//return (new Trainer(id, name, description));

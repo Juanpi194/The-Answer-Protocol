@@ -1,13 +1,14 @@
 #include "parser/itemparser.hpp"
 
-#include "items/Consumable.hpp"
-#include "items/ItemFactory.hpp"
+// #include "items/Consumable.hpp"
+#include "factories/ItemFactory.hpp"
 
 static Item *build_item(const std::string& id,
 						const std::string& name,
 						const std::string& description)
 {
-	return (new Consumable(id, name, description));
+	return  (ItemFactory::create_from_name(name));
+	// return (new Consumable(id, name, description));
 }
 
 std::list<Item*> ItemParser::parse(const nlohmann::json& items_json)

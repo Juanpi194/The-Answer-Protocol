@@ -4,7 +4,7 @@
 
 #include "utils/utils.hpp"
 #include "battle/Battle.hpp"
-#include "characters/Enemy.hpp"
+#include "characters/enemies/Enemy.hpp"
 #include "enchantments/Enchantment.hpp"
 #include "items/Item.hpp"
 #include "server/PlayerConnection.hpp"

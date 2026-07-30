@@ -59,4 +59,8 @@ Puntos nuevos a coemntar:
 - consume recibe 1 parametro 
 - fight no recibe nada jiji
 - Quitar Type en el json
-- Ideas de items, encantamientos. 
+- Ideas de items, encantamientos.
+
+
+6. Mas cosas
+- En los throw (exceptiones): Cambiar por err (throw ParseCommand(err(ErrorCode::INVALIDARGUMENT))) (responses.hpp)
