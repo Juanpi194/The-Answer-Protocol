@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include "protocol/command.hpp"
+#include "commands/command.hpp"
 
 class CommandParser
 {

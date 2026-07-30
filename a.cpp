@@ -180,7 +180,7 @@
 //  lors.cpp src/utils/string_utils.cpp src/utils/globals.cpp -Iinc -o parser_test
 
 #include <iostream>
-#include "protocol/commandparser.hpp"
+#include "commands/commandparser.hpp"
 
 static void report(const std::string& name, bool ok)
 {
