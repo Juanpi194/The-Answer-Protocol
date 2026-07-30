@@ -51,12 +51,6 @@ bool GuiClient::connectRemote(const std::string& host, int port, const std::stri
 {
     disconnect();
 
-#ifdef _WIN32
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-        return false;
-#endif
-
     socketFd_ = static_cast<int>(socket(AF_INET, SOCK_STREAM, 0));
     if (socketFd_ < 0)
         return false;

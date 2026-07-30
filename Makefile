@@ -68,7 +68,7 @@ SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(QUESTS_
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
-FLAGS = $(VERSION_FLAG) -I $(INC_FOLDER) -pthread
+FLAGS = $(VERSION_FLAG) -g -fsanitize=thread -I $(INC_FOLDER) -pthread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter
 CRAZY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
@@ -119,7 +119,7 @@ IMGUI_OBJS = $(IMGUI_SRC:%.cpp=$(OBJ_FOLDER)/%.o)
 SDL_CFLAGS = $(shell pkg-config --cflags sdl2 2>/dev/null || sdl2-config --cflags)
 SDL_LIBS = $(shell pkg-config --libs sdl2 2>/dev/null || sdl2-config --libs)
 GUI_INC = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends
-GUI_FLAGS = $(VERSION_FLAG) -I $(INC_FOLDER) $(GUI_INC) $(SDL_CFLAGS) -pthread
+GUI_FLAGS = $(VERSION_FLAG) -g -fsanitize=thread -I $(INC_FOLDER) $(GUI_INC) $(SDL_CFLAGS) -pthread
 GL_LIBS = -lGL
 
 # DE AQUI PARA ABAJO ESTA COMO LA MIERDA // Ya no tanto
@@ -181,6 +181,7 @@ gui: $(OBJS) $(IMGUI_OBJS)
 
 clean:
 	rm -rf $(OBJ_FOLDER) $(SERVER_OBJ_FOLDER)
+	rm -rf external/imgui
 
 fclean: clean
 	rm -f $(PROGRAM_NAME) $(GUI_PROGRAM_NAME) $(SERVER_PROGRAM_NAME)
