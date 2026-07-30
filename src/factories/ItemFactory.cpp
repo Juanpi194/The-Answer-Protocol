@@ -6,6 +6,7 @@
 #include "items/Apple.hpp"
 #include "items/ChestKey.hpp"
 #include "items/FlameSword.hpp"
+#include "items/HealingPotion.hpp"
 #include "items/IronArmor.hpp"
 #include "items/IronShield.hpp"
 #include "items/IronSword.hpp"
@@ -37,6 +38,8 @@ Item							*ItemFactory::create_from_name(const std::string& item_name)
 		return (create_chest_key());
 	if (temp == FlameSword::NAME)
 		return (create_flame_sword());
+	if (temp == HealingPotion::NAME)
+		return (create_healing_potion());
 	if (temp == IronArmor::NAME)
 		return (create_iron_armor());
 	if (temp == IronShield::NAME)
@@ -64,6 +67,11 @@ ChestKey	*ItemFactory::create_chest_key(void) noexcept
 FlameSword	*ItemFactory::create_flame_sword(void) noexcept
 {
 	return (new FlameSword());
+}
+
+HealingPotion	*ItemFactory::create_healing_potion(void) noexcept
+{
+	return (new HealingPotion());
 }
 
 IronArmor	*ItemFactory::create_iron_armor(void) noexcept
