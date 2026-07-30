@@ -6,38 +6,31 @@
   "items": {
     "starter_pack": {
       "name": "Starter Pack",
-      "description": "Un pequeño kit inicial.",
-      "type": "consumable"
+      "description": "Un pequeño kit inicial."
     },
     "medal_forest": {
       "name": "Forest Medal",
-      "description": "Medalla que certifica el bosque.",
-      "type": "consumable"
+      "description": "Medalla que certifica el bosque."
     },
     "medal_mountain": {
       "name": "Mountain Medal",
-      "description": "Medalla que certifica la montaña.",
-      "type": "consumable"
+      "description": "Medalla que certifica la montaña."
     },
     "medal_ice": {
       "name": "Ice Medal",
-      "description": "Medalla que certifica el reino de hielo.",
-      "type": "consumable"
+      "description": "Medalla que certifica el reino de hielo."
     },
     "medal_fire": {
       "name": "Fire Medal",
-      "description": "Medalla que certifica el reino de fuego.",
-      "type": "consumable"
+      "description": "Medalla que certifica el reino de fuego."
     },
     "potion_fire": {
       "name": "Fire Potion",
-      "description": "Una pocion que arde en tus manos.",
-      "type": "consumable"
+      "description": "Una pocion que arde en tus manos."
     },
     "potion_ice": {
       "name": "Ice Potion",
-      "description": "Una pocion helada al tacto.",
-      "type": "consumable"
+      "description": "Una pocion helada al tacto."
     }
   },
   "npcs": {
@@ -107,7 +100,6 @@
       "id": "room.safe.spawn",
       "name": "Lobby",
       "description": "Punto de partida de la aventura.",
-      "type": "safe",
       "exits": {
         "north": "room.safe.tutorial"
       }
@@ -116,7 +108,6 @@
       "id": "room.safe.tutorial",
       "name": "Tutorial",
       "description": "Solo un texto explicando el uso del juego, no hay npc.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.spawn",
         "north": "room.safe.narrator"
@@ -126,7 +117,6 @@
       "id": "room.safe.narrator",
       "name": "Narrator",
       "description": "El narrador entrega el primer item.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.tutorial",
         "north": "room.safe.path1"
@@ -140,7 +130,6 @@
       "id": "room.safe.path1",
       "name": "Path",
       "description": "Solo se puede avanzar al norte.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.narrator",
         "north": "room.safe.plaza"
@@ -150,7 +139,6 @@
       "id": "room.safe.plaza",
       "name": "Plaza Central",
       "description": "Hub principal del mapa.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.path1",
         "north": "room.safe.path_choice",
@@ -162,7 +150,6 @@
       "id": "room.safe.path_choice",
       "name": "Path Choice",
       "description": "Npc que cuenta los caminos disponibles para elegir.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.plaza",
         "west": "room.safe.forest",
@@ -175,7 +162,6 @@
       "id": "room.safe.forest",
       "name": "Forest",
       "description": "El limite del bosque encantado.",
-      "type": "safe",
       "exits": {
         "east": "room.safe.path_choice",
         "north": "room.safe.forest_mision"
@@ -185,7 +171,6 @@
       "id": "room.safe.forest_mision",
       "name": "Forest Mission",
       "description": "Te comenta de los goblins.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.forest",
         "north": "room.combat.forest_gob1"
@@ -196,7 +181,6 @@
       "id": "room.combat.forest_gob1",
       "name": "Goblin",
       "description": "Un goblin agresivo bloquea el paso.",
-      "type": "combat",
       "enemy": "goblin",
       "exits": {
         "south": "room.safe.forest_mision",
@@ -207,7 +191,6 @@
       "id": "room.chest.forest_c1",
       "name": "Chest",
       "description": "Desde aqui: norte camino principal, oeste uno alternativo.",
-      "type": "chest",
       "exits": {
         "south": "room.combat.forest_gob1",
         "north": "room.combat.forest_gob3",
@@ -218,7 +201,6 @@
       "id": "room.combat.forest_gob2",
       "name": "Goblin",
       "description": "Goblin del camino alternativo.",
-      "type": "combat",
       "enemy": "goblin",
       "exits": {
         "east": "room.chest.forest_c1",
@@ -229,7 +211,6 @@
       "id": "room.safe.forest_side",
       "name": "Side Mission",
       "description": "Npc hace una pregunta, si respondes bien te da un premio.",
-      "type": "safe",
       "exits": {
         "south": "room.combat.forest_gob2",
         "north": "room.chest.forest_final"
@@ -240,7 +221,6 @@
       "id": "room.combat.forest_gob3",
       "name": "Goblin",
       "description": "Goblin del camino principal.",
-      "type": "combat",
       "enemy": "goblin",
       "exits": {
         "south": "room.chest.forest_c1",
@@ -251,7 +231,6 @@
       "id": "room.chest.forest_final",
       "name": "Forest Medal Room",
       "description": "Entrega la medalla del bosque. Se puede volver a la plaza.",
-      "type": "chest",
       "exits": {
         "south": "room.combat.forest_gob3",
         "north": "room.safe.plaza"
@@ -265,7 +244,6 @@
       "id": "room.safe.mountain",
       "name": "Mountain",
       "description": "Las faldas de una montaña nevada.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.path_choice",
         "north": "room.safe.mtn_mision"
@@ -275,7 +253,6 @@
       "id": "room.safe.mtn_mision",
       "name": "Ogre Mission",
       "description": "Te comenta de los ogros.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.mountain",
         "north": "room.combat.mtn_ogre1"
@@ -286,7 +263,6 @@
       "id": "room.combat.mtn_ogre1",
       "name": "Ogre",
       "description": "Un ogro furioso te ataca.",
-      "type": "combat",
       "enemy": "ogre",
       "exits": {
         "south": "room.safe.mtn_mision",
@@ -297,7 +273,6 @@
       "id": "room.chest.mtn_c1",
       "name": "Chest",
       "description": "Un cofre polvoriento en la roca.",
-      "type": "chest",
       "exits": {
         "south": "room.combat.mtn_ogre1",
         "north": "room.combat.mtn_ogre2"
@@ -307,7 +282,6 @@
       "id": "room.combat.mtn_ogre2",
       "name": "Ogre",
       "description": "Desde aqui: norte camino directo, oeste mision secundaria.",
-      "type": "combat",
       "enemy": "ogre",
       "exits": {
         "south": "room.chest.mtn_c1",
@@ -319,7 +293,6 @@
       "id": "room.safe.mtn_side",
       "name": "Side Mission",
       "description": "Npc hace una pregunta, si respondes bien te da un premio.",
-      "type": "safe",
       "exits": {
         "east": "room.combat.mtn_ogre2",
         "north": "room.combat.mtn_shade"
@@ -330,7 +303,6 @@
       "id": "room.combat.mtn_shade",
       "name": "Shade",
       "description": "Una sombra helada acecha aqui.",
-      "type": "combat",
       "enemy": "shade",
       "exits": {
         "south": "room.safe.mtn_side",
@@ -341,7 +313,6 @@
       "id": "room.chest.mtn_final",
       "name": "Mountain Medal",
       "description": "Entrega la medalla de la montaña y vuelve a la plaza.",
-      "type": "chest",
       "exits": {
         "south": "room.combat.mtn_ogre2",
         "north": "room.safe.plaza"
@@ -355,7 +326,6 @@
       "id": "room.safe.kingdom_ch",
       "name": "Kingdom Choice",
       "description": "Elige entre el reino de hielo o el reino de fuego.",
-      "type": "safe",
       "exits": {
         "west": "room.safe.path_choice",
         "north": "room.safe.ice",
@@ -366,7 +336,6 @@
       "id": "room.safe.ice",
       "name": "Ice Kingdom",
       "description": "Un reino congelado cubierto de escarcha.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.kingdom_ch",
         "north": "room.safe.ice_mision"
@@ -376,7 +345,6 @@
       "id": "room.safe.ice_mision",
       "name": "Ice Mission",
       "description": "Te comenta del hechicero.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.ice",
         "north": "room.chest.ice_c1"
@@ -387,7 +355,6 @@
       "id": "room.chest.ice_c1",
       "name": "Chest",
       "description": "Contiene una pocion de fuego.",
-      "type": "chest",
       "exits": {
         "south": "room.safe.ice_mision",
         "north": "room.combat.ice_wizard1"
@@ -400,7 +367,6 @@
       "id": "room.combat.ice_wizard1",
       "name": "Ice Wizard",
       "description": "Un hechicero de hielo te desafia.",
-      "type": "combat",
       "enemy": "wizard",
       "exits": {
         "south": "room.chest.ice_c1",
@@ -412,7 +378,6 @@
       "id": "room.chest.ice_c2",
       "name": "Chest",
       "description": "Un cofre cubierto de escarcha.",
-      "type": "chest",
       "exits": {
         "west": "room.combat.ice_wizard1",
         "east": "room.combat.ice_shade1"
@@ -422,7 +387,6 @@
       "id": "room.combat.ice_shade1",
       "name": "Shade",
       "description": "Una sombra helada acecha aqui.",
-      "type": "combat",
       "enemy": "shade",
       "exits": {
         "west": "room.chest.ice_c2",
@@ -433,7 +397,6 @@
       "id": "room.chest.ice_c3",
       "name": "Chest",
       "description": "Un cofre cubierto de escarcha.",
-      "type": "chest",
       "exits": {
         "south": "room.combat.ice_shade1",
         "west": "room.combat.ice_shade2"
@@ -443,7 +406,6 @@
       "id": "room.combat.ice_shade2",
       "name": "Shade",
       "description": "Otra sombra helada acecha aqui.",
-      "type": "combat",
       "enemy": "shade",
       "exits": {
         "south": "room.chest.ice_c3",
@@ -454,7 +416,6 @@
       "id": "room.chest.ice_final",
       "name": "Ice Medal Room",
       "description": "Entrega la medalla del reino de hielo. Vuelta a la plaza.",
-      "type": "chest",
       "exits": {
         "east": "room.combat.ice_shade2",
         "south": "room.combat.ice_wizard1",
@@ -469,7 +430,6 @@
       "id": "room.safe.fire",
       "name": "Fire Kingdom",
       "description": "Un reino ardiente rodeado de lava.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.kingdom_ch",
         "north": "room.safe.fire_mision"
@@ -479,7 +439,6 @@
       "id": "room.safe.fire_mision",
       "name": "Fire Mission",
       "description": "Te comenta del hechicero.",
-      "type": "safe",
       "exits": {
         "south": "room.safe.fire",
         "north": "room.chest.fire_c1"
@@ -490,7 +449,6 @@
       "id": "room.chest.fire_c1",
       "name": "Chest",
       "description": "Contiene una pocion de hielo.",
-      "type": "chest",
       "exits": {
         "south": "room.safe.fire_mision",
         "north": "room.combat.fire_wiz1"
@@ -503,7 +461,6 @@
       "id": "room.combat.fire_wiz1",
       "name": "Fire Wizard",
       "description": "Un hechicero de fuego te desafia.",
-      "type": "combat",
       "enemy": "wizard",
       "exits": {
         "south": "room.chest.fire_c1",
@@ -515,7 +472,6 @@
       "id": "room.chest.fire_c2",
       "name": "Chest",
       "description": "Un cofre rodeado de cenizas.",
-      "type": "chest",
       "exits": {
         "west": "room.combat.fire_wiz1",
         "east": "room.combat.fire_shade1"
@@ -525,7 +481,6 @@
       "id": "room.combat.fire_shade1",
       "name": "Shade",
       "description": "Una sombra ardiente acecha aqui.",
-      "type": "combat",
       "enemy": "shade",
       "exits": {
         "west": "room.chest.fire_c2",
@@ -536,7 +491,6 @@
       "id": "room.chest.fire_c3",
       "name": "Chest",
       "description": "Un cofre rodeado de cenizas.",
-      "type": "chest",
       "exits": {
         "south": "room.combat.fire_shade1",
         "west": "room.combat.fire_shade2"
@@ -546,7 +500,6 @@
       "id": "room.combat.fire_shade2",
       "name": "Shade",
       "description": "Otra sombra ardiente acecha aqui.",
-      "type": "combat",
       "enemy": "shade",
       "exits": {
         "south": "room.chest.fire_c3",
@@ -557,7 +510,6 @@
       "id": "room.chest.fire_final",
       "name": "Fire Medal Room",
       "description": "Entrega la medalla del reino de fuego. Vuelta a la plaza.",
-      "type": "chest",
       "exits": {
         "east": "room.combat.fire_shade2",
         "south": "room.combat.fire_wiz1",
@@ -572,7 +524,6 @@
       "id": "room.safe.plaza_west",
       "name": "Crossroads",
       "description": "Un cruce de caminos hacia las tiendas.",
-      "type": "safe",
       "exits": {
         "east": "room.safe.plaza",
         "west": "room.shop.enchanter",
@@ -583,7 +534,6 @@
       "id": "room.shop.enchanter",
       "name": "Enchanting",
       "description": "Una tienda llena de runas magicas.",
-      "type": "shop",
       "exits": {
         "east": "room.safe.plaza_west"
       },
@@ -593,7 +543,6 @@
       "id": "room.shop.merchant",
       "name": "Merchant Shop",
       "description": "Un mercader vende objetos utiles.",
-      "type": "shop",
       "exits": {
         "north": "room.safe.plaza_west"
       },
@@ -603,7 +552,6 @@
       "id": "room.gate.dragon",
       "name": "Dragon Gate",
       "description": "Solo se puede pasar con las cuatro medallas.",
-      "type": "gate",
       "exits": {
         "west": "room.safe.plaza",
         "north": "room.safe.fortress"
@@ -619,7 +567,6 @@
       "id": "room.safe.fortress",
       "name": "Fortress",
       "description": "Texto explicando la fortaleza, sin npc.",
-      "type": "safe",
       "exits": {
         "south": "room.gate.dragon",
         "north": "room.safe.narrator2"
@@ -629,7 +576,6 @@
       "id": "room.safe.narrator2",
       "name": "Last Advice",
       "description": "El narrador da el ultimo consejo. Se elige sur o este.",
-      "type": "safe",
       "exits": {
         "west": "room.safe.fortress",
         "south": "room.combat.goblins2",
@@ -641,7 +587,6 @@
       "id": "room.combat.shadow2",
       "name": "Shadow",
       "description": "Una sombra poderosa custodia el paso.",
-      "type": "combat",
       "enemy": "shadow",
       "exits": {
         "west": "room.safe.narrator2",
@@ -652,7 +597,6 @@
       "id": "room.safe.warn_east",
       "name": "Dragon Warning",
       "description": "Npc advierte que en la siguiente sala esta el dragon.",
-      "type": "safe",
       "exits": {
         "south": "room.combat.shadow2",
         "north": "room.boss.dragon"
@@ -663,7 +607,6 @@
       "id": "room.combat.goblins2",
       "name": "Goblins",
       "description": "Un grupo de goblins bloquea el paso.",
-      "type": "combat",
       "enemy": "goblin",
       "exits": {
         "south": "room.safe.narrator2",
@@ -674,7 +617,6 @@
       "id": "room.safe.warn_south",
       "name": "Dragon Warning",
       "description": "Npc advierte que en la siguiente sala esta el dragon.",
-      "type": "safe",
       "exits": {
         "south": "room.combat.goblins2",
         "north": "room.boss.dragon"
@@ -685,7 +627,6 @@
       "id": "room.boss.dragon",
       "name": "Dragon Room",
       "description": "Enfrentamiento final contra el dragon.",
-      "type": "boss",
       "enemy": "dragon",
       "exits": {}
     }

@@ -58,5 +58,5 @@ Puntos nuevos a coemntar:
 - flee (huir) no recibe parametros
 - consume recibe 1 parametro 
 - fight no recibe nada jiji
-- Quitar Type
+- Quitar Type en el json
 - Ideas de items, encantamientos. 

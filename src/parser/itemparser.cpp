@@ -2,20 +2,12 @@
 
 #include "items/Consumable.hpp"
 #include "items/ItemFactory.hpp"
-#include "utils/utils.hpp"
 
 static Item *build_item(const std::string& id,
 						const std::string& name,
-						const std::string& description,
-						const std::string& type)
+						const std::string& description)
 {
-	if (type == "consumable")
-		return (new Consumable(id, name, description));
-
-	log("Item '" + id + "' has unsupported type '" + type + "'.",
-		LogLevel::WARNING);
-
-	return (nullptr);
+	return (new Consumable(id, name, description));
 }
 
 std::list<Item*> ItemParser::parse(const nlohmann::json& items_json)
@@ -34,10 +26,8 @@ std::list<Item*> ItemParser::parse(const nlohmann::json& items_json)
 		const std::string name = item_json["name"];
 		const std::string description =
 			item_json.value("description", "A useful object.");
-		const std::string type =
-			item_json.value("type", "consumable");
 
-		Item *item = build_item(id, name, description, type);
+		Item *item = build_item(id, name, description);
 
 		if (item != nullptr)
 			items.push_back(item);

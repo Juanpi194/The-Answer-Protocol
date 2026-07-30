@@ -32,6 +32,14 @@ std::string	command_type_to_string(CommandType type)
 			return ("TALK");
 		case CommandType::ATTACK:
 			return ("ATTACK");
+		case CommandType::DEFEND:
+			return ("DEFEND");
+		case CommandType::FLEE:
+			return ("FLEE");
+		case CommandType::CONSUME:
+			return ("CONSUME");
+		case CommandType::FIGHT:
+			return ("FIGHT");
 		case CommandType::STATUS:
 			return ("STATUS");
 		case CommandType::QUEST:

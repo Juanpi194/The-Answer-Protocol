@@ -1,6 +1,4 @@
-#ifndef COMMAND_HPP
-#define COMMAND_HPP
-
+#pragma once
 #include <exception>
 #include <string>
 #include <vector>
@@ -16,6 +14,10 @@ enum class CommandType
 	INVENTORY,
 	TALK,
 	ATTACK,
+	DEFEND,
+	FLEE,
+	CONSUME,
+	FIGHT,
 	STATUS,
 	QUEST,
 	QUESTS,
@@ -42,5 +44,3 @@ class CommandParseError : public std::exception
 };
 
 std::string	command_type_to_string(CommandType type);
-
-#endif

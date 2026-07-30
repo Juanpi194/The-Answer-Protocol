@@ -1,7 +1,5 @@
 #include "protocol/commandparser.hpp"
-
 #include <cctype>
-
 #include "utils/utils.hpp"
 
 static const char *CHAT_CHANNELS[] =
@@ -62,7 +60,7 @@ static bool	is_one_of(const std::string& value,
 	return (false);
 }
 //Comprueba si una cadena coincide con alguno de los valores permitidos de una lista.
-
+// Exige 0 argumentos. Usado por LOOK, INVENTORY, STATUS, QUESTS, WHO, QUIT, ATTACK, DEFEND, FLEE, FIGHT.
 static Command	parse_no_arguments(CommandType type,
 	const std::string& rest,
 	const std::string& name)
@@ -72,7 +70,7 @@ static Command	parse_no_arguments(CommandType type,
 	return (Command{type, {}});
 }
 //Valida comandos que no aceptan argumentos y crea el Command.
-
+// Exige 1 argumento de texto libre (puede tener espacios). Usado por TAKE, DROP, TALK.
 static Command	parse_text_argument(CommandType type,
 	const std::string& rest,
 	const std::string& name)
@@ -82,7 +80,7 @@ static Command	parse_text_argument(CommandType type,
 	return (Command{type, {rest}});
 }
 //Valida comandos que requieren un único argumento de texto libre (puede contener espacios).
-
+// Exige 1 argumento, sin espacios (una única palabra). Usado por CONNECT, MOVE, QUEST, CONSUME.
 static Command	parse_single_argument(CommandType type,
 	const std::string& rest,
 	const std::string& name)
@@ -96,16 +94,7 @@ static Command	parse_single_argument(CommandType type,
 	return (Command{type, {rest}});
 }
 //Valida comandos que requieren exactamente un argumento sin espacios
-
-static Command	parse_attack(const std::string& rest)
-{
-	if (rest.empty())
-		return (Command{CommandType::ATTACK, {}});
-
-	return (Command{CommandType::ATTACK, {rest}});
-}
-//Parsea el comando ATTACK, permitiendo usarlo con o sin objetivo.
-
+// Exige 2 argumentos: canal (GLOBAL/ROOM/GROUP) y mensaje. Usado por CHAT.
 static Command	parse_chat(const std::string& rest)
 {
 	std::string	channel;
@@ -125,7 +114,7 @@ static Command	parse_chat(const std::string& rest)
 	return (Command{CommandType::CHAT, {channel, message}});
 }
 //Valida el canal de CHAT y extrae el mensaje que se quiere enviar.
-
+// Exige 0, 1 o 2 argumentos según el subcomando (INVITE/LEAVE/KICK). Usado por GROUP.
 static Command	parse_group(const std::string& rest)
 {
 	std::string	subcommand;
@@ -171,7 +160,7 @@ static Command	parse_group(const std::string& rest)
 }
 //Valida los subcomandos de GROUP (INVITE, LEAVE o KICK) y sus argumentos
 
-Command	CommandParser::parse(const std::string& line) const
+Command	CommandParser::parse(const std::string& line)
 {
 	std::string	trimmed = line;
 	std::string	keyword;
@@ -186,7 +175,6 @@ Command	CommandParser::parse(const std::string& line) const
 
 	keyword = to_upper(keyword);
 
-	// Commands without arguments
 	if (keyword == "LOOK")
 		return (parse_no_arguments(CommandType::LOOK, rest, keyword));
 
@@ -205,7 +193,18 @@ Command	CommandParser::parse(const std::string& line) const
 	if (keyword == "QUIT")
 		return (parse_no_arguments(CommandType::QUIT, rest, keyword));
 
-	// Commands with a single argument
+	if (keyword == "ATTACK")
+		return (parse_no_arguments(CommandType::ATTACK, rest, keyword));
+
+	if (keyword == "DEFEND")
+		return (parse_no_arguments(CommandType::DEFEND, rest, keyword));
+
+	if (keyword == "FLEE")
+		return (parse_no_arguments(CommandType::FLEE, rest, keyword));
+
+	if (keyword == "FIGHT")
+		return (parse_no_arguments(CommandType::FIGHT, rest, keyword));
+
 	if (keyword == "CONNECT")
 		return (parse_single_argument(CommandType::CONNECT, rest, keyword));
 
@@ -215,7 +214,9 @@ Command	CommandParser::parse(const std::string& line) const
 	if (keyword == "QUEST")
 		return (parse_single_argument(CommandType::QUEST, rest, keyword));
 
-	// Commands with free text
+	if (keyword == "CONSUME")
+		return (parse_single_argument(CommandType::CONSUME, rest, keyword));
+
 	if (keyword == "TAKE")
 		return (parse_text_argument(CommandType::TAKE, rest, keyword));
 
@@ -224,10 +225,6 @@ Command	CommandParser::parse(const std::string& line) const
 
 	if (keyword == "TALK")
 		return (parse_text_argument(CommandType::TALK, rest, keyword));
-
-	// Special commands
-	if (keyword == "ATTACK")
-		return (parse_attack(rest));
 
 	if (keyword == "CHAT")
 		return (parse_chat(rest));
