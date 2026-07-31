@@ -28,10 +28,14 @@ FACTORIES_FOLDER = factories
 FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/$(FACTORIES_FOLDER)/, \
 					EnchantmentFactory.cpp EnemyFactory.cpp ItemFactory.cpp)
 
+GROUP_FOLDER = group
+GROUP_SRC = $(addprefix $(SRC_FOLDER)/$(GROUP_FOLDER)/, \
+				Group.cpp)
+
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				Apple.cpp Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp FlameSword.cpp \
-				Gear.cpp Inventory.cpp IronArmor.cpp IronShield.cpp \
+				Gear.cpp HealingPotion.cpp Inventory.cpp IronArmor.cpp IronShield.cpp \
 				IronSword.cpp Item.cpp Shield.cpp \
 				SpikeArmor.cpp Weapon.cpp )
 
@@ -45,7 +49,7 @@ PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
 
 PROTOCOL_FOLDER = protocol
 PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
-				responses.cpp)
+				events.cpp responses.cpp)
 
 QUESTS_FOLDER = quests
 QUESTS_SRC = $(addprefix $(SRC_FOLDER)/$(QUESTS_FOLDER)/, \
@@ -65,12 +69,11 @@ WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
 SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(FACTORIES_SRC) \
-		$(ITEMS_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+		$(GROUP_SRC) $(ITEMS_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
-
-FLAGS = $(VERSION_FLAG) -I $(INC_FOLDER)
+FLAGS = $(VERSION_FLAG) $(FSANITIZE) -I $(INC_FOLDER)
 FSANITIZE = -g -fsanitize=thread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter

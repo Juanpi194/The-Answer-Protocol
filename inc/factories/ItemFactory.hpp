@@ -8,6 +8,7 @@ class Item;
 class Apple;
 class ChestKey;
 class FlameSword;
+class HealingPotion;
 class IronArmor;
 class IronShield;
 class IronSword;

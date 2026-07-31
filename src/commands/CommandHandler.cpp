@@ -10,6 +10,7 @@
 #include "characters/enemies/Enemy.hpp"
 #include "items/Consumable.hpp"
 #include "libs/json.hpp"
+#include "protocol/events.hpp"
 #include "protocol/responses.hpp"
 #include "server/PlayerConnection.hpp"
 #include "server/Server.hpp"
@@ -77,7 +78,12 @@ static void		cmd_look(Player& player)
 static void		cmd_move(const Command& cmd, Player& player)
 {
 	Direction	dir;
+	Room		*old_room;
+	Room		*new_room;
 
+	old_room = player.get_current_room();
+	if (!old_room)
+		return;
 	dir = string_to_direction(cmd.args[0]);
 	if (dir == Direction::INVALID)
 	{
@@ -86,10 +92,14 @@ static void		cmd_move(const Command& cmd, Player& player)
 	}
 	if (!player.move(dir))
 		player.send_to_outbox(err(ErrorCode::NO_EXIT));
-	else if (player.get_current_room())
-		player.send_to_outbox(ok("room=" + player.get_current_room()->get_name()));
 	else
-		player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
+	{
+		new_room = player.get_current_room();
+		assert(new_room != nullptr && "After move, the player must have a room");
+		old_room->room_broadcast(evt_presence_leave(player.get_name()), &player);
+		new_room->room_broadcast(evt_presence_enter(player.get_name()), &player);
+		player.send_to_outbox(ok("room=" + new_room->get_id()));
+	}
 }
 
 static void		cmd_quit(PlayerConnection& conn)
@@ -104,30 +114,38 @@ static void		cmd_chat(const Command& cmd, PlayerConnection& conn)
 {
 	std::string	channel;
 	std::string	msg;
-	std::string	full_msg;
+	std::string	name;
 
 	if (!conn.get_server())
 		return;
 	channel = cmd.args[0];
 	msg = cmd.args[1];
-	full_msg = conn.get_player().get_name() + ": '" + msg + "'";
+	name = conn.get_player().get_name();
 	if (channel == "GLOBAL")
 	{
-		conn.get_server()->broadcast(full_msg, conn.get_client_fd());
-		conn.get_player().send_to_outbox(ok("sent"));
+		conn.get_server()->broadcast(evt_global_chat(name, msg), conn.get_client_fd());
+		conn.get_player().send_to_outbox(ok(""));
 	}
 	else if (channel == "ROOM")
 	{
-		if (!conn.get_player().get_current_room())
+		Room	*room = conn.get_player().get_current_room();
+		if (!room)
 			conn.get_player().send_to_outbox(err(ErrorCode::NO_ROOM));
 		else
 		{
-			// TODO: Room logic
+			room->room_broadcast(evt_room_chat(name, msg), &conn.get_player());
+			conn.get_player().send_to_outbox(ok(""));
 		}
 	}
 	else if (channel == "GROUP")
 	{
-		// TODO: Group logic
+		if (!conn.get_group())
+			conn.get_player().send_to_outbox(err(ErrorCode::NOT_IN_GROUP));
+		else
+		{
+			conn.get_server()->group_broadcast(*conn.get_group(), evt_group_chat(name, msg), conn.get_client_fd());
+			conn.get_player().send_to_outbox(ok(""));
+		}
 	}
 	else
 		conn.get_player().send_to_outbox(err(ErrorCode::INVALID_ARGUMENT));
@@ -192,10 +210,13 @@ static void		cmd_group(const Command& cmd, PlayerConnection& conn)
 			else
 			{
 				group = conn.get_server()->join_group(conn, *leader);
-				if (!group)
-					result = err(ErrorCode::NOT_INVITED);
-				else
+				if (group)
+				{
 					result = ok("group=" + group->get_id());
+					conn.get_server()->group_broadcast(*group, evt_group_join(conn.get_player().get_name()), conn.get_client_fd());
+				}
+				else
+					result = err(ErrorCode::NOT_INVITED);
 			}
 		}
 

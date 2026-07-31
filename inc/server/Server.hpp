@@ -44,18 +44,12 @@ class ServerOwner;
 class Server
 {
 	private:
-		int							sock;
-		ServerOwner					*owner;
-		World						*world;
+		int								sock;
+		ServerOwner						*owner;
+		World							*world;
 
-		std::list<PlayerConnection>	clients;
-		std::mutex					clients_mtx;
-
-		std::list<t_command>		cmd_queue;
-		std::mutex					cmd_mtx;
-
-		std::atomic<bool>			on;
-		std::thread					accept_thread;
+		std::atomic<bool>				on;
+		std::thread						accept_thread;
 
 		/**
 		 * @brief	When shutting down the server, we need to know
@@ -64,24 +58,37 @@ class Server
 		 * 			them accept_thread will be joined, so the list will
 		 * 			not be modified anywhere.
 		 */
-		std::vector<std::thread>	thread_list;
+		std::vector<std::thread>		thread_list;
 
 		/**
 		 * @brief	Variable used to check if the program is running.
 		 */
-		std::atomic<bool>			running;
+		std::atomic<bool>				running;
 
-		std::list<std::string>		banned_clients;
-		std::mutex					banned_mtx;
+		std::list<PlayerConnection>		clients;
+		std::mutex						clients_mtx;
 
-		std::list<Group>			groups;
-		std::mutex					groups_mtx;
+		std::list<t_command>			cmd_queue;
+		std::mutex						cmd_mtx;
+
+		std::list<std::string>			banned_clients;
+		std::mutex						banned_mtx;
+
+		std::list<Group>				groups;
+		std::mutex						groups_mtx;
+
+		std::list<PlayerConnection*>	pending_joins;
+		std::mutex						joins_mtx;
+
+		std::list<PlayerConnection*>	pending_leaves;
+		std::mutex						leaves_mtx;
 
 		static constexpr int			DOMAIN = AF_INET;
 		static constexpr int			TYPE = SOCK_STREAM;
 		static constexpr int			DEFAULT_PORT = 8080;
 		static constexpr unsigned int	MAX_CLIENTS = 20;
 		static constexpr size_t			MAX_MSG_LENGTH = 1024;
+		static constexpr time_t			GAME_LOOP_MS_CD = 50;	// Milliseconds cooldown
 
 		/**
 		 * @brief	Initializes the server socket.
@@ -177,17 +184,23 @@ class Server
 		 */
 		void				broadcast(const std::string& msg, int fd_excluded = -1);
 
-		/**
-		 * @brief	Broadcasts that a client connected.
-		 */
-		void				announce_connection(PlayerConnection& client);
+		void				group_broadcast(Group& group, const std::string& msg, int fd_excluded = -1);
 
 		/**
-		 * @brief	Broadcasts that a client disconnected.
+		 * @note	Locks `cmd_mtx`.
 		 */
-		void				announce_disconnection(PlayerConnection& client);
-
 		void				push_command(const t_command& cmd);
+
+		/**
+		 * @note	Locks `joins_mtx`.
+		 */
+		void				push_join(PlayerConnection* client);
+
+		/**
+		 * @note	Locks `leaves_mtx`.
+		 */
+		void				push_leave(PlayerConnection* client);
+
 		void				game_loop(void);
 
 		PlayerConnection	*find_client_by_fd(int fd) noexcept;
@@ -240,7 +253,7 @@ class Server
 		std::string			get_commands_instructions(void) const noexcept;
 
 		/**
-		 * @brief	Counts how many clients the server has.
+		 * @brief	Counts how many CONNECTED clients the server has.
 		 * @returns	The size of the clients list.
 		 */
 		size_t				count_clients(void) noexcept;
