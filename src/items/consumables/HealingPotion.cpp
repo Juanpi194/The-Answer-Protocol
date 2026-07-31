@@ -1,4 +1,4 @@
-#include "items/HealingPotion.hpp"
+#include "items/consumables/HealingPotion.hpp"
 
 unsigned int		HealingPotion::available_id = 0;
 const std::string	HealingPotion::PREFIX = "healing_potion.";
