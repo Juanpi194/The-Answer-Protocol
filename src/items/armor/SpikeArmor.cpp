@@ -1,4 +1,4 @@
-#include "items/SpikeArmor.hpp"
+#include "items/armor/SpikeArmor.hpp"
 
 
 unsigned int		SpikeArmor::available_id = 0;

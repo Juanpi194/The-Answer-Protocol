@@ -1,7 +1,7 @@
 #include "commands/command.hpp"
 
-CommandParseError::CommandParseError(const std::string& msg)
-	: msg(msg)
+CommandParseError::CommandParseError(ErrorCode err_code)
+	: msg(err(err_code))
 {
 }
 

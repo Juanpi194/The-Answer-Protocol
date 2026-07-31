@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "protocol/responses.hpp"
+
 enum class CommandType
 {
 	CONNECT,
@@ -38,7 +40,7 @@ class CommandParseError : public std::exception
 		std::string	msg;
 
 	public:
-		explicit CommandParseError(const std::string& msg);
+		explicit CommandParseError(ErrorCode err_code);
 
 		const char	*what(void) const noexcept override;
 };

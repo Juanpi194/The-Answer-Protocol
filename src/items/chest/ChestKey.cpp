@@ -1,4 +1,4 @@
-#include "items/ChestKey.hpp"
+#include "items/chest/ChestKey.hpp"
 
 unsigned int		ChestKey::available_id = 0;
 const std::string	ChestKey::PREFIX = "chest_key.";

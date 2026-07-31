@@ -1,9 +1,9 @@
-#include "items/Chest.hpp"
+#include "items/chest/Chest.hpp"
 
 #include <cstdlib>
 #include <stdexcept>
 
-#include "items/ChestKey.hpp"
+#include "items/chest/ChestKey.hpp"
 #include "factories/ItemFactory.hpp"
 #include "utils/utils.hpp"
 #include "characters/enemies/Enemy.hpp"

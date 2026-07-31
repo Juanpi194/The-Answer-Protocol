@@ -1,5 +1,6 @@
 #include "parser/roomparser.hpp"
 #include <unordered_map>
+#include "utils/types.hpp"
 #include "utils/utils.hpp"
 #include "world/Room.hpp"
 
@@ -7,28 +8,14 @@
 // Crea un nombre más corto (RoomMap) para un mapa que relaciona el id de una habitación con su objeto Room.
 typedef std::unordered_map<std::string, Room*> RoomMap;
 
-static Direction parse_direction(const std::string& direction)
-{
-	if (direction == "north")
-		return (Direction::NORTH);
-	if (direction == "east")
-		return (Direction::EAST);
-	if (direction == "south")
-		return (Direction::SOUTH);
-	if (direction == "west")
-		return (Direction::WEST);
-
-	log("Unknown direction '" + direction + "'.", LogLevel::WARNING);
-	return (Direction::NORTH);
-}
-
 static Room *create_room(const nlohmann::json& room_json)
 {
 	const std::string id = room_json["id"];
 	const std::string name = room_json["name"];
 	const std::string description = room_json["description"];
+	std::list<Item*> items;
 
-	return (new Room(id, name, description, nullptr, nullptr));
+	return (new Room(id, name, description, nullptr, false, items));
 }
 
 static void connect_exits(const nlohmann::json& room_json,
@@ -42,6 +29,14 @@ static void connect_exits(const nlohmann::json& room_json,
 	{
 		const std::string direction = it.key();
 		const std::string target = it.value();
+		Direction dir = string_to_direction(direction);
+
+		if (dir == Direction::INVALID)
+		{
+			log("Room '" + id + "' has an exit with unknown direction '" + direction + "'.",
+				LogLevel::WARNING);
+			continue;
+		}
 
 		if (all_rooms.find(target) == all_rooms.end())
 		{
@@ -50,9 +45,7 @@ static void connect_exits(const nlohmann::json& room_json,
 			continue;
 		}
 
-		current_room->set_adyacent_room(
-			parse_direction(direction),
-			all_rooms[target]);
+		current_room->set_adjacent_room(dir, all_rooms[target]);
 	}
 }
 
