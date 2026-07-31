@@ -30,10 +30,16 @@ FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/$(FACTORIES_FOLDER)/, \
 
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
-				Apple.cpp Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp FlameSword.cpp \
-				Gear.cpp Inventory.cpp IronArmor.cpp IronShield.cpp \
-				IronSword.cpp Item.cpp Shield.cpp \
-				SpikeArmor.cpp Weapon.cpp )
+				Armor.cpp Consumable.cpp Gear.cpp Inventory.cpp Item.cpp \
+				Shield.cpp Weapon.cpp \
+				armor/BronzeArmor.cpp armor/EmberArmor.cpp armor/FrostArmor.cpp \
+				armor/IronArmor.cpp armor/SpikeArmor.cpp armor/SteelArmor.cpp \
+				chest/Chest.cpp chest/ChestKey.cpp \
+				consumables/Apple.cpp consumables/FirePotion.cpp consumables/HastePotion.cpp \
+				consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
+				weapons/BronzeShield.cpp weapons/BronzeSword.cpp weapons/FlameSword.cpp \
+				weapons/FrostSword.cpp weapons/IronShield.cpp weapons/IronSword.cpp \
+				weapons/SerratedSword.cpp weapons/SteelShield.cpp weapons/SteelSword.cpp )
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \

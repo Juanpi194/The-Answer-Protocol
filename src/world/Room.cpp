@@ -7,7 +7,7 @@
 #include "characters/enemies/Enemy.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
-#include "items/Chest.hpp"
+#include "items/chest/Chest.hpp"
 #include "items/Item.hpp"
 
 const std::string Room::PREFIX = "room.";

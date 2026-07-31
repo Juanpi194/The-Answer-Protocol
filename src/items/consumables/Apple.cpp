@@ -1,4 +1,4 @@
-#include "items/Apple.hpp"
+#include "items/consumables/Apple.hpp"
 
 
 unsigned int		Apple::available_id = 0;

@@ -1,4 +1,4 @@
-#include "items/FlameSword.hpp"
+#include "items/weapons/FlameSword.hpp"
 
 unsigned int		FlameSword::available_id = 0;
 const std::string	FlameSword::PREFIX = "flame_sword.";
