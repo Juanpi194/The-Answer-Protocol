@@ -61,7 +61,7 @@ void	Player::set_battle(Battle *battle) noexcept
 
 // Items --
 
-bool		Player::obtain_item(Item *item) noexcept
+bool				Player::obtain_item(Item *item) noexcept
 {
 	if (!item)
 		return (log("Player '" + get_name() + "' tried to obtain a nullptr item.", LogLevel::INFO), false);
@@ -84,20 +84,20 @@ bool		Player::obtain_item(Item *item) noexcept
 	return (log(item->get_name() + " was obtained from the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
 }
 
-bool		Player::obtain_item(const std::string& item_name) noexcept
+Item				*Player::obtain_item(const std::string& item_name) noexcept
 {
 	std::string	cleaned_name = item_name;
 	Item		*item_found;
 
 	item_found = nullptr;
 	if (!current_room)
-		return (log("Player '" + get_name() + "' cannot obtain an item with nullptr current room.", LogLevel::WARNING), false);
+		return (log("Player '" + get_name() + "' cannot obtain an item with nullptr current room.", LogLevel::WARNING), nullptr);
 	trim_str(cleaned_name, false);
 	for (Item *item: current_room->get_items())
 		if (cleaned_name == item->get_name() || cleaned_name == item->get_id())
 			item_found = item;
 	if (!item_found)
-		return (log("Couldn't find '" + item_name + "' in the room.", LogLevel::INFO), false);
+		return (log("Couldn't find '" + item_name + "' in the room.", LogLevel::INFO), nullptr);
 
 	// Item found, now it will get removed from the room and added to the player.
 	try
@@ -107,12 +107,12 @@ bool		Player::obtain_item(const std::string& item_name) noexcept
 	}
 	catch (const std::invalid_argument& e)
 	{
-		return (log(e.what(), LogLevel::ERROR), false);
+		return (log(e.what(), LogLevel::ERROR), nullptr);
 	}
-	return (log(item_found->get_name() + " was obtained from the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
+	return (log(item_found->get_name() + " was obtained from the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), item_found);
 }
 
-bool		Player::drop_item(Item *item) noexcept
+bool				Player::drop_item(Item *item) noexcept
 {
 	// ? Review: Check logic and maybe add mutex...
 	bool	found;
@@ -141,20 +141,20 @@ bool		Player::drop_item(Item *item) noexcept
 	return (log(item->get_name() + " was dropped into the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
 }
 
-bool		Player::drop_item(const std::string& item_name) noexcept
+Item				*Player::drop_item(const std::string& item_name) noexcept
 {
 	std::string	cleaned_name = item_name;
 	Item		*item_found;
 
 	item_found = nullptr;
 	if (!current_room)
-		return (log("Player '" + get_name() + "' cannot drop an item with nullptr current room.", LogLevel::WARNING), false);
+		return (log("Player '" + get_name() + "' cannot drop an item with nullptr current room.", LogLevel::WARNING), nullptr);
 	trim_str(cleaned_name, false);
 	for (Item *item: inventory.get_items())
 		if (cleaned_name == item->get_name() || cleaned_name == item->get_id())
 			item_found = item;
 	if (!item_found)
-		return (log("Item '" + item_name + "' does not exist in player's item list.", LogLevel::WARNING), false);
+		return (log("Item '" + item_name + "' does not exist in player's item list.", LogLevel::WARNING), nullptr);
 
 	// Item found, now it will get removed from the player and added to the room.
 	try
@@ -164,9 +164,9 @@ bool		Player::drop_item(const std::string& item_name) noexcept
 	}
 	catch (const std::invalid_argument& e)
 	{
-		return (log(e.what(), LogLevel::ERROR), false);
+		return (log(e.what(), LogLevel::ERROR), nullptr);
 	}
-	return (log(item_found->get_name() + " was dropped into the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), true);
+	return (log(item_found->get_name() + " was dropped into the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), item_found);
 }
 
 // Enchantments --
@@ -295,9 +295,10 @@ void		Player::talk_with(Character& character)
 	character.on_talk(*this);
 }
 
-void		Player::on_talk(Player& player) noexcept
+const std::string		Player::on_talk(Player& player) noexcept
 {
 	// TODO: Logic...
+	return ("");
 }
 
 // User --

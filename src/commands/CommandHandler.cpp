@@ -65,14 +65,6 @@ static void		cmd_look(Player& player)
 	else
 		result = ok(player.get_current_room()->look());
 	player.send_to_outbox(result);
-
-	// TODO: Remove the json test.
-	// std::string	json_format;
-	// json_format = player.get_current_room()->look();
-	// nlohmann::json	j = nlohmann::json::parse(json_format);
-	// std::ofstream	result_file("datos.json");
-	// result_file << j.dump(4);
-	// result_file.close();
 }
 
 static void		cmd_move(const Command& cmd, Player& player)
@@ -190,7 +182,11 @@ static void		cmd_group(const Command& cmd, PlayerConnection& conn)
 		else if (!conn.get_server()->invite_group(conn, *target))
 			result = err(ErrorCode::ALREADY_INVITED);
 		else
+		{
 			result = ok("");
+			Group	*g = conn.get_group();
+			target->get_player().send_to_outbox(evt_group_invite(g->get_leader()->get_player().get_name()));
+		}
 	}
 	else if (scope == "JOIN")
 	{
@@ -231,6 +227,8 @@ static void		cmd_group(const Command& cmd, PlayerConnection& conn)
 			result = err(ErrorCode::NOT_IN_GROUP);
 		else
 		{
+			Group	*group = conn.get_group();
+			conn.get_server()->group_broadcast(*group, evt_group_leave(conn.get_player().get_name()), conn.get_client_fd());
 			if (conn.get_server()->leave_group(conn))
 				result = ok("");
 			else
@@ -238,6 +236,48 @@ static void		cmd_group(const Command& cmd, PlayerConnection& conn)
 		}
 	}
 	conn.get_player().send_to_outbox(result);
+}
+
+static void		cmd_take(const Command& cmd, Player& player)
+{
+	Item	*taken;
+
+	taken = player.obtain_item(cmd.args[0]);
+	if (taken)
+		player.send_to_outbox(ok("taken=" + taken->get_id()));
+	else
+		player.send_to_outbox(err(ErrorCode::ITEM_NOT_FOUND));
+}
+
+static void		cmd_drop(const Command& cmd, Player& player)
+{
+	Item	*dropped;
+
+	dropped	= player.drop_item(cmd.args[0]);
+	if (dropped)
+		player.send_to_outbox(ok("dropped=" + dropped->get_id()));
+	else
+		player.send_to_outbox(err(ErrorCode::ITEM_NOT_IN_INVENTORY));
+}
+
+static void		cmd_inventory(Player& player)
+{
+	player.send_to_outbox(ok(player.get_inventory().to_json_format()));
+}
+
+static void		cmd_talk(const Command& cmd, Player& player)
+{
+	Room	*room;
+	NPC		*npc;
+
+	room = player.get_current_room();
+	npc = nullptr;
+	if (room)
+		npc = room->get_NPC();
+	if (!npc || npc->get_name() != cmd.args[0])
+		player.send_to_outbox(err(ErrorCode::NPC_NOT_FOUND));
+	else
+		player.send_to_outbox(ok(npc->on_talk(player)));
 }
 
 /**
@@ -347,16 +387,16 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			cmd_group(cmd, connection);
 			break;
 		case CommandType::TAKE:
-			// TODO: cmd_take
+			cmd_take(cmd, player);
 			break;
 		case CommandType::DROP:
-			// TODO: cmd_drop
+			cmd_drop(cmd, player);
 			break;
 		case CommandType::INVENTORY:
-			// TODO: cmd_inventory
+			cmd_inventory(player);
 			break;
 		case CommandType::TALK:
-			// TODO: cmd_talk
+			cmd_talk(cmd, player);
 			break;
 		case CommandType::FIGHT:
 			cmd_fight(connection.get_player());

@@ -19,9 +19,10 @@ unsigned int	Enemy::get_gold(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Enemy::on_talk(Player& player) noexcept
+const std::string	Enemy::on_talk(Player& player) noexcept
 {
 	// TODO: Logic ...
+	return ("");
 }
 
 FighterType	Enemy::get_type(void) const noexcept

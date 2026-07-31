@@ -483,9 +483,7 @@ void				Server::game_loop(void)
 			}
 			catch (const CommandParseError& e)
 			{
-				// TODO: Mandar al error el tipo de error, poniéndole a la excepción un tipo de error en concreto.
-				// TODO: El salto de linea debería venir ya en el e.what, generado al llamar a err(tipo de error)
-				(*cmd_info.sender).get_player().send_to_outbox(std::string(e.what(), strlen(e.what())) + '\n');
+				(*cmd_info.sender).get_player().send_to_outbox(e.what());
 				log(e.what(), LogLevel::ERROR);
 				continue;
 			}
