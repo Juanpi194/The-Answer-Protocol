@@ -8,6 +8,7 @@
 #include "battle/Battle.hpp"
 #include "characters/Player.hpp"
 #include "characters/enemies/Enemy.hpp"
+#include "items/Consumable.hpp"
 #include "libs/json.hpp"
 #include "protocol/responses.hpp"
 #include "server/PlayerConnection.hpp"
@@ -54,13 +55,11 @@ static void		fight_result(Player& player, World& world)
 		player.respawn(world.get_spawn_room());
 }
 
-static void		cmd_look(const Command& cmd, Player& player)
+static void		cmd_look(Player& player)
 {
 	std::string	result;
 
-	if (cmd.args.size() != 0)
-		result = err(ErrorCode::WRONG_ARGUMENTS);
-	else if (!player.get_current_room())
+	if (!player.get_current_room())
 		result = err(ErrorCode::NO_ROOM);
 	else
 		result = ok(player.get_current_room()->look());
@@ -79,11 +78,6 @@ static void		cmd_move(const Command& cmd, Player& player)
 {
 	Direction	dir;
 
-	if (cmd.args.size() != 1)
-	{
-		player.send_to_outbox(err(ErrorCode::WRONG_ARGUMENTS));
-		return;
-	}
 	dir = string_to_direction(cmd.args[0]);
 	if (dir == Direction::INVALID)
 	{
@@ -98,17 +92,136 @@ static void		cmd_move(const Command& cmd, Player& player)
 		player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 }
 
-static void		cmd_quit(const Command& cmd, PlayerConnection& conn)
+static void		cmd_quit(PlayerConnection& conn)
 {
-	if (cmd.args.size() != 0)
-		conn.get_player().send_to_outbox(err(ErrorCode::WRONG_ARGUMENTS));
-	else
-	{
-		conn.get_player().send_to_outbox(ok("bye"));
-		conn.set_quitting(true);
-	}
+	if (!conn.get_server())
+		return;
+	conn.get_player().send_to_outbox(ok("bye"));
+	conn.set_quitting(true);
 }
 
+static void		cmd_chat(const Command& cmd, PlayerConnection& conn)
+{
+	std::string	channel;
+	std::string	msg;
+	std::string	full_msg;
+
+	if (!conn.get_server())
+		return;
+	channel = cmd.args[0];
+	msg = cmd.args[1];
+	full_msg = conn.get_player().get_name() + ": '" + msg + "'";
+	if (channel == "GLOBAL")
+	{
+		conn.get_server()->broadcast(full_msg, conn.get_client_fd());
+		conn.get_player().send_to_outbox(ok("sent"));
+	}
+	else if (channel == "ROOM")
+	{
+		if (!conn.get_player().get_current_room())
+			conn.get_player().send_to_outbox(err(ErrorCode::NO_ROOM));
+		else
+		{
+			// TODO: Room logic
+		}
+	}
+	else if (channel == "GROUP")
+	{
+		// TODO: Group logic
+	}
+	else
+		conn.get_player().send_to_outbox(err(ErrorCode::INVALID_ARGUMENT));
+}
+
+static void		cmd_who(PlayerConnection& conn)
+{
+	size_t	n_clients;
+
+	if (!conn.get_server())
+		return;
+	n_clients = conn.get_server()->count_clients();
+	conn.get_player().send_to_outbox(ok(std::to_string(n_clients)));
+}
+
+static void		cmd_group(const Command& cmd, PlayerConnection& conn)
+{
+	// TODO: Create, Invite, Join, Leave
+	std::string	scope;
+	std::string	result;
+
+	if (!conn.get_server())
+		return;
+	scope = cmd.args[0];
+	if (scope == "CREATE")
+	{
+		Group	*group = conn.get_server()->create_group(conn);
+		if (group)
+			result = ok("group=" + group->get_id());
+		else
+			result = err(ErrorCode::ALREADY_IN_GROUP);
+	}
+	else if (scope == "INVITE")
+	{
+		PlayerConnection	*target;
+		target = conn.get_server()->search_client_by_name(cmd.args[1]);
+
+		if (!conn.get_group())
+			result = err(ErrorCode::NOT_IN_GROUP);
+		else if (!target)
+			result = err(ErrorCode::PLAYER_NOT_FOUND);
+		else if (!conn.get_server()->invite_group(conn, *target))
+			result = err(ErrorCode::ALREADY_INVITED);
+		else
+			result = ok("");
+	}
+	else if (scope == "JOIN")
+	{
+		const std::string	leader_name = cmd.args[1];
+		Group				*group;
+		PlayerConnection	*leader;
+
+		leader = conn.get_server()->search_client_by_name(leader_name);
+		if (conn.get_group())
+			result = err(ErrorCode::ALREADY_IN_GROUP);
+		else if (!leader)
+			result = err(ErrorCode::PLAYER_NOT_FOUND);
+		else
+		{
+			if (!conn.get_server()->find_group_by_leader(*leader))
+				result = err(ErrorCode::GROUP_NOT_FOUND);
+			else
+			{
+				group = conn.get_server()->join_group(conn, *leader);
+				if (!group)
+					result = err(ErrorCode::NOT_INVITED);
+				else
+					result = ok("group=" + group->get_id());
+			}
+		}
+
+	}
+	else if (scope == "KICK")
+	{
+		// TODO: KICK logic
+	}
+	else if (scope == "LEAVE")
+	{
+		if (!conn.get_group())
+			result = err(ErrorCode::NOT_IN_GROUP);
+		else
+		{
+			if (conn.get_server()->leave_group(conn))
+				result = ok("");
+			else
+				result = err(ErrorCode::NOT_IN_GROUP);
+		}
+	}
+	conn.get_player().send_to_outbox(result);
+}
+
+/**
+ * @brief	This functions includes ATTACK, DEFEND and FLEE commands.
+ */
 static void		cmd_fight(Player& player)
 {
 	// ? REVIEW: All this logic and messages.
@@ -117,20 +230,20 @@ static void		cmd_fight(Player& player)
 
 	if (player.get_battle())
 	{
-		player.send_to_outbox("You are already in a battle.");
+		player.send_to_outbox(err(ErrorCode::ALREADY_IN_BATTLE));
 		return;
 	}
 	player_room = player.get_current_room();
 	if (!player_room)
 	{
-		player.send_to_outbox("You must be in a room with an enemy to start a fight.");
+		player.send_to_outbox(err(ErrorCode::NO_ROOM));
 		return;
 	}
 	enemy = get_enemy_in_room(*player_room);
 	if (!enemy)
-		player.send_to_outbox("There is no enemy in this room.");
+		player.send_to_outbox(err(ErrorCode::NO_ENEMY));
 	else if (player.is_enemy_beaten(enemy))
-		player.send_to_outbox("You have beaten the enemy already.");
+		player.send_to_outbox(err(ErrorCode::ALREADY_BEATEN));
 	else
 	{
 		log("'" + player.get_name() + "' started a fight with '" + enemy->get_name() + "'.", LogLevel::INFO);
@@ -138,13 +251,27 @@ static void		cmd_fight(Player& player)
 	}
 }
 
-static void		cmd_in_fight(Player& player, FightChoice choice, World& world)
+static void		cmd_in_fight(const Command cmd, Player& player, FightChoice choice, World& world)
 {
-	// ? REVIEW: Messages
+	// CONSUME case
+	if (choice.action == FightAction::CONSUME)
+	{
+		Item		*item = player.get_inventory().find_item_by_name(cmd.args[0]);
+		Consumable	*consumable = dynamic_cast<Consumable*>(item);
+		if (consumable)
+			choice.consumable = consumable;
+		else
+		{
+			player.send_to_outbox(err(ErrorCode::ITEM_NOT_IN_INVENTORY));
+			return;
+		}
+	}
+
+	// Executing action
 	if (player.get_battle())
 	{
 		if (choice.action == FightAction::DEFEND && !player.get_shield())
-			player.send_to_outbox("Can't defend, no shield equipped.");
+			player.send_to_outbox(err(ErrorCode::NO_SHIELD));
 		else
 		{
 			player.get_battle()->execute_turn(choice);
@@ -153,17 +280,15 @@ static void		cmd_in_fight(Player& player, FightChoice choice, World& world)
 		}
 	}
 	else
-		player.send_to_outbox("You are not in a battle.");
+		player.send_to_outbox(err(ErrorCode::NOT_IN_BATTLE));
 }
 
-static void		cmd_help(const Command& cmd, PlayerConnection& conn)
+static void		cmd_help(PlayerConnection& conn)
 {
 	std::string	result;
 
 	if (!conn.get_server())
-		result = err(ErrorCode::UNEXPECTED_ERROR);
-	else if (cmd.args.size() != 0)
-		result = err(ErrorCode::WRONG_ARGUMENTS);
+		return;
 	else
 		result = ok(conn.get_server()->get_commands_instructions());
 	conn.get_player().send_to_outbox(result);
@@ -183,13 +308,49 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			player.send_to_outbox(ok("already connected"));
 			break;
 		case CommandType::LOOK:
-			cmd_look(cmd, player);
+			cmd_look(player);
 			break;
 		case CommandType::MOVE:
 			cmd_move(cmd, player);
 			break;
 		case CommandType::QUIT:
-			cmd_quit(cmd, connection);
+			cmd_quit(connection);
+			break;
+		case CommandType::CHAT:
+			cmd_chat(cmd, connection);
+			break;
+		case CommandType::WHO:
+			cmd_who(connection);
+			break;
+		case CommandType::GROUP:
+			cmd_group(cmd, connection);
+			break;
+		case CommandType::TAKE:
+			// TODO: cmd_take
+			break;
+		case CommandType::DROP:
+			// TODO: cmd_drop
+			break;
+		case CommandType::INVENTORY:
+			// TODO: cmd_inventory
+			break;
+		case CommandType::TALK:
+			// TODO: cmd_talk
+			break;
+		case CommandType::FIGHT:
+			cmd_fight(connection.get_player());
+			break;
+		case CommandType::ATTACK:
+			cmd_in_fight(cmd, connection.get_player(), {FightAction::ATTACK}, world);
+			break;
+		case CommandType::DEFEND:
+			cmd_in_fight(cmd, connection.get_player(), {FightAction::DEFEND}, world);
+			break;
+		case CommandType::FLEE:
+			cmd_in_fight(cmd, connection.get_player(), {FightAction::FLEE}, world);
+			break;
+		case CommandType::CONSUME:
+			cmd_in_fight(cmd, connection.get_player(), {FightAction::CONSUME}, world);
 			break;
 		default:
 			// It should never get to this point, all types should be managed.

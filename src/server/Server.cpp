@@ -8,6 +8,7 @@
 #include "utils/utils.hpp"
 #include "commands/CommandHandler.hpp"
 #include "commands/commandparser.hpp"
+#include "group/Group.hpp"
 #include "protocol/responses.hpp"
 
 const std::string	ServerError::DEFAULT_MSG = "Server initialization failed.";
@@ -239,7 +240,7 @@ void				Server::accept_loop(void)
 	}
 }
 
-PlayerConnection	*Server::search_client_by_name(const std::string& name) noexcept
+PlayerConnection	*Server::search_client_by_name_nolock(const std::string& name) noexcept
 {
 	for (PlayerConnection& client: clients)
 		if (client.get_player().get_name() == name)
@@ -449,6 +450,28 @@ PlayerConnection	*Server::find_client_by_fd(int fd) noexcept
 	return (nullptr);
 }
 
+PlayerConnection	*Server::search_client_by_name(const std::string& name) noexcept
+{
+	std::lock_guard<std::mutex>	lock(clients_mtx);
+
+	for (PlayerConnection& client: clients)
+		if (client.get_player().get_name() == name)
+			return (&client);
+	return (nullptr);
+}
+
+Group				*Server::find_group_by_leader(PlayerConnection& leader) noexcept
+{
+	if (!leader.get_group())
+		return (nullptr);
+
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	for (Group& group: groups)
+		if (group.get_leader() == &leader)
+			return (&group);
+	return (nullptr);
+}
+
 bool				Server::is_fd_available(int fd) noexcept
 {
 	std::lock_guard<std::mutex>	lock(clients_mtx);
@@ -560,4 +583,69 @@ std::string			Server::get_commands_instructions(void) const noexcept
 	result += '\n';
 	result += bars;
 	return (result);
+}
+
+size_t				Server::count_clients(void) noexcept
+{
+	std::lock_guard<std::mutex>	lock(clients_mtx);
+	return (clients.size());
+}
+
+Group				*Server::create_group(PlayerConnection& leader)
+{
+	if (leader.get_group())
+		return (nullptr);
+
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	groups.emplace_back(leader);
+	leader.set_group(&groups.back());
+	return (&groups.back());
+}
+
+bool				Server::invite_group(PlayerConnection& inviter, PlayerConnection& target)
+{
+	if (!inviter.get_group())
+		return (false);
+
+	// Inviting target
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	if (!inviter.get_group()->invite_member(target))
+		return (false);
+	return (true);
+}
+
+Group				*Server::join_group(PlayerConnection& member, PlayerConnection& leader)
+{
+	Group						*target_group;
+	
+	target_group = nullptr;
+
+	// Looking for target group
+	{
+		std::lock_guard<std::mutex>	lock(groups_mtx);
+		for (Group& group: groups)
+			if (group.get_leader() == &leader)
+				target_group = &group;
+	}
+	if (!target_group)
+		return (nullptr);
+	if (target_group->accept_member(member))
+		return (target_group);
+	return (nullptr);
+}
+
+bool				Server::leave_group(PlayerConnection& member)
+{
+	Group	*group;
+
+	group = member.get_group();
+	if (!group)
+		return (false);
+
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	if (!group->remove_member(member))
+		return (false);
+	if (group->get_members().empty())
+		groups.remove(*group);
+	return (true);
 }
