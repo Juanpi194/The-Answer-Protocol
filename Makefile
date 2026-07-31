@@ -41,9 +41,9 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				chest/Chest.cpp chest/ChestKey.cpp \
 				consumables/Apple.cpp consumables/FirePotion.cpp consumables/HastePotion.cpp \
 				consumables/HealingPotion.cpp consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
-				weapons/BronzeShield.cpp weapons/BronzeSword.cpp weapons/FlameSword.cpp \
-				weapons/FrostSword.cpp weapons/IronShield.cpp weapons/IronSword.cpp \
-				weapons/SerratedSword.cpp weapons/SteelShield.cpp weapons/SteelSword.cpp )
+				shields/BronzeShield.cpp shields/IronShield.cpp shields/SteelShield.cpp \
+				weapons/BronzeSword.cpp weapons/FlameSword.cpp weapons/FrostSword.cpp \
+				weapons/IronSword.cpp weapons/SerratedSword.cpp weapons/SteelSword.cpp )
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \
