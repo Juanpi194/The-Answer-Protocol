@@ -40,7 +40,7 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				armor/IronArmor.cpp armor/SpikeArmor.cpp armor/SteelArmor.cpp \
 				chest/Chest.cpp chest/ChestKey.cpp \
 				consumables/Apple.cpp consumables/FirePotion.cpp consumables/HastePotion.cpp \
-				consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
+				consumables/HealingPotion.cpp consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
 				weapons/BronzeShield.cpp weapons/BronzeSword.cpp weapons/FlameSword.cpp \
 				weapons/FrostSword.cpp weapons/IronShield.cpp weapons/IronSword.cpp \
 				weapons/SerratedSword.cpp weapons/SteelShield.cpp weapons/SteelSword.cpp )
