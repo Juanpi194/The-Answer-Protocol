@@ -59,5 +59,5 @@ class QuestGiver final: public NPC
 
 		// Utils --------------------------------------------------------------
 
-		void	on_talk(Player& player) noexcept override;
+		const std::string	on_talk(Player& player) noexcept override;
 };

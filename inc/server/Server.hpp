@@ -5,6 +5,9 @@
 #include <thread>
 #include <vector>
 
+#include "utils/attributes.hpp"
+#include "group/Group.hpp"
+#include "protocol/responses.hpp"
 #include "server/PlayerConnection.hpp"
 #include "world/World.hpp"
 
@@ -41,15 +44,12 @@ class ServerOwner;
 class Server
 {
 	private:
-		int							sock;
-		ServerOwner					*owner;
-		World						*world;
-		std::list<PlayerConnection>	clients;
-		std::mutex					clients_mtx;
-		std::list<t_command>		cmd_queue;
-		std::mutex					cmd_mtx;
-		std::atomic<bool>			on;
-		std::thread					accept_thread;
+		int								sock;
+		ServerOwner						*owner;
+		World							*world;
+
+		std::atomic<bool>				on;
+		std::thread						accept_thread;
 
 		/**
 		 * @brief	When shutting down the server, we need to know
@@ -58,24 +58,43 @@ class Server
 		 * 			them accept_thread will be joined, so the list will
 		 * 			not be modified anywhere.
 		 */
-		std::vector<std::thread>	thread_list;
+		std::vector<std::thread>		thread_list;
 
 		/**
 		 * @brief	Variable used to check if the program is running.
 		 */
-		std::atomic<bool>			running;
+		std::atomic<bool>				running;
 
-		// static constexpr int		DOMAIN = AF_INET;
-		// static constexpr int		TYPE = SOCK_STREAM;
+		std::list<PlayerConnection>		clients;
+		std::mutex						clients_mtx;
+
+		std::list<t_command>			cmd_queue;
+		std::mutex						cmd_mtx;
+
+		std::list<std::string>			banned_clients;
+		std::mutex						banned_mtx;
+
+		std::list<Group>				groups;
+		std::mutex						groups_mtx;
+
+		std::list<PlayerConnection*>	pending_joins;
+		std::mutex						joins_mtx;
+
+		std::list<PlayerConnection*>	pending_leaves;
+		std::mutex						leaves_mtx;
+
+		static constexpr int			DOMAIN = AF_INET;
+		static constexpr int			TYPE = SOCK_STREAM;
 		static constexpr int			DEFAULT_PORT = 8080;
 		static constexpr unsigned int	MAX_CLIENTS = 20;
 		static constexpr size_t			MAX_MSG_LENGTH = 1024;
+		static constexpr time_t			GAME_LOOP_MS_CD = 50;	// Milliseconds cooldown
 
 		/**
 		 * @brief	Initializes the server socket.
 		 * @returns	The socket fd. -1 if any problem happened.
 		 */
-		int	init(void);
+		int					init(void);
 
 		/**
 		 * @brief	Connects a new user or reconnects if it already exists
@@ -84,22 +103,29 @@ class Server
 		 * @returns	A new account or one that already exists. `nullptr` if
 		 * 			any error happens during the connection.
 		 */
-		PlayerConnection	*setup_client(int fd);
+		PlayerConnection	*setup_client(const int fd);
 
 		/**
 		 * @brief	Thread that will simulate each client.	
 		 */
-		void	client_thread(int fd);
+		void				client_thread(int fd);
 
 		/**
 		 * @brief	Thread that will be accepting new clients.
 		 */
-		void	accept_loop(void);
+		void				accept_loop(void);
 
 		/**
+		 * @brief	Looks for a client in the clients list with the specified
+		 * 			name.
+		 * @param	name	The name of the client to find.
+		 * @returns	A pointer to the client found with that name,
+		 * 			`nullptr` otherwise.
 		 * @note	This method will not lock `clients_mtx`.
+		 * 			Used in `setup_client`.
 		 */
-		PlayerConnection	*search_client_by_name(const std::string& name) noexcept;
+		PlayerConnection	*search_client_by_name_nolock(const std::string& name) noexcept;
+
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -122,6 +148,8 @@ class Server
 		World								*get_world(void) const noexcept;
 		const std::list<PlayerConnection>&	get_clients(void) const noexcept;
 		bool								is_on(void) const noexcept;
+		const std::list<std::string>&		get_banned_clients(void) const noexcept;
+		const std::list<Group>&				get_groups(void) const noexcept;
 
 		void	set_owner(ServerOwner *owner) noexcept;
 		void	set_world(World *world) noexcept;
@@ -137,10 +165,15 @@ class Server
 		/**
 		 * @throws	`ServerError` if `init` failed.
 		 */
-		void	start(void);
+		void				start(void);
 
-		void	stop(void);
-		void	send_msg_to(int dst, const std::string& msg);
+		/**
+		 * @brief	Turns the server off: Waits `accept_thread` to finish,
+		 * 			closes the socket, sets it to -1, sets all clients as
+		 * 			disconnected, and joins all client threads.
+		 */
+		void				stop(void);
+		void				send_msg_to(int dst, const std::string& msg);
 
 		/**
 		 * @brief				Sends a message to all clients.
@@ -149,22 +182,48 @@ class Server
 		 * 						message. If `-1` , all clients will
 		 * 						receive the message.
 		 */
-		void	broadcast(const std::string& msg, int fd_excluded = -1);
+		void				broadcast(const std::string& msg, int fd_excluded = -1);
+
+		void				group_broadcast(Group& group, const std::string& msg, int fd_excluded = -1);
 
 		/**
-		 * @brief	Broadcasts that a client connected.
+		 * @note	Locks `cmd_mtx`.
 		 */
-		void	connect_client(PlayerConnection& client);
+		void				push_command(const t_command& cmd);
 
 		/**
-		 * @brief	Broadcasts that a client disconnected.
+		 * @note	Locks `joins_mtx`.
 		 */
-		void	disconnect_client(PlayerConnection& client);
+		void				push_join(PlayerConnection* client);
 
-		void	push_command(const t_command& cmd);
-		void	game_loop(void);
+		/**
+		 * @note	Locks `leaves_mtx`.
+		 */
+		void				push_leave(PlayerConnection* client);
+
+		void				game_loop(void);
 
 		PlayerConnection	*find_client_by_fd(int fd) noexcept;
+
+		/**
+		 * @brief	Looks for a client in the clients list with the specified
+		 * 			name.
+		 * @param	name	The name of the client to find.
+		 * @returns	A pointer to the client found with that name,
+		 * 			`nullptr` otherwise.
+		 * @note	This method locks `clients_mtx`.
+		 */
+		PlayerConnection	*search_client_by_name(const std::string& name) noexcept;
+
+		/**
+		 * @brief	Looks for a group that the specified client leads.
+		 * @param	leader	The client.
+		 * @returns	The group `leader` leads, `nullptr` if `leader` is not the
+		 * 			leader of its group or if it has no group.
+		 * @note	This method locks `groups_mtx`.
+		 */
+		Group				*find_group_by_leader(PlayerConnection& leader) noexcept;
+
 		bool				is_fd_available(int fd) noexcept;
 
 		/**
@@ -172,4 +231,66 @@ class Server
 		 * @returns	The generated string.
 		 */
 		std::string			list_clients(void) noexcept;
+
+		/**
+		 * @brief	Checks if a player is in the bans list.
+		 * @param	client	The player to check.
+		 */
+		bool				is_client_banned(const std::string& name) noexcept;
+
+		/**
+		 * @brief	Bans the client with the specified name from the server.
+		 * @param	name	The name of the client to ban.
+		 * @return	`true` if ban was succesfull. `false` otherwise.
+		 */
+		bool				ban_client(const std::string& name) noexcept;
+
+		/**
+		 * @brief	Creates a string with all the available commands and their
+		 * 			information.
+		 * @returns	A string with all commands instructions explained.
+		 */
+		std::string			get_commands_instructions(void) const noexcept;
+
+		/**
+		 * @brief	Counts how many CONNECTED clients the server has.
+		 * @returns	The size of the clients list.
+		 */
+		size_t				count_clients(void) noexcept;
+
+		/**
+		 * @brief	Creates a group that will have the provided client as the
+		 * 			leader of the group.
+		 * @param	leader	The leader of the new group.
+		 * @returns	The new group, `nullptr` if `leader` is already in a group.
+		 */
+		Group				*create_group(PlayerConnection& leader) TAP_UNUSED_RESULT;
+
+		/**
+		 * @brief	Invites a member with the specified name to the member's group.
+		 * @param	inviter		The member that made the invitation.
+		 * @param	target_name	The name of the client to get invited.
+		 * @returns	`true` if the invitation was successfully done. `false` if
+		 * 			`member` does not have a group, if `target_name` does not match
+		 * 			any client, or the invitation failed.
+		 */
+		bool				invite_group(PlayerConnection& inviter, PlayerConnection& target);
+
+		/**
+		 * @brief	Tries to join a member to the specified leader's group.
+		 * @param	member	The member to join to the group.
+		 * @param	leader	The leader of the group `member` will be joining.
+		 * @returns	The group `member` joined, `nullptr` if there is no group
+		 * 			with that member as leader, or if the member didn't get
+		 * 			accepted (for other reasons).
+		 */
+		Group				*join_group(PlayerConnection& member, PlayerConnection& leader);
+
+		/**
+		 * @brief	Makes the specified member to leave its group.
+		 * @param	member	The member that will leave its group.
+		 * @returns	`true` if the member successfully left his group,
+		 * 			`false` otherwise.
+		 */
+		bool				leave_group(PlayerConnection& member);
 };

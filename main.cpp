@@ -15,7 +15,7 @@
 #include "world/World.hpp"
 const std::string	DEFAULT_CLIENT_NAME = "Alberto";
 const std::string	DEFAULT_WORLD_NAME = "The Amazing World Of Gumball";
-const std::string	DEFAULT_WORLD_JSON = "default.json";
+const std::string	DEFAULT_WORLD_JSON = "map/default.json"; // MODIFIED: antes "default.json" en la raíz
 static bool	read_command(std::string& out)
 {
 	std::getline(std::cin, out);
@@ -35,7 +35,8 @@ static void	debug_mode(void)
 	std::string				msg;
 	Command					cmd;
 	world.get_spawn_room()->add_player(&client.get_player());
-	client.connect();
+	// MODIFIED: connect() ya no existe en PlayerConnection -- el
+	// constructor deja `connected` en true directamente.
 	while (client.is_connected())
 	{
 		if (!read_command(msg))
@@ -70,12 +71,24 @@ static void	normal_mode(void)
 	server.game_loop();
 	owner_thread.join();
 }
-int	main(void)
+// MODIFIED: antes se decidía en tiempo de compilación (current_level, via
+// #ifdef DEBUG_BUILD), lo que obligaba a compilar dos veces todo el
+// proyecto (una carpeta de objetos por modo) para poder tener los dos
+// binarios. Ahora es un flag de línea de comandos, así que un único set de
+// objetos sirve para todo -- "tap" sin nada es el server, "tap --debug"
+// entra en debug_mode.
+int	main(int argc, char **argv)
 {
-	// new int(5);
+	bool	debug_requested = false;
+
+	for (int i = 1; i < argc; ++i)
+	{
+		if (std::string(argv[i]) == "--debug" || std::string(argv[i]) == "-d")
+			debug_requested = true;
+	}
 	try
 	{
-		if (current_level == LogLevel::DEBUG)
+		if (debug_requested)
 			debug_mode();
 		else
 			normal_mode();

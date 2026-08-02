@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
-#include "characters/Enemy.hpp"
+#include "characters/enemies/Enemy.hpp" // MODIFIED: vuelta a la estructura de juanpi
 #include "characters/Player.hpp"
 
 void	Battle::set_winner(Fighter& winner) noexcept
@@ -134,7 +134,7 @@ void	Battle::execute_turn(FightChoice player_choice) noexcept
 
 		// Finished?
 		if (finished)
-			return ;
+			return;
 
 		// Second fighter acting
 		resolve_action(*second, *first, second_choice);

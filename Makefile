@@ -1,70 +1,92 @@
 PROGRAM_NAME = tap
+TUI_PROGRAM_NAME = tap_tui_client
 GUI_PROGRAM_NAME = tap_gui_client
 
 ENTRY = main.cpp
-GUI_ENTRY = gui/src/main.cpp
+TUI_ENTRY = ui/tui/main.cpp
+GUI_ENTRY = ui/gui/main.cpp
 
 SRC_FOLDER = src
 INC_FOLDER = inc
 OBJ_FOLDER = obj
 
-BATTLE_FOLDER = battle
-BATTLE_SRC = $(addprefix $(SRC_FOLDER)/$(BATTLE_FOLDER)/, \
+# MODIFIED: rutas explícitas, sin $(wildcard ...) -- a petición expresa,
+# nada de flexibilidad automática. Cualquier archivo nuevo que alguien
+# añada hay que listarlo aquí a mano para que entre en la compilación.
+#
+# Cosas que existen en el repo pero NO se listan aquí a propósito (quedan
+# fuera del build, sin tocarlas, hasta que estén terminadas):
+#   - src/factories/EnchantmentFactory.cpp y src/enchantments/EnchantmentFactory.cpp
+#     (dos versiones, ninguna conectada a nada todavía -- a revisar cuál
+#     de las dos es la buena cuando se termine esa parte)
+#   - src/factories/NpcPacificFactory.cpp (no compila tal cual: le falta
+#     el include de Enchanter.hpp, y tiene un typo NpcFactory/NpcPacificFactory)
+#   - src/protocol/command.cpp y src/protocol/commandparser.cpp (fork viejo,
+#     ya superado por src/commands/, pedido explícitamente no tocarlos)
+#   - src/parser/enemyparser.cpp (vacío, sin empezar)
+#   - inc/characters/Vendor.hpp, inc/items/SpecialEffectGear.hpp (solo
+#     cabecera, sin .cpp -- nada que compilar todavía)
+
+BATTLE_SRC = $(addprefix $(SRC_FOLDER)/battle/, \
 				Battle.cpp)
 
-CHARACTERS_FOLDER = characters
-CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
-					Character.cpp Enchanter.cpp Enemy.cpp EnemyFactory.cpp \
-					Fighter.cpp Goblin.cpp Merchant.cpp Narrator.cpp \
-					NPC.cpp Player.cpp QuestGiver.cpp)
+CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/characters/, \
+					Character.cpp Enchanter.cpp Fighter.cpp Merchant.cpp \
+					NPC.cpp Narrator.cpp Player.cpp QuestGiver.cpp \
+					enemies/Enemy.cpp enemies/Goblin.cpp)
 
-ENCHANTMENTS_FOLDER = enchantments
-ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
-						Enchantment.cpp EnchantmentFactory.cpp Flame.cpp Freeze.cpp)
+ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/enchantments/, \
+						Enchantment.cpp Flame.cpp Freeze.cpp)
 
-ITEMS_FOLDER = items
-ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
-				Apple.cpp Armor.cpp Chest.cpp ChestKey.cpp Consumable.cpp \
-				FlameSword.cpp Gear.cpp Inventory.cpp IronArmor.cpp \
-				IronShield.cpp IronSword.cpp ItemFactory.cpp Item.cpp \
-				Shield.cpp SpikeArmor.cpp Weapon.cpp)
+ITEMS_SRC = $(addprefix $(SRC_FOLDER)/items/, \
+				Armor.cpp Consumable.cpp Gear.cpp Inventory.cpp Item.cpp \
+				Shield.cpp Weapon.cpp \
+				armor/BronzeArmor.cpp armor/EmberArmor.cpp \
+				armor/FrostArmor.cpp armor/IronArmor.cpp \
+				armor/SpikeArmor.cpp armor/SteelArmor.cpp \
+				chest/Chest.cpp chest/ChestKey.cpp \
+				consumables/Apple.cpp consumables/FirePotion.cpp \
+				consumables/HastePotion.cpp consumables/HealingPotion.cpp \
+				consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
+				shields/BronzeShield.cpp shields/IronShield.cpp \
+				shields/SteelShield.cpp \
+				weapons/BronzeSword.cpp weapons/FlameSword.cpp \
+				weapons/FrostSword.cpp weapons/IronSword.cpp \
+				weapons/SerratedSword.cpp weapons/SteelSword.cpp)
 
-# MODIFIED: esta carpeta entera faltaba en el Makefile -- CommandParser y
-# CommandHandler no se estaban compilando en absoluto, de ahi los
-# "undefined reference" al enlazar.
-COMMANDS_FOLDER = commands
-COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/$(COMMANDS_FOLDER)/, \
+FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/factories/, \
+					EnemyFactory.cpp ItemFactory.cpp)
+
+COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/commands/, \
 					command.cpp CommandHandler.cpp commandparser.cpp)
 
-PARSER_FOLDER = parser
-PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \
-				parser.cpp)
+# MODIFIED: solo events.cpp/responses.cpp -- command.cpp/commandparser.cpp
+# de esta carpeta son el fork viejo, sin tocar, no entran en el build.
+PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/protocol/, \
+					events.cpp responses.cpp)
 
-QUESTS_FOLDER = quests
-QUESTS_SRC = $(addprefix $(SRC_FOLDER)/$(QUESTS_FOLDER)/, \
+GROUP_SRC = $(addprefix $(SRC_FOLDER)/group/, \
+				Group.cpp)
+
+QUESTS_SRC = $(addprefix $(SRC_FOLDER)/quests/, \
 				Quest.cpp)
 
-SERVER_FOLDER = server
-SERVER_SRC = $(addprefix $(SRC_FOLDER)/$(SERVER_FOLDER)/, \
+SERVER_SRC = $(addprefix $(SRC_FOLDER)/server/, \
 				PlayerConnection.cpp Server.cpp ServerOwner.cpp)
 
-UTILS_FOLDER = utils
-UTILS_SRC = $(addprefix $(SRC_FOLDER)/$(UTILS_FOLDER)/, \
-				colors.cpp globals.cpp log.cpp string_utils.cpp \
-				types.cpp)
+UTILS_SRC = $(addprefix $(SRC_FOLDER)/utils/, \
+				colors.cpp globals.cpp log.cpp string_utils.cpp types.cpp)
 
-WORLD_FOLDER = world
-WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
+WORLD_SRC = $(addprefix $(SRC_FOLDER)/world/, \
 				Room.cpp World.cpp)
 
-# MODIFIED: GuiClient es parte del motor compartido -- se compila con las
-# mismas reglas/flags que el resto (no necesita SDL2/ImGui para compilar,
-# solo el propio motor de juego), asi que entra en el mismo SRC/OBJS.
-GUI_CLIENT_FOLDER = gui
-GUI_CLIENT_SRC = $(addprefix $(SRC_FOLDER)/$(GUI_CLIENT_FOLDER)/, \
-					GuiClient.cpp)
+UI_CLIENT_SRC = $(addprefix $(SRC_FOLDER)/ui/, \
+					CLI.cpp)
 
-SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC) $(COMMANDS_SRC) $(GUI_CLIENT_SRC)
+PARSER_SRC = $(addprefix $(SRC_FOLDER)/parser/, \
+				jsonconfig.cpp itemparser.cpp npcparser.cpp roomparser.cpp)
+
+SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(FACTORIES_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC) $(COMMANDS_SRC) $(PROTOCOL_SRC) $(GROUP_SRC) $(PARSER_SRC) $(UI_CLIENT_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
@@ -80,13 +102,6 @@ CRAZY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
 # -include $(DEPS)
 DEBUG_FLAG = -D WOW -D DEBUG_BUILD
 CC = c++
-
-# MODIFIED: carpeta de objetos aparte para el build SIN DEBUG_BUILD (el
-# servidor real, normal_mode). Necesaria porque los .o de obj/ ya llevan
-# DEBUG_BUILD horneado -- no se pueden reutilizar para esto.
-SERVER_OBJ_FOLDER = obj_server
-SERVER_OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(SERVER_OBJ_FOLDER)/%.o)
-SERVER_PROGRAM_NAME = tap_server
 
 COLOR_RESET			:= \033[0m
 COLOR_GRAY			:= \033[0;30m
@@ -122,10 +137,25 @@ GUI_INC = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends
 GUI_FLAGS = $(VERSION_FLAG) -g -fsanitize=thread -I $(INC_FOLDER) $(GUI_INC) $(SDL_CFLAGS) -pthread
 GL_LIBS = -lGL
 
-# DE AQUI PARA ABAJO ESTA COMO LA MIERDA // Ya no tanto
+# DE AQUI PARA ABAJO ME HE FLIPADO INTENTANDO HACER INTERCONEXIONES.
+# FUNCIONA, PERO RECOMPILA EN TODO MOMENTO. LO ARREGLARE.
 
+# MODIFIED: make help ahora sí explica cada comando.
 help:
-	# TODO: Explanation of each command
+	@echo "Available targets:"
+	@echo "  make / make all   - Compile all 3 executables: server, gui, tui"
+	@echo "  make server       - Compile only the server binary ($(PROGRAM_NAME))"
+	@echo "  make gui          - Compile only the GUI client ($(GUI_PROGRAM_NAME))"
+	@echo "  make tui          - Compile only the TUI client ($(TUI_PROGRAM_NAME))"
+	@echo "  make run-server   - Compile (if needed) and launch the server"
+	@echo "  make run-gui      - Compile (if needed) and launch the GUI client"
+	@echo "  make run-tui      - Compile (if needed) and launch the TUI client"
+	@echo "  make debug-mode   - Compile (if needed) and launch the server in debug_mode (--debug)"
+	@echo "  make valgrind-run - Compile (if needed) and run the server under valgrind"
+	@echo "  make install      - Fetch external dependencies (json.hpp, Dear ImGui)"
+	@echo "  make clean        - Remove compiled object files"
+	@echo "  make fclean       - clean + remove binaries + remove installed dependencies (json.hpp, external/imgui)"
+	@echo "  make re           - fclean + all"
 
 # MODIFIED: ademas de json.hpp, ahora tambien trae ImGui si no esta ya.
 install:
@@ -137,57 +167,79 @@ install:
 		echo "Dear ImGui already present at $(IMGUI_DIR), skipping."; \
 	fi
 
-# MODIFIED: run ahora es la entrada base para el proyecto, antes lanzaba valgrind por alguna razon
-run: gui
-	./$(GUI_PROGRAM_NAME)
-
-valgrind-run: all
+valgrind-run: server
 	valgrind ./$(PROGRAM_NAME) 2>result.txt
 
-$(OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp
+$(OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp | install
 	mkdir -p $(dir $@)
 	$(CC) $(FLAGS) $(DEBUG_FLAG) -c $< -o $@
 
-# MODIFIED: misma regla, pero SIN DEBUG_FLAG -- esta es la que de verdad
-# produce current_level = WARNING, es decir, normal_mode() (el servidor
-# real con sockets) en vez de debug_mode().
-$(SERVER_OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp
-	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) -c $< -o $@
-
 # MODIFIED: regla de compilacion para los .cpp de ImGui (A revisar)
-$(OBJ_FOLDER)/$(IMGUI_DIR)/%.o: $(IMGUI_DIR)/%.cpp
+$(OBJ_FOLDER)/$(IMGUI_DIR)/%.o: $(IMGUI_DIR)/%.cpp | install
 	mkdir -p $(dir $@)
 	$(CC) $(VERSION_FLAG) $(GUI_INC) $(SDL_CFLAGS) -O2 -c $< -o $@
 
-all: $(OBJS)
-	$(CC) $(FLAGS) $(ENTRY) $(OBJS) -o $(PROGRAM_NAME)
+# MODIFIED: all ahora compila los 3 ejecutables (antes solo el server).
+all: server gui tui
 
 compile-debug: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) $(DEBUG_FLAG) -o $(PROGRAM_NAME)
 
-# MODIFIED: el servidor real (normal_mode). "tap" y "tap_gui_client" siguen
-# siendo siempre debug_mode/modo local -- este es el unico que abre el
-# socket TCP de verdad.
-server: $(SERVER_OBJS)
-	$(CC) $(FLAGS) $(ENTRY) $(SERVER_OBJS) -o $(SERVER_PROGRAM_NAME)
+# MODIFIED: "server" es ahora el nombre explícito de este target (antes era
+# "all"). Sigue siendo el mismo binario de siempre: "tap" a secas es el
+# server (normal_mode), "tap --debug" es debug_mode -- ver debug-mode abajo.
+server: $(OBJS)
+	$(CC) $(FLAGS) $(ENTRY) $(OBJS) -o $(PROGRAM_NAME)
 
 run-server: server
-	./$(SERVER_PROGRAM_NAME)
+	./$(PROGRAM_NAME)
+
+debug-mode: server
+	./$(PROGRAM_NAME) --debug
+
+# MODIFIED: TUI (cliente CLI que pide el subject aparte del server y la
+# GUI). Comparte $(OBJS) con todo lo demas -- no necesita SDL2 ni ImGui
+# para nada, CLI no depende de esas librerias.
+tui: $(OBJS)
+	$(CC) $(FLAGS) $(TUI_ENTRY) $(OBJS) -o $(TUI_PROGRAM_NAME)
+
+run-tui: tui
+	./$(TUI_PROGRAM_NAME)
 
 # MODIFIED: build de la GUI, unificado aqui (antes vivia en gui/Makefile).
-gui: $(OBJS) $(IMGUI_OBJS)
+# MODIFIED: "gui" ya no depende directamente de $(IMGUI_OBJS) -- eso obliga
+# a Make a resolver esa regla ANTES de ejecutar "install", y en un repo
+# nuevo external/imgui/ todavia no existe en ese momento (Make calcula todo
+# el grafo de dependencias antes de ejecutar nada), asi que fallaba con
+# "No rule to make target obj/external/imgui/imgui.o" aunque install
+# fuese a crear la carpeta un segundo despues. La solucion: "install" se
+# ejecuta primero de verdad (prerequisito normal, no de orden), y luego se
+# lanza una sub-invocacion de make que vuelve a leer el Makefile con
+# external/imgui/ ya en el sitio.
+gui: install
+	$(MAKE) gui-build
+
+gui-build: $(OBJS) $(IMGUI_OBJS)
 	$(CC) $(GUI_FLAGS) $(GUI_ENTRY) $(OBJS) $(IMGUI_OBJS) $(SDL_LIBS) $(GL_LIBS) -o $(GUI_PROGRAM_NAME)
 
+run-gui: gui
+	./$(GUI_PROGRAM_NAME)
+
+# MODIFIED: clean ya no toca external/imgui -- eso son "importaciones" de
+# install, no artefactos de compilación. Se queda solo con obj/, así un
+# "make clean" normal no te obliga a re-descargar ImGui cada vez.
 clean:
-	rm -rf $(OBJ_FOLDER) $(SERVER_OBJ_FOLDER)
-	rm -rf external/imgui
+	rm -rf $(OBJ_FOLDER)
 
+# MODIFIED: fclean ahora también deshace lo que trae "install" (json.hpp,
+# external/imgui), tal y como pediste.
 fclean: clean
-	rm -f $(PROGRAM_NAME) $(GUI_PROGRAM_NAME) $(SERVER_PROGRAM_NAME)
+	rm -f $(PROGRAM_NAME) $(TUI_PROGRAM_NAME) $(GUI_PROGRAM_NAME)
+	rm -rf external/imgui
+	rm -f inc/libs/json.hpp
 
-re: clean all
+re: fclean all
 
-.PHONY: help install run valgrind-run run-server clean fclean re gui all compile-debug server
+.PHONY: help install run-server run-gui run-tui valgrind-run debug-mode clean fclean re gui gui-build all compile-debug tui server
 
 .DEFAULT_GOAL= all

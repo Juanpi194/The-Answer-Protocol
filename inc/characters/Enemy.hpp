@@ -25,7 +25,9 @@ class Enemy: public NPC, public Fighter
 
 		// Utils --------------------------------------------------------------
 
-		void				on_talk(Player& player) noexcept override;
+		// MODIFIED: era "void", no coincidía con la virtual pura de
+		// Character (const std::string) -- no compilaba.
+		const std::string				on_talk(Player& player) noexcept override;
 		FighterType			get_type(void) const noexcept override;
 
 		/**

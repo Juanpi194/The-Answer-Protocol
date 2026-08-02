@@ -15,7 +15,8 @@ PlayerConnection::PlayerConnection(const std::string& name, int client_fd, Serve
 	client_fd(client_fd),
 	connected(true),
 	server(server),
-	quitting(false)
+	quitting(false),
+	group(nullptr)
 {
 	// if (!server)
 	// 	throw std::invalid_argument("Player connection must be addressed to a server when being created.");
@@ -59,7 +60,12 @@ Server			*PlayerConnection::get_server(void) const noexcept
 bool			PlayerConnection::is_quitting(void) const noexcept
 {
 	return (quitting);
-} 
+}
+
+Group			*PlayerConnection::get_group(void) const noexcept
+{
+	return (group);
+}
 
 void	PlayerConnection::set_client_fd(int client_fd) noexcept
 {
@@ -88,17 +94,23 @@ void	PlayerConnection::set_quitting(bool quitting) noexcept
 	this->quitting = quitting;
 }
 
-void	PlayerConnection::connect(void)
+void	PlayerConnection::set_group(Group *group) noexcept
 {
-	// TODO: Connect to the server, ...
+	this->group = group;
+}
+
+void	PlayerConnection::reconnect(int fd)
+{
+	set_client_fd(fd);
+	connected = true;
+	quitting = false;
 }
 
 void	PlayerConnection::disconnect(void)
 {
-	// TODO: Disconnect from the server ...
-
 	quitting = false;
 	connected = false;
-	close(client_fd);
+	if (client_fd >= 0)
+		close(client_fd);
 	client_fd = -1;
 }

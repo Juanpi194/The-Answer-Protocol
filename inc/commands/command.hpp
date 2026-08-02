@@ -1,8 +1,9 @@
 #pragma once
-
 #include <exception>
 #include <string>
 #include <vector>
+
+#include "protocol/responses.hpp"
 
 enum class CommandType
 {
@@ -15,6 +16,10 @@ enum class CommandType
 	INVENTORY,
 	TALK,
 	ATTACK,
+	DEFEND,
+	FLEE,
+	CONSUME,
+	FIGHT,
 	STATUS,
 	QUEST,
 	QUESTS,
@@ -35,7 +40,7 @@ class CommandParseError : public std::exception
 		std::string	msg;
 
 	public:
-		explicit CommandParseError(const std::string& msg);
+		explicit CommandParseError(ErrorCode err_code);
 
 		const char	*what(void) const noexcept override;
 };

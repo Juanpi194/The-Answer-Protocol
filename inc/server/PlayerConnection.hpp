@@ -3,16 +3,18 @@
 
 #include "characters/Player.hpp"
 
+class Group;
 class Server;
 
 class PlayerConnection final
 {
 	private:
 		Player				player;
-		int					client_fd;
+		std::atomic<int>	client_fd;
 		std::atomic<bool>	connected;
 		Server				*server;
 		std::atomic<bool>	quitting;
+		Group				*group;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -36,6 +38,7 @@ class PlayerConnection final
 		bool			is_connected(void) const noexcept;
 		Server			*get_server(void) const noexcept;
 		bool			is_quitting(void) const noexcept;
+		Group			*get_group(void) const noexcept;
 
 		/**
 		 * @note	`client_fd` lower than `0` is not allowed.
@@ -44,10 +47,16 @@ class PlayerConnection final
 		void	set_connected(bool connected) noexcept;
 		void	set_server(Server *server);
 		void	set_quitting(bool quitting) noexcept;
+		void	set_group(Group *group) noexcept;
 
 		// Utils --------------------------------------------------------------
 
-		void		connect(void);
+		/**
+		 * @brief	Reconnects a player and sets the specified file descriptor
+		 * 			as the new one.
+		 * @param	fd	The new client's file descriptor.
+		 */
+		void		reconnect(int fd);
 
 		/**
 		 * @brief	Called when the player is disconnecting.

@@ -100,26 +100,15 @@ class Room
 		 */
 		void	remove_player(Player *player) TAP_NONNULL;
 
-		// ? REVIEW: Should we do these methods?
-
 		/**
-		 * @brief	Removed the specified item if its in the list, and
-		 * 			it also returns it.
-		 * @param	item	The item to remove. Assign as `nullptr` if you
-		 * 					want the last item to be removed.
-		 * @returns	`item` if found, or the last item of the list if
-		 * 			`item` is `nullptr`.
-		 * @throws	`std::invalid_argument` if `item` is not `nullptr` and its
-		 * 			not in the item list.
+		 * @brief	Sends a message to every player in the room.
+		 * @param	msg			The message to be sent.
+		 * @param	excluded	The player that will not receive the message.
+		 * 						If `nullptr`, all players will receive the
+		 * 						message.
 		 */
-		Item	*pop_item(Item *item = nullptr);
-
-		// virtual void	on_enter(void) noexcept = 0;
-
-		void			clear(void);
-
-		// void			connect_room();
-
+		void	room_broadcast(const std::string& msg, Player *excluded = nullptr);
+	
 		/**
 		 * @brief	Generates the room information in json format.
 		 * @returns	The json format as `string`.

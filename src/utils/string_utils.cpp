@@ -14,7 +14,7 @@ void	trim_str(std::string& s, bool middle)
 		s.erase(0, 1);
 	// Removing duplicated in the middle
 	if (!middle)
-		return ;
+		return;
 	for (char c : s)
 	{
 		if (c != ' ')

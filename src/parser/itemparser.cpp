@@ -1,25 +1,19 @@
 #include "parser/itemparser.hpp"
 
-#include "items/Consumable.hpp"
-#include "utils/utils.hpp"
+// MODIFIED: factories/ se borró (duplicado), ItemFactory vive en items/
+#include "factories/ItemFactory.hpp" // MODIFIED: items/ItemFactory.hpp -> factories/
 
 static Item *build_item(const std::string& id,
 						const std::string& name,
-						const std::string& description,
-						const std::string& type)
+						const std::string& description)
 {
-	if (type == "consumable")
-		return (new Consumable(id, name, description));
-
-	log("Item '" + id + "' has unsupported type '" + type + "'.",
-		LogLevel::WARNING);
-
-	return (nullptr);
+	return  (ItemFactory::create_from_name(name));
+	// return (new Consumable(id, name, description));
 }
 
-std::list<Item*> ItemParser::parse(const nlohmann::json& items_json)
+std::map<std::string, Item*> ItemParser::parse(const nlohmann::json& items_json)
 {
-	std::list<Item*> items;
+	std::map<std::string, Item*> items;
 
 	if (!items_json.is_object())
 		return (items);
@@ -33,13 +27,11 @@ std::list<Item*> ItemParser::parse(const nlohmann::json& items_json)
 		const std::string name = item_json["name"];
 		const std::string description =
 			item_json.value("description", "A useful object.");
-		const std::string type =
-			item_json.value("type", "consumable");
 
-		Item *item = build_item(id, name, description, type);
+		Item *item = build_item(id, name, description);
 
 		if (item != nullptr)
-			items.push_back(item);
+			items[it.key()] = item;
 	}
 
 	return (items);

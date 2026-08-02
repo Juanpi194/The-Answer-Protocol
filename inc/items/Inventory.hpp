@@ -34,7 +34,7 @@ class Inventory
 		 * @param	item	The item to be added.
 		 * @note	Be careful when using this method.
 		 */
-		void	add_item(Item *item) noexcept TAP_NONNULL;
+		void				add_item(Item *item) noexcept TAP_NONNULL;
 
 		/**
 		 * @brief	Simply removes an item from the player's item list,
@@ -42,7 +42,7 @@ class Inventory
 		 * @param	item	The item to be removed.
 		 * @note	Be careful when using this method.
 		 */
-		void	remove_item(Item *item) noexcept TAP_NONNULL;
+		void				remove_item(Item *item) noexcept TAP_NONNULL;
 
 		/**
 		 * @brief	Removes an item from the player's item list, removing it
@@ -51,7 +51,7 @@ class Inventory
 		 * @throws	`std::invalid_argument` if the item is not in the player's
 		 * 			item list.
 		 */
-		void	consume_item(Item& item);
+		void				consume_item(Item& item);
 
 		/**
 		 * @brief	Finds an item from the fighter's item list that matches the
@@ -61,7 +61,7 @@ class Inventory
 		 * @note	It is defined in the .hpp because it uses templates.
 		 */
 		template<typename T>
-		T		*find_item(void)
+		T					*find_item(void)
 		{
 			for (Item *item_in_list: items)
 			{
@@ -78,6 +78,7 @@ class Inventory
 		 * @returns	The item found with that name, `nullptr` if no item
 		 * 			was found with the specified name.
 		 */
-		Item	*find_item_by_name(const std::string& item_name) const;
+		Item				*find_item_by_name(const std::string& item_name) const;
 
+		const std::string	to_json_format(void) const noexcept;	
 };

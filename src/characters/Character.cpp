@@ -38,7 +38,7 @@ void	Character::set_name(const std::string& name)
 	if (temp.empty())
 	{
 		log("Tried to set empty name. Change was not done.", LogLevel::WARNING);
-		return ;
+		return;
 	}
 	this->name = name;
 }

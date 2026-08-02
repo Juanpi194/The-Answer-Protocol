@@ -19,9 +19,13 @@ unsigned int	Enemy::get_gold(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Enemy::on_talk(Player& player) noexcept
+// MODIFIED: era "void", no coincidía con la virtual pura de Character
+// (const std::string) -- no compilaba.
+const std::string	Enemy::on_talk(Player& player) noexcept
 {
+	(void)player;
 	// TODO: Logic ...
+	return ("");
 }
 
 FighterType	Enemy::get_type(void) const noexcept

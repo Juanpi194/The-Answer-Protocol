@@ -3,7 +3,13 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
-#include "characters/Goblin.hpp"
+// MODIFIED: necesarios para la orquestación real de World(name, json_path)
+#include "parser/jsonconfig.hpp"
+#include "parser/itemparser.hpp"
+#include "parser/npcparser.hpp"
+#include "parser/roomparser.hpp"
+#include "items/Item.hpp"
+#include "characters/NPC.hpp"
 
 /**
  * @brief	Obtains the opposite direction of the specified direction.
@@ -81,19 +87,53 @@ World::World(const std::string& name, const std::string& json_path):
 {
 	if (!validate_name(name) || !validate_json(json_path))
 		throw std::invalid_argument("World validation failed.");
-	// TODO: Create world with json config
 
-	// ! FIXME: Remove this temporal room when the parse is done.
-	std::list<Item*>	item_list;
-	NPC					*goblin = new Goblin();
-	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", goblin, false, item_list);
-	rooms.push_back(temp_spawn_room);
-	spawn_room = temp_spawn_room;
+	// MODIFIED: orquestación real -- antes esto era una sala placeholder
+	// hardcodeada, sin pasar por el JSON en absoluto.
+	JsonConfig	config;
+	nlohmann::json	data = config.load_json(json_path); // valida el esquema, lanza si algo falta
+
+	ItemParser	item_parser;
+	NPCParser	npc_parser;
+	RoomParser	room_parser;
+
+	// "npcs" no lo exige JsonConfig::validate() -- lo tratamos como
+	// opcional (un mundo sin NPCs es válido).
+	std::map<std::string, Item*>	items = item_parser.parse(data["items"]);
+	std::map<std::string, NPC*>	npcs = npc_parser.parse(data.value("npcs", nlohmann::json::object()));
+	std::list<Room*>				parsed_rooms = room_parser.parse(data["rooms"], items, npcs);
+
+	for (Room *room: parsed_rooms)
+		rooms.push_back(room);
+
+	// Cualquier item/npc del JSON que ninguna sala haya reclamado se
+	// queda huérfano -- lo liberamos aquí para no perderlo (Room solo
+	// borra lo que tiene en su propia lista).
+	for (auto& [key, item]: items)
+	{
+		log("Item '" + key + "' was defined but not placed in any room.", LogLevel::WARNING);
+		delete (item);
+	}
+	for (auto& [key, npc]: npcs)
+	{
+		log("NPC '" + key + "' was defined but not placed in any room.", LogLevel::WARNING);
+		delete (npc);
+	}
+
+	const std::string spawn_id = data["world"]["spawn"];
+	for (Room *room: rooms)
+	{
+		if (room->get_id() == spawn_id)
+		{
+			spawn_room = room;
+			break;
+		}
+	}
 
 	if (rooms.size() < 1)
 		throw std::runtime_error("World does not have any room.");
 	if (!spawn_room)
-		throw std::runtime_error("World MUST have a spawn room.");
+		throw std::runtime_error("World MUST have a spawn room (check 'world.spawn' matches a room id).");
 }
 
 World::~World(void)
