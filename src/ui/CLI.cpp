@@ -60,9 +60,6 @@ bool CLI::connect(const std::string& host, int port)
         return false;
     }
 
-    // MODIFIED: socket en modo no bloqueante antes de conectar, para poder
-    // acotar la espera con select() a CONNECT_TIMEOUT_SECONDS en vez de
-    // dejar que el sistema operativo decida cuanto tiempo esperar.
 #ifdef _WIN32
     u_long nonBlockingMode = 1;
     ioctlsocket(socketFd_, FIONBIO, &nonBlockingMode);
@@ -111,8 +108,6 @@ bool CLI::connect(const std::string& host, int port)
         }
     }
 
-    // Back to blocking mode for the rest of the session -- sendCommand()/
-    // recvLoop() are meant to block as before, this only bounded connect().
 #ifdef _WIN32
     u_long blockingMode = 0;
     ioctlsocket(socketFd_, FIONBIO, &blockingMode);

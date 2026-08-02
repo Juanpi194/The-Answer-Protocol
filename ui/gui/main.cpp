@@ -15,7 +15,7 @@
 #include <atomic>
 
 #include "ui/CLI.hpp"
-#include "libs/json.hpp" // MODIFIED: mismo json.hpp que usa el resto del proyecto (parser/, etc.)
+#include "libs/json.hpp"
 
 enum class AppState
 {
@@ -31,36 +31,26 @@ static void logMsg(std::vector<std::string>& log, const std::string& msg)
 }
 
 // ---------------------------------------------------------------------------
-// MODIFIED: WorldCache -- la copia local del mapa que comentamos. No existe
-// ningun Player local (no hay modo Local): todo lo que sabemos del mundo es
-// lo que el servidor nos ha mandado alguna vez en una respuesta a LOOK. Esta
-// clase interpreta esas respuestas (JSON) y se queda con lo visto hasta
-// ahora -- exactamente igual de espiritu que el "discoveredRooms" que
-// teniamos en la version local, solo que alimentado por texto real del
-// socket en vez de un World en memoria.
-//
+// MODIFIED: WorldCache -- la copia local del mapa.
 // Deliberadamente NO vive en CLI (que sigue siendo solo transporte, sin
 // saber nada de JSON ni de salas) ni se comparte con la TUI -- es puramente
-// una conveniencia de presentacion para la GUI, tal y como se acordo.
+// una conveniencia de presentacion para la GUI
 // ---------------------------------------------------------------------------
 struct RoomInfo
 {
     std::string                        id;
     std::string                        name;
     std::string                        description;
-    std::map<std::string, std::string> exits;   // "NORTH" -> id de la sala destino
-    std::vector<std::string>           items;   // ids tal cual los manda el server (p.ej. "item.apple.0")
-    std::string                        npc;     // id del npc, vacio si no hay
+    std::map<std::string, std::string> exits;
+    std::vector<std::string>           items;
+    std::string                        npc;
     std::vector<std::string>           players;
 };
 
 class WorldCache
 {
     public:
-        // Intenta interpretar `line` como una respuesta de LOOK. Si no lo
-        // es (cualquier otra cosa: "OK room=...", errores, chat...), no
-        // hace nada -- esa linea se sigue viendo en el log de siempre, solo
-        // que no actualiza el mapa.
+
         void ingest(const std::string& line)
         {
             size_t braceStart = line.find('{');
@@ -74,7 +64,7 @@ class WorldCache
             }
             catch (const std::exception&)
             {
-                return; // no era JSON valido -- no es una respuesta de LOOK
+                return;
             }
 
             if (!data.contains("room") || !data["room"].is_object())
@@ -141,11 +131,6 @@ class WorldCache
         std::string                     currentRoomId_;
 };
 
-// ---------------------------------------------------------------------------
-// MODIFIED: pantalla de conexion -- sin cambios de fondo respecto a la
-// version anterior (hilo aparte para no bloquear el render, comando estilo
-// "nc host puerto").
-// ---------------------------------------------------------------------------
 static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMsg)
 {
     static char              inputBuf[128] = "";
@@ -220,11 +205,6 @@ static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMs
     ImGui::End();
 }
 
-// ---------------------------------------------------------------------------
-// Mapa: mismo BFS por direcciones que teniamos en la version local, pero
-// ahora sobre el WorldCache (ids/direcciones como strings, tal y como
-// llegan del servidor) en vez de sobre un World/Room de verdad.
-// ---------------------------------------------------------------------------
 static ImVec2 directionOffset(const std::string& dir)
 {
     if (dir == "NORTH") return ImVec2(0, -1);
@@ -343,15 +323,6 @@ static void drawRoomWindow(const WorldCache& world)
     ImGui::End();
 }
 
-// ---------------------------------------------------------------------------
-// Menu: Actions / Inventory / Stats / Settings.
-// MODIFIED: los botones de mover mandan MOVE y, encadenado, un LOOK -- el
-// servidor solo responde "OK room=<id>" a un MOVE (sin detalles), asi que
-// sin este LOOK automatico el mapa/sala no se refrescarian solos.
-// Inventory/Stats se quedan como estaban: el servidor no tiene INVENTORY ni
-// STATUS implementados todavia, asi que no hay nada estructurado que
-// mostrar ahi -- ver el chat para la respuesta en crudo.
-// ---------------------------------------------------------------------------
 static void drawMenuWindow(CLI& client, std::vector<std::string>& log)
 {
     static int selectedIndex = -1;
@@ -374,7 +345,7 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log)
                     std::string moveCmd = std::string("MOVE ") + dir;
                     client.sendCommand(moveCmd);
                     logMsg(log, "> " + moveCmd);
-                    client.sendCommand("LOOK"); // MODIFIED: refresca mapa/sala automaticamente
+                    client.sendCommand("LOOK"); // MODIFIED: refresca mapa/sala automaticamente (PRUEBA)
                     logMsg(log, "> LOOK");
                 }
                 ImGui::SameLine();
@@ -488,7 +459,7 @@ int main(int, char**)
     AppState                    state = AppState::CONNECT;
     std::string                 connectError;
     std::vector<std::string>    log;
-    WorldCache                  world; // MODIFIED: copia local del mapa, alimentada por LOOK
+    WorldCache                  world;
     bool                        running = true;
 
     while (running)
@@ -518,7 +489,7 @@ int main(int, char**)
             for (const std::string& msg : client.pollMessages())
             {
                 logMsg(log, msg);
-                world.ingest(msg); // MODIFIED: cada mensaje puede ser una respuesta de LOOK
+                world.ingest(msg);
             }
 
             drawMapWindow(world);
