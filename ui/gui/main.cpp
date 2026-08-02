@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <thread>
+#include <atomic>
 
 #include "ui/CLI.hpp"
 
@@ -36,7 +38,26 @@ static void logMsg(std::vector<std::string>& log, const std::string& msg)
 // ---------------------------------------------------------------------------
 static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMsg)
 {
-    static char inputBuf[128] = "";
+    static char              inputBuf[128] = "";
+    // MODIFIED: connect() bloquea (es una llamada de socket real) -- si se
+    // llama directo desde este hilo (el mismo que dibuja la ventana entera),
+    // toda la GUI se queda congelada mientras dura la conexion. Se lanza en
+    // un hilo aparte, y este solo pinta un "Connecting..." mientras tanto.
+    static std::thread       connectThread;
+    static std::atomic<bool> connecting{false};
+    static std::atomic<bool> connectSucceeded{false};
+    static std::string       connectHost;
+    static int               connectPort = 0;
+
+    // Un intento anterior acaba de terminar: recoger el resultado.
+    if (connectThread.joinable() && !connecting)
+    {
+        connectThread.join();
+        if (connectSucceeded)
+            state = AppState::GAME;
+        else
+            errorMsg = "Could not connect to " + connectHost + ":" + std::to_string(connectPort);
+    }
 
     ImGuiIO& io = ImGui::GetIO();
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
@@ -48,12 +69,20 @@ static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMs
     ImGui::TextColored(ImVec4(0.6f, 0.9f, 1.0f, 1.0f), "  nc 127.0.0.1 8080");
 
     ImGui::Separator();
+    ImGui::BeginDisabled(connecting); // no se puede reintentar mientras hay uno en curso
     bool submitted = ImGui::InputText("##ConnectInput", inputBuf, IM_ARRAYSIZE(inputBuf),
                                        ImGuiInputTextFlags_EnterReturnsTrue);
     ImGui::SameLine();
     bool pressed = ImGui::Button("Go");
+    ImGui::EndDisabled();
 
-    if (submitted || pressed)
+    if (connecting)
+    {
+        ImGui::Spacing();
+        ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.3f, 1.0f), "Connecting...");
+    }
+
+    if (!connecting && (submitted || pressed))
     {
         errorMsg.clear();
         std::string host;
@@ -63,13 +92,17 @@ static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMs
         {
             errorMsg = "Not a valid connection command. Try: nc 127.0.0.1 8080";
         }
-        else if (client.connect(host, port))
-        {
-            state = AppState::GAME;
-        }
         else
         {
-            errorMsg = "Could not connect to " + host + ":" + std::to_string(port);
+            connectHost = host;
+            connectPort = port;
+            connecting = true;
+            connectThread = std::thread([&client, host, port]()
+            {
+                bool ok = client.connect(host, port);
+                connectSucceeded = ok;
+                connecting = false;
+            });
         }
     }
 

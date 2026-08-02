@@ -1,3 +1,4 @@
+#include <atomic>
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -54,21 +55,31 @@ int main(void)
     std::cout << "Type commands (e.g. \"CONNECT alice\", \"LOOK\", \"MOVE NORTH\"), "
                  "or \"QUIT\" to exit." << std::endl;
 
+    // MODIFIED: hilo impresor en segundo plano -- imprime lo que llegue por
+    // el socket en cuanto llega, sin esperar a que el usuario escriba la
+    // siguiente línea. El hilo principal se queda libre para hacer lo que
+    // siempre ha hecho una terminal: bloquear en std::getline() esperando
+    // la siguiente línea.
+    std::atomic<bool> running{true};
+    std::thread printerThread([&client, &running]()
+    {
+        while (running)
+        {
+            printMessages(client);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    });
+
     while (client.isConnected() && std::getline(std::cin, line))
     {
         if (line.empty())
             continue;
 
         client.sendCommand(line);
-
-        // The response arrives asynchronously on CLI's background recv
-        // thread. A short sleep here is good enough for an interactive
-        // CLI where a human is typing; a real guarantee would need a
-        // request/response correlation scheme, which the protocol does
-        // not have.
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        printMessages(client);
     }
+
+    running = false;
+    printerThread.join();
 
     client.disconnect();
     return 0;
