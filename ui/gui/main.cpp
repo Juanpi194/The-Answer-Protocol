@@ -7,11 +7,15 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <queue>
+#include <set>
 #include <cstdio>
 #include <thread>
 #include <atomic>
 
 #include "ui/CLI.hpp"
+#include "libs/json.hpp" // MODIFIED: mismo json.hpp que usa el resto del proyecto (parser/, etc.)
 
 enum class AppState
 {
@@ -27,29 +31,130 @@ static void logMsg(std::vector<std::string>& log, const std::string& msg)
 }
 
 // ---------------------------------------------------------------------------
-// MODIFIED: ya no hay formulario de usuario/contraseña ni selector
-// Local/Remote (el modo Local ha desaparecido, y no vamos a gestionar
-// cuentas). En su lugar, un unico campo de texto: el jugador escribe algo
-// como "nc 127.0.0.1 8080" -- igual que abrir una conexion con netcat de
-// verdad -- y eso es lo unico que se interpreta en el propio cliente
-// (CLI::parseNcCommand). Todo lo que venga despues (CONNECT <nombre>,
-// MOVE, etc.) son comandos normales que ya interpreta el servidor, no algo
-// que gestionemos aqui.
+// MODIFIED: WorldCache -- la copia local del mapa que comentamos. No existe
+// ningun Player local (no hay modo Local): todo lo que sabemos del mundo es
+// lo que el servidor nos ha mandado alguna vez en una respuesta a LOOK. Esta
+// clase interpreta esas respuestas (JSON) y se queda con lo visto hasta
+// ahora -- exactamente igual de espiritu que el "discoveredRooms" que
+// teniamos en la version local, solo que alimentado por texto real del
+// socket en vez de un World en memoria.
+//
+// Deliberadamente NO vive en CLI (que sigue siendo solo transporte, sin
+// saber nada de JSON ni de salas) ni se comparte con la TUI -- es puramente
+// una conveniencia de presentacion para la GUI, tal y como se acordo.
+// ---------------------------------------------------------------------------
+struct RoomInfo
+{
+    std::string                        id;
+    std::string                        name;
+    std::string                        description;
+    std::map<std::string, std::string> exits;   // "NORTH" -> id de la sala destino
+    std::vector<std::string>           items;   // ids tal cual los manda el server (p.ej. "item.apple.0")
+    std::string                        npc;     // id del npc, vacio si no hay
+    std::vector<std::string>           players;
+};
+
+class WorldCache
+{
+    public:
+        // Intenta interpretar `line` como una respuesta de LOOK. Si no lo
+        // es (cualquier otra cosa: "OK room=...", errores, chat...), no
+        // hace nada -- esa linea se sigue viendo en el log de siempre, solo
+        // que no actualiza el mapa.
+        void ingest(const std::string& line)
+        {
+            size_t braceStart = line.find('{');
+            if (braceStart == std::string::npos)
+                return;
+
+            nlohmann::json data;
+            try
+            {
+                data = nlohmann::json::parse(line.substr(braceStart));
+            }
+            catch (const std::exception&)
+            {
+                return; // no era JSON valido -- no es una respuesta de LOOK
+            }
+
+            if (!data.contains("room") || !data["room"].is_object())
+                return;
+
+            const nlohmann::json& roomJson = data["room"];
+            RoomInfo info;
+            info.id = roomJson.value("id", "");
+            info.name = roomJson.value("name", "");
+            info.description = roomJson.value("description", "");
+
+            if (roomJson.contains("exits") && roomJson["exits"].is_object())
+            {
+                for (auto it = roomJson["exits"].begin(); it != roomJson["exits"].end(); ++it)
+                    if (it.value().is_string())
+                        info.exits[it.key()] = it.value().get<std::string>();
+            }
+
+            // MODIFIED: el server manda "items"/"npc" como el string "None"
+            // cuando estan vacios, y como array/string de verdad si no --
+            // hay que comprobar el tipo antes de leer.
+            if (data.contains("items") && data["items"].is_array())
+                for (const auto& item : data["items"])
+                    if (item.is_string())
+                        info.items.push_back(item.get<std::string>());
+
+            if (data.contains("npc") && data["npc"].is_string())
+            {
+                std::string npc = data["npc"].get<std::string>();
+                if (npc != "None")
+                    info.npc = npc;
+            }
+
+            if (data.contains("players") && data["players"].is_array())
+                for (const auto& p : data["players"])
+                    if (p.is_string())
+                        info.players.push_back(p.get<std::string>());
+
+            if (info.id.empty())
+                return;
+
+            rooms_[info.id] = info;
+            currentRoomId_ = info.id;
+        }
+
+        const RoomInfo* getRoom(const std::string& id) const
+        {
+            auto it = rooms_.find(id);
+            return (it != rooms_.end()) ? &it->second : nullptr;
+        }
+
+        const RoomInfo* getCurrentRoom() const
+        {
+            return getRoom(currentRoomId_);
+        }
+
+        const std::map<std::string, RoomInfo>& getRooms() const
+        {
+            return rooms_;
+        }
+
+    private:
+        std::map<std::string, RoomInfo> rooms_;
+        std::string                     currentRoomId_;
+};
+
+// ---------------------------------------------------------------------------
+// MODIFIED: pantalla de conexion -- sin cambios de fondo respecto a la
+// version anterior (hilo aparte para no bloquear el render, comando estilo
+// "nc host puerto").
 // ---------------------------------------------------------------------------
 static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMsg)
 {
     static char              inputBuf[128] = "";
-    // MODIFIED: connect() bloquea (es una llamada de socket real) -- si se
-    // llama directo desde este hilo (el mismo que dibuja la ventana entera),
-    // toda la GUI se queda congelada mientras dura la conexion. Se lanza en
-    // un hilo aparte, y este solo pinta un "Connecting..." mientras tanto.
     static std::thread       connectThread;
     static std::atomic<bool> connecting{false};
     static std::atomic<bool> connectSucceeded{false};
     static std::string       connectHost;
     static int               connectPort = 0;
 
-    // Un intento anterior acaba de terminar: recoger el resultado.
     if (connectThread.joinable() && !connecting)
     {
         connectThread.join();
@@ -69,7 +174,7 @@ static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMs
     ImGui::TextColored(ImVec4(0.6f, 0.9f, 1.0f, 1.0f), "  nc 127.0.0.1 8080");
 
     ImGui::Separator();
-    ImGui::BeginDisabled(connecting); // no se puede reintentar mientras hay uno en curso
+    ImGui::BeginDisabled(connecting);
     bool submitted = ImGui::InputText("##ConnectInput", inputBuf, IM_ARRAYSIZE(inputBuf),
                                        ImGuiInputTextFlags_EnterReturnsTrue);
     ImGui::SameLine();
@@ -116,15 +221,144 @@ static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMs
 }
 
 // ---------------------------------------------------------------------------
-// No Map/Room/Stats windows -- those read from a local Player that no
-// longer exists (no Local mode). Only the Menu, with Actions (buttons +
-// chat) and Inventory/Stats as placeholders until the server sends back
-// structured state (STATUS, INVENTORY...).
+// Mapa: mismo BFS por direcciones que teniamos en la version local, pero
+// ahora sobre el WorldCache (ids/direcciones como strings, tal y como
+// llegan del servidor) en vez de sobre un World/Room de verdad.
+// ---------------------------------------------------------------------------
+static ImVec2 directionOffset(const std::string& dir)
+{
+    if (dir == "NORTH") return ImVec2(0, -1);
+    if (dir == "SOUTH") return ImVec2(0, 1);
+    if (dir == "EAST")  return ImVec2(1, 0);
+    if (dir == "WEST")  return ImVec2(-1, 0);
+    return ImVec2(0, 0);
+}
+
+static void drawMapWindow(const WorldCache& world)
+{
+    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Discovered Map");
+
+    const RoomInfo* current = world.getCurrentRoom();
+    if (!current)
+    {
+        ImGui::TextDisabled("Nothing seen yet -- try \"LOOK\".");
+        ImGui::End();
+        return;
+    }
+
+    std::map<std::string, ImVec2> coords;
+    std::set<std::string>         visited;
+    std::queue<std::string>       queue;
+
+    coords[current->id] = ImVec2(0, 0);
+    queue.push(current->id);
+    visited.insert(current->id);
+
+    while (!queue.empty())
+    {
+        std::string roomId = queue.front();
+        queue.pop();
+        const RoomInfo* room = world.getRoom(roomId);
+        if (!room)
+            continue;
+        ImVec2 base = coords[roomId];
+
+        for (const auto& [dir, targetId] : room->exits)
+        {
+            if (!world.getRoom(targetId) || visited.count(targetId))
+                continue; // solo dibujamos salas que ya hemos visto de verdad (con LOOK)
+
+            ImVec2 off = directionOffset(dir);
+            coords[targetId] = ImVec2(base.x + off.x, base.y + off.y);
+            visited.insert(targetId);
+            queue.push(targetId);
+        }
+    }
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 origin = ImGui::GetCursorScreenPos();
+    const float cell = 90.0f;
+
+    for (const auto& [roomId, room] : world.getRooms())
+    {
+        if (!coords.count(roomId))
+            continue; // sala conocida pero no alcanzable desde la actual por salas ya vistas
+        ImVec2 grid = coords[roomId];
+        ImVec2 pos(origin.x + 150 + grid.x * cell, origin.y + 150 + grid.y * cell);
+
+        bool isCurrent = (roomId == current->id);
+        ImU32 fill = isCurrent ? IM_COL32(120, 200, 120, 255) : IM_COL32(200, 200, 200, 255);
+
+        drawList->AddRectFilled(pos, ImVec2(pos.x + cell - 10, pos.y + cell - 10), fill);
+        drawList->AddRect(pos, ImVec2(pos.x + cell - 10, pos.y + cell - 10), IM_COL32(0, 0, 0, 255));
+        drawList->AddText(ImVec2(pos.x + 5, pos.y + 5), IM_COL32(0, 0, 0, 255), room.name.c_str());
+    }
+
+    ImGui::Dummy(ImVec2(400, 400));
+    ImGui::End();
+}
+
+static void drawRoomWindow(const WorldCache& world)
+{
+    ImGui::SetNextWindowPos(ImVec2(440, 20), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Current Room");
+
+    const RoomInfo* room = world.getCurrentRoom();
+    if (!room)
+    {
+        ImGui::TextDisabled("Nothing seen yet -- try \"LOOK\".");
+        ImGui::End();
+        return;
+    }
+
+    ImGui::TextColored(ImVec4(1, 1, 0.6f, 1), "%s", room->name.c_str());
+    ImGui::TextWrapped("%s", room->description.c_str());
+
+    ImGui::Separator();
+    ImGui::Text("Items in this room:");
+    if (room->items.empty())
+        ImGui::TextDisabled("(none)");
+    else
+        for (const std::string& item : room->items)
+            ImGui::BulletText("%s", item.c_str());
+
+    ImGui::Separator();
+    ImGui::Text("NPC in this room:");
+    if (room->npc.empty())
+        ImGui::TextDisabled("(none)");
+    else
+        ImGui::BulletText("%s", room->npc.c_str());
+
+    ImGui::Separator();
+    ImGui::Text("Players here:");
+    if (room->players.empty())
+        ImGui::TextDisabled("(none)");
+    else
+        for (const std::string& p : room->players)
+            ImGui::BulletText("%s", p.c_str());
+
+    ImGui::End();
+}
+
+// ---------------------------------------------------------------------------
+// Menu: Actions / Inventory / Stats / Settings.
+// MODIFIED: los botones de mover mandan MOVE y, encadenado, un LOOK -- el
+// servidor solo responde "OK room=<id>" a un MOVE (sin detalles), asi que
+// sin este LOOK automatico el mapa/sala no se refrescarian solos.
+// Inventory/Stats se quedan como estaban: el servidor no tiene INVENTORY ni
+// STATUS implementados todavia, asi que no hay nada estructurado que
+// mostrar ahi -- ver el chat para la respuesta en crudo.
 // ---------------------------------------------------------------------------
 static void drawMenuWindow(CLI& client, std::vector<std::string>& log)
 {
-    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(700, 500), ImGuiCond_FirstUseEver);
+    static int selectedIndex = -1;
+    (void)selectedIndex;
+
+    ImGui::SetNextWindowPos(ImVec2(20, 440), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(820, 240), ImGuiCond_FirstUseEver);
     ImGui::Begin("Menu");
 
     if (ImGui::BeginTabBar("MenuTabs"))
@@ -137,9 +371,11 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log)
             {
                 if (ImGui::Button(dir))
                 {
-                    std::string cmd = std::string("MOVE ") + dir;
-                    client.sendCommand(cmd);
-                    logMsg(log, "> " + cmd);
+                    std::string moveCmd = std::string("MOVE ") + dir;
+                    client.sendCommand(moveCmd);
+                    logMsg(log, "> " + moveCmd);
+                    client.sendCommand("LOOK"); // MODIFIED: refresca mapa/sala automaticamente
+                    logMsg(log, "> LOOK");
                 }
                 ImGui::SameLine();
             }
@@ -155,14 +391,12 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log)
 
             ImGui::Separator();
             ImGui::Text("Log:");
-            ImGui::BeginChild("LogScroll", ImVec2(0, 250), true);
+            ImGui::BeginChild("LogScroll", ImVec2(0, 90), true);
             for (const std::string& line : log)
                 ImGui::TextUnformatted(line.c_str());
             ImGui::SetScrollHereY(1.0f);
             ImGui::EndChild();
 
-            // Free-text command input -- CONNECT <name> and anything else
-            // goes here, same idea as typing after `nc host port`.
             static char commandBuf[256] = "";
             ImGui::PushItemWidth(-70);
             bool submitted = ImGui::InputText("##CommandInput", commandBuf, IM_ARRAYSIZE(commandBuf),
@@ -254,6 +488,7 @@ int main(int, char**)
     AppState                    state = AppState::CONNECT;
     std::string                 connectError;
     std::vector<std::string>    log;
+    WorldCache                  world; // MODIFIED: copia local del mapa, alimentada por LOOK
     bool                        running = true;
 
     while (running)
@@ -281,8 +516,13 @@ int main(int, char**)
         else
         {
             for (const std::string& msg : client.pollMessages())
+            {
                 logMsg(log, msg);
+                world.ingest(msg); // MODIFIED: cada mensaje puede ser una respuesta de LOOK
+            }
 
+            drawMapWindow(world);
+            drawRoomWindow(world);
             drawMenuWindow(client, log);
         }
 

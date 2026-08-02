@@ -10,12 +10,6 @@
 // TUI (Terminal User Interface): el cliente CLI que pide el subject aparte
 // del server y de la GUI. Comparte CLI al 100% con ui/gui/main.cpp -- la
 // única diferencia es cómo se muestra lo que llega (aquí, texto plano).
-//
-// MODIFIED: sin modo Local -- solo conecta por socket real. La primera
-// instrucción que escribe el jugador es la propia conexión, estilo
-// `nc <host> <puerto>` (ver CLI::parseNcCommand) -- no hay formulario de
-// host/puerto separado. El nombre tampoco se pide aquí: se manda como un
-// comando más ("CONNECT alice") una vez conectado, igual que cualquier otro.
 // ---------------------------------------------------------------------------
 
 static void printMessages(CLI& client)
@@ -55,11 +49,6 @@ int main(void)
     std::cout << "Type commands (e.g. \"CONNECT alice\", \"LOOK\", \"MOVE NORTH\"), "
                  "or \"QUIT\" to exit." << std::endl;
 
-    // MODIFIED: hilo impresor en segundo plano -- imprime lo que llegue por
-    // el socket en cuanto llega, sin esperar a que el usuario escriba la
-    // siguiente línea. El hilo principal se queda libre para hacer lo que
-    // siempre ha hecho una terminal: bloquear en std::getline() esperando
-    // la siguiente línea.
     std::atomic<bool> running{true};
     std::thread printerThread([&client, &running]()
     {

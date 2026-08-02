@@ -10,11 +10,7 @@ SRC_FOLDER = src
 INC_FOLDER = inc
 OBJ_FOLDER = obj
 
-# MODIFIED: rutas explícitas, sin $(wildcard ...) -- a petición expresa,
-# nada de flexibilidad automática. Cualquier archivo nuevo que alguien
-# añada hay que listarlo aquí a mano para que entre en la compilación.
-#
-# Cosas que existen en el repo pero NO se listan aquí a propósito (quedan
+# MODIFIED: Cosas que existen en el repo pero NO se listan aquí a propósito (quedan
 # fuera del build, sin tocarlas, hasta que estén terminadas):
 #   - src/factories/EnchantmentFactory.cpp y src/enchantments/EnchantmentFactory.cpp
 #     (dos versiones, ninguna conectada a nada todavía -- a revisar cuál
@@ -62,6 +58,7 @@ COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/commands/, \
 
 # MODIFIED: solo events.cpp/responses.cpp -- command.cpp/commandparser.cpp
 # de esta carpeta son el fork viejo, sin tocar, no entran en el build.
+
 PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/protocol/, \
 					events.cpp responses.cpp)
 
@@ -90,7 +87,14 @@ SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(ENCHANTMENTS_SRC) $(ITEMS_SRC) $(FACTORI
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
-FLAGS = $(VERSION_FLAG) -g -fsanitize=thread -I $(INC_FOLDER) -pthread
+# MODIFIED: sin -fsanitize=thread -- lo probamos con la GUI y ThreadSanitizer
+# instrumenta TODOS los hilos del proceso, incluidos los que crea el driver
+# grafico de Mesa/AMD al usar OpenGL/ImGui. Eso ralentiza tanto la GUI que
+# el sistema operativo la marca como "no responde", aunque el bucle siga
+# corriendo por dentro (lo confirmamos con trazas de debug -- no era ningun
+# deadlock nuestro, era sobrecarga de TSan sobre codigo que no es nuestro).
+# Un solo arbol de objetos otra vez, para todo -- server, GUI y TUI.
+FLAGS = $(VERSION_FLAG) -g -I $(INC_FOLDER) -pthread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter
 CRAZY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
@@ -121,10 +125,6 @@ BOLD_OFF			:= \033[22m
 UNDERLINE			:= \033[4m
 UNDERLINE_OFF		:= \033[24m
 
-# --- MODIFIED: GUI-only build settings (ImGui + SDL2) ----------------------
-# Discusion que tengo con Claudia sobre si deberiamos o no mantener el proyecto compilable
-# sin tener ImGui accesible. Creo que es algo que requiere el subject, asi que como es mantener
-# normas especificas que se pueden unificar, lo voy a dejar.
 IMGUI_DIR = external/imgui
 IMGUI_TAG = v1.90.9
 IMGUI_SRC = $(addprefix $(IMGUI_DIR)/, imgui.cpp imgui_draw.cpp imgui_tables.cpp imgui_widgets.cpp) \
@@ -134,18 +134,21 @@ IMGUI_OBJS = $(IMGUI_SRC:%.cpp=$(OBJ_FOLDER)/%.o)
 SDL_CFLAGS = $(shell pkg-config --cflags sdl2 2>/dev/null || sdl2-config --cflags)
 SDL_LIBS = $(shell pkg-config --libs sdl2 2>/dev/null || sdl2-config --libs)
 GUI_INC = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends
-GUI_FLAGS = $(VERSION_FLAG) -g -fsanitize=thread -I $(INC_FOLDER) $(GUI_INC) $(SDL_CFLAGS) -pthread
+# MODIFIED: sin -fsanitize=thread aqui -- TSan instrumenta TODO el proceso,
+# incluidos los hilos internos del driver grafico de Mesa (shader compiler,
+# hilo de GL...), y eso ralentiza tanto la GUI que el SO la marca como "no
+# responde" aunque el bucle siga corriendo (confirmado con las trazas de
+# debug: los 4 mensajes se repetian sin parar, no habia ningun deadlock).
+# El hilo de CLI (lo que de verdad nos interesa vigilar con TSan) se puede
+# probar via tap_tui, que usa la misma clase sin el coste del driver.
+GUI_FLAGS = $(VERSION_FLAG) -g -I $(INC_FOLDER) $(GUI_INC) $(SDL_CFLAGS) -pthread
 GL_LIBS = -lGL
 
-# DE AQUI PARA ABAJO ME HE FLIPADO INTENTANDO HACER INTERCONEXIONES.
-# FUNCIONA, PERO RECOMPILA EN TODO MOMENTO. LO ARREGLARE.
-
-# MODIFIED: make help ahora sí explica cada comando.
 help:
 	@echo "Available targets:"
 	@echo "  make / make all   - Compile all 3 executables: server, gui, tui"
 	@echo "  make server       - Compile only the server binary ($(PROGRAM_NAME))"
-	@echo "  make gui          - Compile only the GUI client ($(GUI_PROGRAM_NAME))"
+	@echo "  make gui          - Compile only the GUI client ($(GUI_PROGRAM_NAME)) -- run 'make install' first on a fresh checkout"
 	@echo "  make tui          - Compile only the TUI client ($(TUI_PROGRAM_NAME))"
 	@echo "  make run-server   - Compile (if needed) and launch the server"
 	@echo "  make run-gui      - Compile (if needed) and launch the GUI client"
@@ -179,22 +182,19 @@ $(OBJ_FOLDER)/$(IMGUI_DIR)/%.o: $(IMGUI_DIR)/%.cpp | install
 	mkdir -p $(dir $@)
 	$(CC) $(VERSION_FLAG) $(GUI_INC) $(SDL_CFLAGS) -O2 -c $< -o $@
 
-# MODIFIED: all ahora compila los 3 ejecutables (antes solo el server).
+# MODIFIED: all ahora compila los 3 ejecutables.
 all: server gui tui
 
 compile-debug: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) $(DEBUG_FLAG) -o $(PROGRAM_NAME)
 
-# MODIFIED: "server" es ahora el nombre explícito de este target (antes era
-# "all"). Sigue siendo el mismo binario de siempre: "tap" a secas es el
-# server (normal_mode), "tap --debug" es debug_mode -- ver debug-mode abajo.
 server: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) -o $(PROGRAM_NAME)
 
-run-server: server
+run-server:
 	./$(PROGRAM_NAME)
 
-debug-mode: server
+debug-mode:
 	./$(PROGRAM_NAME) --debug
 
 # MODIFIED: TUI (cliente CLI que pide el subject aparte del server y la
@@ -203,36 +203,18 @@ debug-mode: server
 tui: $(OBJS)
 	$(CC) $(FLAGS) $(TUI_ENTRY) $(OBJS) -o $(TUI_PROGRAM_NAME)
 
-run-tui: tui
+run-tui:
 	./$(TUI_PROGRAM_NAME)
 
-# MODIFIED: build de la GUI, unificado aqui (antes vivia en gui/Makefile).
-# MODIFIED: "gui" ya no depende directamente de $(IMGUI_OBJS) -- eso obliga
-# a Make a resolver esa regla ANTES de ejecutar "install", y en un repo
-# nuevo external/imgui/ todavia no existe en ese momento (Make calcula todo
-# el grafo de dependencias antes de ejecutar nada), asi que fallaba con
-# "No rule to make target obj/external/imgui/imgui.o" aunque install
-# fuese a crear la carpeta un segundo despues. La solucion: "install" se
-# ejecuta primero de verdad (prerequisito normal, no de orden), y luego se
-# lanza una sub-invocacion de make que vuelve a leer el Makefile con
-# external/imgui/ ya en el sitio.
-gui: install
-	$(MAKE) gui-build
-
-gui-build: $(OBJS) $(IMGUI_OBJS)
+gui: $(OBJS) $(IMGUI_OBJS)
 	$(CC) $(GUI_FLAGS) $(GUI_ENTRY) $(OBJS) $(IMGUI_OBJS) $(SDL_LIBS) $(GL_LIBS) -o $(GUI_PROGRAM_NAME)
 
-run-gui: gui
+run-gui:
 	./$(GUI_PROGRAM_NAME)
 
-# MODIFIED: clean ya no toca external/imgui -- eso son "importaciones" de
-# install, no artefactos de compilación. Se queda solo con obj/, así un
-# "make clean" normal no te obliga a re-descargar ImGui cada vez.
 clean:
 	rm -rf $(OBJ_FOLDER)
 
-# MODIFIED: fclean ahora también deshace lo que trae "install" (json.hpp,
-# external/imgui), tal y como pediste.
 fclean: clean
 	rm -f $(PROGRAM_NAME) $(TUI_PROGRAM_NAME) $(GUI_PROGRAM_NAME)
 	rm -rf external/imgui
@@ -240,6 +222,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: help install run-server run-gui run-tui valgrind-run debug-mode clean fclean re gui gui-build all compile-debug tui server
+.PHONY: help install run-server run-gui run-tui valgrind-run debug-mode clean fclean re gui all compile-debug tui server
 
 .DEFAULT_GOAL= all

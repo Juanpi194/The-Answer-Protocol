@@ -15,7 +15,7 @@
 #include "world/World.hpp"
 const std::string	DEFAULT_CLIENT_NAME = "Alberto";
 const std::string	DEFAULT_WORLD_NAME = "The Amazing World Of Gumball";
-const std::string	DEFAULT_WORLD_JSON = "map/default.json"; // MODIFIED: antes "default.json" en la raíz
+const std::string	DEFAULT_WORLD_JSON = "map/default.json";
 static bool	read_command(std::string& out)
 {
 	std::getline(std::cin, out);

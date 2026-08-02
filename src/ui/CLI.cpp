@@ -11,9 +11,18 @@
     #include <netinet/in.h>
     #include <arpa/inet.h>
     #include <unistd.h>
+    #include <fcntl.h>
+    #include <sys/select.h>
+    #include <cerrno>
 #endif
 
 static const int DEFAULT_PORT = 8080; // matches Server::DEFAULT_PORT
+// MODIFIED: tope maximo para que connect() se resuelva (exito o fallo).
+// Antes de esto, un connect() a un host que no responde (nadie escuchando,
+// firewall descartando paquetes en silencio, etc.) podia dejar al sistema
+// operativo decidir cuanto esperar -- a veces mucho tiempo, sentido como
+// "colgado para siempre".
+static const int CONNECT_TIMEOUT_SECONDS = 5;
 
 CLI::CLI(void):
     socketFd_(-1),
@@ -51,11 +60,65 @@ bool CLI::connect(const std::string& host, int port)
         return false;
     }
 
-    if (::connect(socketFd_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
+    // MODIFIED: socket en modo no bloqueante antes de conectar, para poder
+    // acotar la espera con select() a CONNECT_TIMEOUT_SECONDS en vez de
+    // dejar que el sistema operativo decida cuanto tiempo esperar.
+#ifdef _WIN32
+    u_long nonBlockingMode = 1;
+    ioctlsocket(socketFd_, FIONBIO, &nonBlockingMode);
+#else
+    int originalFlags = fcntl(socketFd_, F_GETFL, 0);
+    fcntl(socketFd_, F_SETFL, originalFlags | O_NONBLOCK);
+#endif
+
+    int result = ::connect(socketFd_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+    bool connected = (result == 0);
+
+    if (!connected)
     {
-        closeSocket();
-        return false;
+#ifdef _WIN32
+        bool inProgress = (WSAGetLastError() == WSAEWOULDBLOCK);
+#else
+        bool inProgress = (errno == EINPROGRESS);
+#endif
+        if (!inProgress)
+        {
+            closeSocket();
+            return false;
+        }
+
+        fd_set writeSet;
+        FD_ZERO(&writeSet);
+        FD_SET(socketFd_, &writeSet);
+        timeval timeout{};
+        timeout.tv_sec = CONNECT_TIMEOUT_SECONDS;
+        timeout.tv_usec = 0;
+
+        int selectResult = select(socketFd_ + 1, nullptr, &writeSet, nullptr, &timeout);
+        if (selectResult <= 0)
+        {
+            closeSocket(); // timed out (0), or select() itself failed (< 0)
+            return false;
+        }
+
+        int socketError = 0;
+        socklen_t errorLen = sizeof(socketError);
+        getsockopt(socketFd_, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&socketError), &errorLen);
+        if (socketError != 0)
+        {
+            closeSocket();
+            return false;
+        }
     }
+
+    // Back to blocking mode for the rest of the session -- sendCommand()/
+    // recvLoop() are meant to block as before, this only bounded connect().
+#ifdef _WIN32
+    u_long blockingMode = 0;
+    ioctlsocket(socketFd_, FIONBIO, &blockingMode);
+#else
+    fcntl(socketFd_, F_SETFL, originalFlags);
+#endif
 
     running_ = true;
     recvThread_ = std::thread(&CLI::recvLoop, this);
