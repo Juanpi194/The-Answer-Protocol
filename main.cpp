@@ -35,8 +35,7 @@ static void	debug_mode(void)
 	std::string				msg;
 	Command					cmd;
 	world.get_spawn_room()->add_player(&client.get_player());
-	// MODIFIED: connect() ya no existe en PlayerConnection -- el
-	// constructor deja `connected` en true directamente.
+
 	while (client.is_connected())
 	{
 		if (!read_command(msg))
