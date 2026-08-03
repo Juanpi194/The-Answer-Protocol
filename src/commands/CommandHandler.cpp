@@ -8,6 +8,7 @@
 #include "battle/Battle.hpp"
 #include "characters/Player.hpp"
 #include "characters/enemies/Enemy.hpp"
+#include "characters/QuestGiver.hpp"
 #include "items/Consumable.hpp"
 #include "libs/json.hpp"
 #include "protocol/events.hpp"
@@ -43,10 +44,19 @@ static Enemy	*get_enemy_in_room(const Room& room)
  */
 static void		fight_result(Player& player, World& world)
 {
+	assert(player.get_battle() != nullptr && "Cannot use this function if battle is nullptr");
+	Enemy	*enemy;
+
+	enemy = player.get_battle()->get_original_enemy();
+	assert(enemy != nullptr && "Battles only have red fighter as enemy for now");
 	player.reset_stats();
 	if (player.get_battle()->get_winner() == &player)
 	{
-		// TODO: Reward player for winning, add the enemy to the beaten enemies, ...
+		player.gain_gold(enemy->get_gold());
+		player.add_beaten_enemy(enemy->get_id());
+
+		// Red will always be the enemy for now.
+		player.complete_defeat_quests(enemy->get_name());
 	}
 	delete (player.get_battle());
 	player.set_defending(false);
@@ -54,6 +64,15 @@ static void		fight_result(Player& player, World& world)
 	player.set_battle(nullptr);
 	if (player.get_stats().current_hp == 0)
 		player.respawn(world.get_spawn_room());
+}
+
+static bool		is_allowed_in_battle(CommandType type)
+{
+	if (type == CommandType::ATTACK || type == CommandType::DEFEND ||
+			type == CommandType::FLEE || type == CommandType::CONSUME ||
+			type == CommandType::STATUS || type == CommandType::QUIT)
+		return (true);
+	return (false);
 }
 
 static void		cmd_look(Player& player)
@@ -91,6 +110,7 @@ static void		cmd_move(const Command& cmd, Player& player)
 		old_room->room_broadcast(evt_presence_leave(player.get_name()), &player);
 		new_room->room_broadcast(evt_presence_enter(player.get_name()), &player);
 		player.send_to_outbox(ok("room=" + new_room->get_id()));
+		player.complete_area_quests(new_room->get_id());
 	}
 }
 
@@ -155,7 +175,6 @@ static void		cmd_who(PlayerConnection& conn)
 
 static void		cmd_group(const Command& cmd, PlayerConnection& conn)
 {
-	// TODO: Create, Invite, Join, Leave
 	std::string	scope;
 	std::string	result;
 
@@ -309,10 +328,11 @@ static void		cmd_fight(Player& player)
 	{
 		log("'" + player.get_name() + "' started a fight with '" + enemy->get_name() + "'.", LogLevel::INFO);
 		player.set_battle(new Battle(player, enemy));
+		player.send_to_outbox(ok("fight started"));
 	}
 }
 
-static void		cmd_in_fight(const Command cmd, Player& player, FightChoice choice, World& world)
+static void		cmd_in_fight(const Command& cmd, Player& player, FightChoice choice, World& world)
 {
 	// CONSUME case
 	if (choice.action == FightAction::CONSUME)
@@ -337,11 +357,61 @@ static void		cmd_in_fight(const Command cmd, Player& player, FightChoice choice,
 		{
 			player.get_battle()->execute_turn(choice);
 			if (player.get_battle()->is_finished())
+			{
+				if (player.get_battle()->get_winner() == &player)
+					player.send_to_outbox(ok("victory"));
+				else
+					player.send_to_outbox(ok("defeat"));
 				fight_result(player, world);
+			}
+			else
+				player.send_to_outbox(ok(player.get_battle()->to_json_format()));
 		}
 	}
 	else
 		player.send_to_outbox(err(ErrorCode::NOT_IN_BATTLE));
+}
+
+static void		cmd_status(Player& player)
+{
+	player.send_to_outbox(ok(player.status_json()));
+}
+
+static void		cmd_quest(const Command& cmd, Player& player)
+{
+	Room		*room;
+	NPC			*npc;
+	QuestGiver	*giver;
+	std::string	quest_json;
+
+	room = player.get_current_room();
+	if (!room)
+	{
+		player.send_to_outbox(err(ErrorCode::NO_ROOM));
+		return;
+	}
+	npc = room->get_NPC();
+	if (!npc || cmd.args[0] != npc->get_name())
+	{
+		player.send_to_outbox(err(ErrorCode::NPC_NOT_FOUND));
+		return;
+	}
+	giver = dynamic_cast<QuestGiver*>(npc);
+	if (!giver)
+	{
+		player.send_to_outbox(err(ErrorCode::NO_QUEST_AVAILABLE));
+		return;
+	}
+	quest_json = giver->request_quest(player);
+	if (quest_json.empty())
+		player.send_to_outbox(err(ErrorCode::NO_QUEST_AVAILABLE));
+	else
+		player.send_to_outbox(ok(quest_json));
+}
+
+static void		cmd_quests(Player& player)
+{
+	player.send_to_outbox(ok(player.quests_to_json_format()));
 }
 
 static void		cmd_help(PlayerConnection& conn)
@@ -357,11 +427,15 @@ static void		cmd_help(PlayerConnection& conn)
 
 void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, World& world)
 {
-	// TODO: Add specific errors in case something wrong happens.
-	// TODO: Validate if player is in a fight.
 	// ? REVIEW: Recheck messages sent to the user.
 	Player&	player = connection.get_player();
 
+	// If player is in battle, only some specific commands will be allowed.
+	if (player.get_battle() && !is_allowed_in_battle(cmd.type))
+	{
+		player.send_to_outbox(err(ErrorCode::IN_BATTLE));
+		return;
+	}
 	switch (cmd.type)
 	{
 		case CommandType::CONNECT:
@@ -399,23 +473,32 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			cmd_talk(cmd, player);
 			break;
 		case CommandType::FIGHT:
-			cmd_fight(connection.get_player());
+			cmd_fight(player);
 			break;
 		case CommandType::ATTACK:
-			cmd_in_fight(cmd, connection.get_player(), {FightAction::ATTACK}, world);
+			cmd_in_fight(cmd, player, {FightAction::ATTACK}, world);
 			break;
 		case CommandType::DEFEND:
-			cmd_in_fight(cmd, connection.get_player(), {FightAction::DEFEND}, world);
+			cmd_in_fight(cmd, player, {FightAction::DEFEND}, world);
 			break;
 		case CommandType::FLEE:
-			cmd_in_fight(cmd, connection.get_player(), {FightAction::FLEE}, world);
+			cmd_in_fight(cmd, player, {FightAction::FLEE}, world);
 			break;
 		case CommandType::CONSUME:
-			cmd_in_fight(cmd, connection.get_player(), {FightAction::CONSUME}, world);
+			cmd_in_fight(cmd, player, {FightAction::CONSUME}, world);
+			break;
+		case CommandType::STATUS:
+			cmd_status(player);
+			break;
+		case CommandType::QUEST:
+			cmd_quest(cmd, player);
+			break;
+		case CommandType::QUESTS:
+			cmd_quests(player);
 			break;
 		default:
 			// It should never get to this point, all types should be managed.
 			player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 	}
-	// TODO: MORE COMMANDS...
+	// TODO: Add OPEN, HELP, BUY and ENCHANT commands (and fix GROUP JOIN)
 }

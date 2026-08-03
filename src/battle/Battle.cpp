@@ -93,6 +93,11 @@ bool			Battle::is_finished(void) const noexcept
 	return (finished);
 }
 
+Enemy			*Battle::get_original_enemy(void) const noexcept
+{
+	return (original_enemy);
+}
+
 void	Battle::set_finished(bool finished) noexcept
 {
 	this->finished = finished;
@@ -100,7 +105,7 @@ void	Battle::set_finished(bool finished) noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Battle::execute_turn(FightChoice player_choice) noexcept
+void		Battle::execute_turn(FightChoice player_choice) noexcept
 {
 	Fighter		*first;
 	Fighter		*second;
@@ -150,4 +155,17 @@ void	Battle::execute_turn(FightChoice player_choice) noexcept
 	{
 		// TODO: Backup for perform_action error.
 	}
+}
+
+std::string	Battle::to_json_format(void) const noexcept
+{
+	std::string	result;
+
+	result = "[";
+	result += "\"blue\": ";
+	result += blue.status_json();
+	result += "\"red\": ";
+	result += red.status_json();
+	result += "]"; 
+	return (result);
 }

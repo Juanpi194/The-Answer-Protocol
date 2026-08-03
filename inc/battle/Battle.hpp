@@ -85,6 +85,7 @@ class Battle
 		Fighter			*get_winner(void) const noexcept;
 		unsigned int	get_turns(void) const noexcept;
 		bool			is_finished(void) const noexcept;
+		Enemy			*get_original_enemy(void) const noexcept;
 
 		void	set_finished(bool finished) noexcept;
 
@@ -95,5 +96,7 @@ class Battle
 		 * @param	player_action	The action chosen by the
 		 * 							player (Blue side).
 		 */
-		void	execute_turn(FightChoice player_choice) noexcept;
+		void		execute_turn(FightChoice player_choice) noexcept;
+
+		std::string	to_json_format(void) const noexcept;
 };

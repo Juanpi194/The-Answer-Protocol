@@ -4,7 +4,7 @@ unsigned int		Goblin::available_id = 0;
 const std::string	Goblin::PREFIX = "goblin.";
 const std::string	Goblin::NAME = "Goblin";
 const std::string	Goblin::DESCRIPTION = "Es muy tonto";
-const t_stats		Goblin::DEFAULT_STATS = {3, 10, 5, 3, 2};
+const t_stats		Goblin::DEFAULT_STATS = {1, 10, 2, 2, 1, 10, 2, 2, 1};
 
 // Constructors ---------------------------------------------------------------
 

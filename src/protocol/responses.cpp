@@ -78,6 +78,9 @@ std::string	err(ErrorCode err_code)
 		case ErrorCode::NOT_INVITED:
 			result = "414 NOT_INVITED";
 			break;
+		case ErrorCode::IN_BATTLE:
+			result = "415 IN_BATTLE";
+			break;
 		case ErrorCode::CONNECTION_FAILED:
 			result = "900 CONNECTION_FAILED";
 			break;
@@ -167,6 +170,9 @@ std::string	get_err_description(ErrorCode err_code)
 			break;
 		case ErrorCode::NOT_INVITED:
 			result = "The client is not invited to the group";
+			break;
+		case ErrorCode::IN_BATTLE:
+			result = "The client is in battle, cannot execute all commands";
 			break;
 		case ErrorCode::CONNECTION_FAILED:
 			result = "Connection establishment failed";

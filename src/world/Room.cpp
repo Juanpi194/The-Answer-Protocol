@@ -231,8 +231,6 @@ void				Room::room_broadcast(const std::string& msg, Player *excluded)
 
 const std::string	Room::look(void) const noexcept
 {
-	// TODO: Add chest and extras.
-	// ? REVIEW: Full review of everything.
 	std::string	result;
 	bool		first;
 

@@ -11,6 +11,27 @@
 #include "items/Weapon.hpp"
 #include "utils/utils.hpp"
 
+std::string	status_to_string(const Status status) noexcept
+{
+	switch (status)
+	{
+		case Status::HEALTHY:
+			return ("healthy");
+		case Status::POISONED:
+			return ("poisoned");
+		case Status::BURNT:
+			return ("burnt");
+		case Status::FROZEN:
+			return ("frozen");
+		case Status::BLEEDING:
+			return ("bleeding");
+		case Status::CONFUSED:
+			return ("confused");
+		default:
+			return ("unknown");
+	}
+}
+
 bool	Fighter::validate_stats(t_stats stats)
 {
 	// TODO: Add validations
@@ -125,7 +146,7 @@ void	Fighter::set_status(Status status) noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Fighter::perform_action(Fighter& opponent, FightChoice choice)
+void		Fighter::perform_action(Fighter& opponent, FightChoice choice)
 {
 	switch (choice.action)
 	{
@@ -144,7 +165,7 @@ void	Fighter::perform_action(Fighter& opponent, FightChoice choice)
 	}
 }
 
-void	Fighter::attack(Fighter& target) noexcept
+void		Fighter::attack(Fighter& target) noexcept
 {
 	unsigned int		final_strength;
 	SpecialEffectGear	*special_weapon;
@@ -170,24 +191,24 @@ void	Fighter::attack(Fighter& target) noexcept
 	target.receive_damage(*this, final_strength);
 }
 
-void	Fighter::defend(void) noexcept
+void		Fighter::defend(void) noexcept
 {
 	if (shield)
 		defending = true;
 }
 
-bool	Fighter::flee(Fighter& opponent) noexcept
+bool		Fighter::flee(Fighter& opponent) noexcept
 {
 	// TODO: Randomly choose, having in mind the opponent...
 	return (true);
 }
 
-void	Fighter::consume(Fighter& opponent, Consumable& consumable) noexcept
+void		Fighter::consume(Fighter& opponent, Consumable& consumable) noexcept
 {
 	// TODO: Logic
 }
 
-void	Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept
+void		Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept
 {
 	unsigned int		final_defense;
 	SpecialEffectGear	*special_armor;
@@ -221,22 +242,22 @@ void	Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) no
 	log("'" + attacker.get_name() + "' hit '" + get_name() + "' for " + std::to_string(incoming_damage) + " damage.", LogLevel::INFO);
 }
 
-void	Fighter::apply_status(Status status) noexcept
+void		Fighter::apply_status(Status status) noexcept
 {
 	// TODO: Logic...
 }
 
-void	Fighter::heal(unsigned int ammount) noexcept
+void		Fighter::heal(unsigned int amount) noexcept
 {
 	// TODO: Logic...
 }
 
-void	Fighter::change_stat(Stat stat, int stage) noexcept
+void		Fighter::change_stat(Stat stat, int stage) noexcept
 {
 	// TODO: Logic...
 }
 
-void	Fighter::restore_stat(Stat stat) noexcept
+void		Fighter::restore_stat(Stat stat) noexcept
 {
 	if (stat == Stat::HP)
 		stats.current_hp = stats.hp;
@@ -248,11 +269,37 @@ void	Fighter::restore_stat(Stat stat) noexcept
 		stats.current_speed = stats.speed;
 }
 
-void	Fighter::reset_stats(bool hp) noexcept
+void		Fighter::reset_stats(bool hp) noexcept
 {
 	if (hp)
 		restore_stat(Stat::HP);
 	restore_stat(Stat::STRENGTH);
 	restore_stat(Stat::DEFENSE);
 	restore_stat(Stat::SPEED);
+}
+
+std::string	Fighter::status_json(void) const noexcept
+{
+	std::string	result;
+
+	result = "{";
+	result += "\"current_hp\": " + std::to_string(stats.current_hp);
+	result += ", ";
+	result += "\"hp\": " + std::to_string(stats.hp);
+	result += ", ";
+	result += "\"current_strength\": " + std::to_string(stats.current_strength);
+	result += ", ";
+	result += "\"strength\": " + std::to_string(stats.strength);
+	result += ", ";
+	result += "\"current_defense\": " + std::to_string(stats.current_defense);
+	result += ", ";
+	result += "\"defense\": " + std::to_string(stats.defense);
+	result += ", ";
+	result += "\"current_speed\": " + std::to_string(stats.current_speed);
+	result += ", ";
+	result += "\"speed\": " + std::to_string(stats.speed);
+	result += ", ";
+	result += "\"status\": \"" + status_to_string(status) + "\"";
+	result += "}";
+	return (result);
 }

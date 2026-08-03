@@ -14,7 +14,7 @@
 
 Player::Player(const std::string& name):
 	Character(name),
-	Fighter(name, {1, 10, 10, 10, 10, 10, 10, 10, 10}),
+	Fighter(name, {1, 10, 3, 2, 2, 10, 3, 2, 2}),
 	gold(STARTING_GOLD),
 	battle(nullptr)
 {
@@ -109,6 +109,7 @@ Item				*Player::obtain_item(const std::string& item_name) noexcept
 	{
 		return (log(e.what(), LogLevel::ERROR), nullptr);
 	}
+	complete_collect_quests(item_found->get_name());
 	return (log(item_found->get_name() + " was obtained from the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), item_found);
 }
 
@@ -213,7 +214,94 @@ bool		Player::obtain_quest(Quest& quest) noexcept
 	return (log("Player '" + get_name() + "' received the quest '" + quest.get_name() + "'.", LogLevel::DEBUG), true);
 }
 
+std::string	Player::quests_to_json_format(void) const noexcept
+{
+	std::string	result;
+	bool		first;
+
+	first = true;
+	result = "[";
+	for (const Quest& q : quest_list)
+	{
+		if (!first)
+			result += ", ";
+		result += q.to_json_format();
+		first = false;
+	}
+	result += "]";
+	return (result);
+}
+
+void		Player::complete_quest(Quest& q) noexcept
+{
+	q.set_completed(true);
+	gain_gold(q.get_gold_reward());
+	if (q.get_item_reward())
+		inventory.add_item(q.get_item_reward()->clone());
+}
+
+void		Player::complete_defeat_quests(const std::string& enemy_name) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::DEFEAT_ENEMY && q.get_objective().target == enemy_name)
+			complete_quest(q);
+	}
+}
+
+void		Player::complete_collect_quests(const std::string& item_name) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::COLLECT_ITEM && q.get_objective().target == item_name)
+			complete_quest(q);
+	}
+}
+
+void		Player::complete_area_quests(const std::string& area_id) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::REACH_AREA && q.get_objective().target == area_id)
+			complete_quest(q);
+	}
+}
+
+void 		Player::complete_gold_quests(void) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::EARN_GOLD && gold >= q.get_objective().amount)
+			complete_quest(q);
+	}
+}
+
+void 		Player::complete_level_quests(void) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::EARN_GOLD && stats.level >= q.get_objective().amount)
+			complete_quest(q);
+	}
+}
+
 // Gold --
+
+void		Player::gain_gold(unsigned int quantity) noexcept
+{
+	gold += quantity;
+	complete_gold_quests();
+}
 
 bool		Player::spend_gold(unsigned int quantity) noexcept
 {
@@ -281,9 +369,23 @@ bool		Player::is_enemy_beaten(Enemy *enemy) noexcept
 	return (false);
 }
 
+void		Player::add_beaten_enemy(const std::string& id) noexcept
+{
+	beaten_enemies_id.push_back(id);
+}
+
 FighterType	Player::get_type(void) const noexcept
 {
 	return (FighterType::Player);
+}
+
+// Stats --
+
+void		Player::level_up(void) noexcept
+{
+	// TODO: change stats...
+
+	complete_level_quests();
 }
 
 // Interactions --
