@@ -161,6 +161,9 @@ Command	CommandParser::parse(const std::string& line)
 	if (keyword == "WHO")
 		return (parse_no_arguments(CommandType::WHO, rest));
 
+	if (keyword == "HELP")
+		return (parse_no_arguments(CommandType::HELP, rest));
+
 	if (keyword == "QUIT")
 		return (parse_no_arguments(CommandType::QUIT, rest));
 

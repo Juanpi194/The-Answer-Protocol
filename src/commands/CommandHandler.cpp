@@ -191,6 +191,9 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 		case CommandType::QUIT:
 			cmd_quit(cmd, connection);
 			break;
+		case CommandType::HELP:
+			cmd_help(cmd, connection);
+			break;
 		default:
 			// It should never get to this point, all types should be managed.
 			player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));

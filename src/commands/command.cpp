@@ -48,6 +48,8 @@ std::string	command_type_to_string(CommandType type)
 			return ("QUESTS");
 		case CommandType::WHO:
 			return ("WHO");
+		case CommandType::HELP:
+			return ("HELP");
 		case CommandType::GROUP:
 			return ("GROUP");
 		case CommandType::QUIT:

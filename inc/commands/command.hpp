@@ -24,6 +24,7 @@ enum class CommandType
 	QUEST,
 	QUESTS,
 	WHO,
+	HELP,
 	GROUP,
 	QUIT
 };
