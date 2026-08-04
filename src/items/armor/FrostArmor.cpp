@@ -27,5 +27,5 @@ FrostArmor	*FrostArmor::clone(void) const noexcept
 
 void	FrostArmor::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
-	// TODO: Apply freeze to opponent
+	opponent.apply_status(APPLIED_STATUS);
 }

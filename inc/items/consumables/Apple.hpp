@@ -11,7 +11,7 @@ class Apple final: public Consumable
 	public:
 		static const std::string		NAME;	// Defined in Apple.cpp
 		static const std::string		DESCRIPTION;	// Defined in Apple.cpp
-		static constexpr unsigned int	HEALING_POINTS = 5;
+		static constexpr unsigned int	HEALING_POINTS = 3;
 
 		// Constructors -------------------------------------------------------
 

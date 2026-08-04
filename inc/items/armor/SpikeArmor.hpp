@@ -1,5 +1,6 @@
 #pragma once
 
+#include "characters/Fighter.hpp"
 #include "items/Armor.hpp"
 #include "items/SpecialEffectGear.hpp"
 
@@ -18,7 +19,9 @@ class SpikeArmor final: public Armor, public SpecialEffectGear
 	public:
 		static const std::string		NAME;	// Defined in SpikeArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in SpikeArmor.cpp
-		static constexpr unsigned int	DAMAGE_REDUCTION = 2;
+		static constexpr unsigned int	DAMAGE_REDUCTION = 5;
+		static constexpr unsigned int	REFLECT_DAMAGE = 3;
+		static constexpr Status			APPLIED_STATUS = Status::POISONED;
 
 		// Constructors -------------------------------------------------------
 

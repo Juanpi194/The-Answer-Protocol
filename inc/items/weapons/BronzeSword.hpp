@@ -13,7 +13,7 @@ class BronzeSword final: public Weapon
 	public:
 		static const std::string		NAME;	// Defined in BronzeSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in BronzeSword.cpp
-		static constexpr unsigned int	EXTRA_DAMAGE = 5;
+		static constexpr unsigned int	EXTRA_DAMAGE = 2;
 
 		// Constructors -------------------------------------------------------
 

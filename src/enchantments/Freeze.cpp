@@ -25,5 +25,5 @@ Freeze	*Freeze::clone(void) const noexcept
 
 void	Freeze::effect(Fighter& user, Fighter& affected) const noexcept
 {
-	// TODO: Logic...
+	affected.apply_status(APPLIED_STATUS);
 }

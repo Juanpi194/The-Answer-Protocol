@@ -384,7 +384,16 @@ FighterType	Player::get_type(void) const noexcept
 
 void		Player::level_up(void) noexcept
 {
-	// TODO: change stats...
+	stats.level++;
+	stats.hp += HP_PER_LEVEL;
+	stats.strength += STRENGTH_PER_LEVEL;
+	stats.defense += DEFENSE_PER_LEVEL;
+	stats.speed += SPEED_PER_LEVEL;
+
+	stats.current_hp += HP_PER_LEVEL;
+	stats.current_strength += STRENGTH_PER_LEVEL;
+	stats.current_defense += DEFENSE_PER_LEVEL;
+	stats.current_speed += SPEED_PER_LEVEL;
 
 	complete_level_quests();
 }

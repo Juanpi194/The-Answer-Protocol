@@ -11,7 +11,7 @@ class HastePotion final: public Consumable
 	public:
 		static const std::string		NAME;	// Defined in HastePotion.cpp
 		static const std::string		DESCRIPTION;	// Defined in HastePotion.cpp
-		static constexpr unsigned int	HASTE_DURATION = 3;
+		static constexpr unsigned int	HASTE_POINTS = 3;
 
 		// Constructors -------------------------------------------------------
 

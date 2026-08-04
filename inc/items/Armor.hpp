@@ -36,7 +36,4 @@ class Armor: public Gear
 
 		// Utils --------------------------------------------------------------
 
-		// void	use(void) noexcept override;
-
-		virtual void	reduce_damage(Fighter& armor_user, Fighter& attacker, unsigned int& incoming_damage) noexcept;
 };

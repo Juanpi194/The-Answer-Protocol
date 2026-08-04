@@ -1,5 +1,6 @@
 #pragma once
 
+#include "characters/Fighter.hpp"
 #include "items/SpecialEffectGear.hpp"
 #include "items/Weapon.hpp"
 
@@ -13,6 +14,7 @@ class SerratedSword final: public Weapon, public SpecialEffectGear
 		static const std::string		NAME;	// Defined in SerratedSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in SerratedSword.cpp
 		static constexpr unsigned int	EXTRA_DAMAGE = 6;
+		static constexpr Status			APPLIED_STATUS = Status::POISONED;
 
 		// Constructors -------------------------------------------------------
 

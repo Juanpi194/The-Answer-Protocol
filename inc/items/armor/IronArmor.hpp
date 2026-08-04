@@ -13,7 +13,7 @@ class IronArmor final: public Armor
 	public:
 		static const std::string		NAME;	// Defined in IronArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronArmor.cpp
-		static constexpr unsigned int	DAMAGE_REDUCTION = 3;
+		static constexpr unsigned int	DAMAGE_REDUCTION = 8;
 
 		// Constructors -------------------------------------------------------
 

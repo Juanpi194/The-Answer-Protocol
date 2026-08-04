@@ -1,6 +1,7 @@
 #pragma once
 
 #include "enchantments/Enchantment.hpp"
+#include "characters/Fighter.hpp"
 
 class Freeze final: public Enchantment
 {
@@ -9,6 +10,7 @@ class Freeze final: public Enchantment
 	public:
 		static const std::string			NAME;	// Defined in Freeze.cpp
 		static const std::string			DESCRIPTION;	// Defined in Freeze.cpp
+		static constexpr Status				APPLIED_STATUS = Status::FROZEN;
 
 		// Constructors -------------------------------------------------------
 

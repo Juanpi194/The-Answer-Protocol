@@ -6,8 +6,6 @@ class Fighter;
 
 class Consumable: public Item
 {
-	private:
-		// TODO: Add some attributes
 	public:
 		// Constructors -------------------------------------------------------
 

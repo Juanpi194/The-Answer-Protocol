@@ -1,6 +1,7 @@
 #pragma once
 
 #include "enchantments/Enchantment.hpp"
+#include "characters/Fighter.hpp"
 
 class Flame final: public Enchantment
 {
@@ -9,6 +10,7 @@ class Flame final: public Enchantment
 	public:
 		static const std::string			NAME;	// Defined in Flame.cpp
 		static const std::string			DESCRIPTION;	// Defined in Flame.cpp
+		static constexpr Status				APPLIED_STATUS = Status::BURNT;
 
 		// Constructors -------------------------------------------------------
 

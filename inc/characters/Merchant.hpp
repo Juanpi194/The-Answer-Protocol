@@ -51,5 +51,5 @@ class Merchant final: public NPC, public Vendor
 
 		const std::string	on_talk(Player& player) noexcept override;
 
-		void	on_buy(Player& player, const std::string& product) noexcept override;
+		bool	on_buy(Player& player, const std::string& product) noexcept override;
 };

@@ -36,7 +36,4 @@ class Weapon: public Gear
 
 		// Utils --------------------------------------------------------------
 
-		// void	use(void) noexcept override;
-
-		virtual void	apply_extra_damage(Fighter& user, Fighter& target, unsigned int initial_damage) noexcept;
 };

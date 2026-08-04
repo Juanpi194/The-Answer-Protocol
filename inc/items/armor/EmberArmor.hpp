@@ -1,5 +1,6 @@
 #pragma once
 
+#include "characters/Fighter.hpp"
 #include "items/Armor.hpp"
 #include "items/SpecialEffectGear.hpp"
 
@@ -13,12 +14,13 @@ class EmberArmor final: public Armor, public SpecialEffectGear
 		/**
 		 * @brief	Duration of the burn effect applied to the attacker.
 		 */
-		static constexpr unsigned int	BURN_DURATION = 2;
+		// static constexpr unsigned int	BURN_DURATION = 2;
 
 	public:
 		static const std::string		NAME;	// Defined in EmberArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in EmberArmor.cpp
-		static constexpr unsigned int	DAMAGE_REDUCTION = 2;
+		static constexpr unsigned int	DAMAGE_REDUCTION = 4;
+		static constexpr Status			APPLIED_STATUS = Status::BURNT;
 
 		// Constructors -------------------------------------------------------
 

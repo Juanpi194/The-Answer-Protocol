@@ -22,8 +22,3 @@ unsigned int	Armor::get_reduced_damage(void) const noexcept
 }
 
 // Utils ----------------------------------------------------------------------
-
-void	Armor::reduce_damage(Fighter& armor_user, Fighter& attacker, unsigned int& incoming_damage) noexcept
-{
-	// TODO: Logic...
-}

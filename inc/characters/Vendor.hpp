@@ -19,5 +19,5 @@ class Vendor
 
 		// Utils --------------------------------------------------------------
 
-		virtual void	on_buy(Player& player, const std::string& product) noexcept = 0;
+		virtual bool	on_buy(Player& player, const std::string& product) noexcept = 0;
 };

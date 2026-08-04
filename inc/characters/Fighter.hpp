@@ -13,9 +13,7 @@ enum Status
 	HEALTHY,
 	POISONED,
 	BURNT,
-	FROZEN,
-	BLEEDING,
-	CONFUSED
+	FROZEN
 };
 
 /**
@@ -144,6 +142,8 @@ class Fighter: public virtual Character
 
 		virtual FighterType	get_type() const noexcept = 0;
 
+		// Actions --
+
 		/**
 		 * @brief	Performs the selected action, done by the user. Only
 		 * 			`ATTACK`, `DEFEND`, `CONSUME` are supported. `FLEE`
@@ -162,9 +162,17 @@ class Fighter: public virtual Character
 		void				attack(Fighter& target) noexcept;
 		void				defend(void) noexcept;
 		bool				flee(Fighter& opponent) noexcept;
-		void				receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept;
-		void				apply_status(Status status) noexcept;
 		void				consume(Fighter& opponent, Consumable& consumable) noexcept;
+
+		// Status --
+
+		void				apply_status(Status status) noexcept;
+		bool				can_apply_status(Status status) const noexcept;
+		void				tick_status(void) noexcept;
+
+		// Stats --
+
+		unsigned int		get_effective_speed(void) const noexcept;
 
 		/**
 		 * @brief	Heals the fighter for the specified amount.
@@ -172,13 +180,22 @@ class Fighter: public virtual Character
 		 */
 		void				heal(unsigned int amount) noexcept;
 
-		// TODO: Work in this docstring
+		/**
+		 * @brief	Takes in mind the armor and other conditions to receive damage.
+		 */
+		void				receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept;
+
+		/**
+		 * @brief	Loses that amount of hp without any other consideration.
+		 */
+		void				lose_hp(unsigned int amount) noexcept;
+
 		/**
 		 * @brief	Changes the specified stat depending on the provided stage.
 		 * @param	stat	The stat to change.
-		 * @param	stage	Indicates how much the stat is going to change.
+		 * @param	amount	Indicates how much the stat is going to change.
 		 */
-		void				change_stat(Stat stat, int stage) noexcept;
+		void				change_stat(Stat stat, int amount) noexcept;
 
 		/**
 		 * @brief	Restores the specified stat. That means that the
@@ -193,6 +210,8 @@ class Fighter: public virtual Character
 		 * @param	hp	If set to `true`, hp will be reset too.
 		 */
 		void				reset_stats(bool hp = false) noexcept;
+
+		// STATUS command --
 
 		std::string			status_json(void) const noexcept;
 };

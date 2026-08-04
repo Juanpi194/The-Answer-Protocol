@@ -1,5 +1,6 @@
 #pragma once
 
+#include "characters/Fighter.hpp"
 #include "items/SpecialEffectGear.hpp"
 #include "items/Weapon.hpp"
 
@@ -12,7 +13,8 @@ class FlameSword final: public Weapon, public SpecialEffectGear
 	public:
 		static const std::string		NAME;	// Defined in FlameSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in FlameSword.cpp
-		static constexpr unsigned int	EXTRA_DAMAGE = 8;
+		static constexpr unsigned int	EXTRA_DAMAGE = 5;
+		static constexpr Status			APPLIED_STATUS = Status::BURNT;
 
 		// Constructors -------------------------------------------------------
 

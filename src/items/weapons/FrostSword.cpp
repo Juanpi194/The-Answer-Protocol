@@ -26,5 +26,5 @@ FrostSword	*FrostSword::clone(void) const noexcept
 
 void	FrostSword::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
-	// TODO: Apply freeze to opponent, ...
+	opponent.apply_status(APPLIED_STATUS);
 }
