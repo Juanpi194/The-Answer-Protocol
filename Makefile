@@ -12,7 +12,7 @@ BATTLE_SRC = $(addprefix $(SRC_FOLDER)/$(BATTLE_FOLDER)/, \
 
 CHARACTERS_FOLDER = characters
 CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
-					Character.cpp Enchanter.cpp enemies/Enemy.cpp \
+					Character.cpp Enchanter.cpp Enemy.cpp \
 					Fighter.cpp enemies/Goblin.cpp Merchant.cpp Narrator.cpp \
 					NPC.cpp Player.cpp QuestGiver.cpp)
 

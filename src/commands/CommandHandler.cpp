@@ -7,7 +7,7 @@
 #include "utils/types.hpp"
 #include "battle/Battle.hpp"
 #include "characters/Player.hpp"
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 #include "characters/QuestGiver.hpp"
 #include "items/Consumable.hpp"
 #include "libs/json.hpp"
@@ -70,7 +70,8 @@ static bool		is_allowed_in_battle(CommandType type)
 {
 	if (type == CommandType::ATTACK || type == CommandType::DEFEND ||
 			type == CommandType::FLEE || type == CommandType::CONSUME ||
-			type == CommandType::STATUS || type == CommandType::QUIT)
+			type == CommandType::STATUS || type == CommandType::QUIT ||
+			type == CommandType::CHAT)
 		return (true);
 	return (false);
 }
@@ -500,5 +501,5 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			// It should never get to this point, all types should be managed.
 			player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 	}
-	// TODO: Add OPEN, HELP, BUY and ENCHANT commands (and fix GROUP JOIN)
+	// TODO: Add OPEN, HELP, BUY and ENCHANT commands (and fix GROUP JOIN) y GROUP KICK
 }

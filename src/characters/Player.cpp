@@ -4,7 +4,7 @@
 
 #include "utils/utils.hpp"
 #include "battle/Battle.hpp"
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 #include "enchantments/Enchantment.hpp"
 #include "items/Item.hpp"
 #include "server/PlayerConnection.hpp"
@@ -234,6 +234,7 @@ std::string	Player::quests_to_json_format(void) const noexcept
 
 void		Player::complete_quest(Quest& q) noexcept
 {
+	log("Quest '" + q.get_name() + "' completed by '" + get_name() + "'.", LogLevel::INFO);
 	q.set_completed(true);
 	gain_gold(q.get_gold_reward());
 	if (q.get_item_reward())
