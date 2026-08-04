@@ -19,6 +19,14 @@ enum Status
 };
 
 /**
+ * @brief	Casts the given status to string format.
+ * @param	status	The status to cast.
+ * @returns	The string format of `status`. If status is unknown,
+ * 			the word 'unknown' will be returned.
+ */
+std::string	status_to_string(const Status status) noexcept;
+
+/**
  * @param	level		The level of the fighter.
  * @param	hp			The hp of the fighter (health points).
  * @param	strength	The strength of the fighter (attack).
@@ -83,15 +91,14 @@ class Fighter: public virtual Character
 		FightAction	last_action;
 		bool		defending;
 
-		static constexpr unsigned int	MIN_HP = 10;
+		static constexpr unsigned int	MIN_HP = 5;
 		static constexpr unsigned int	MAX_HP = 100;
-		static constexpr unsigned int	MIN_STRENGTH = 5;
+		static constexpr unsigned int	MIN_STRENGTH = 1;
 		static constexpr unsigned int	MAX_STRENGTH = 80;
-		static constexpr unsigned int	MIN_DEFENSE = 3;
+		static constexpr unsigned int	MIN_DEFENSE = 1;
 		static constexpr unsigned int	MAX_DEFENSE = 90;
-		static constexpr unsigned int	MIN_SPEED = 3;
+		static constexpr unsigned int	MIN_SPEED = 1;
 		static constexpr unsigned int	MAX_SPEED = 70;
-		// TODO: Add more stats
 
 		/**
 		 * @brief	Validates if the provided stats for the fighter are valid.
@@ -160,10 +167,10 @@ class Fighter: public virtual Character
 		void				consume(Fighter& opponent, Consumable& consumable) noexcept;
 
 		/**
-		 * @brief	Heals the fighter for the specified ammount.
-		 * @param	ammount	The healing points to heal.
+		 * @brief	Heals the fighter for the specified amount.
+		 * @param	amount	The healing points to heal.
 		 */
-		void				heal(unsigned int ammount) noexcept;
+		void				heal(unsigned int amount) noexcept;
 
 		// TODO: Work in this docstring
 		/**
@@ -186,4 +193,6 @@ class Fighter: public virtual Character
 		 * @param	hp	If set to `true`, hp will be reset too.
 		 */
 		void				reset_stats(bool hp = false) noexcept;
+
+		std::string			status_json(void) const noexcept;
 };

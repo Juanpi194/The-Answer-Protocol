@@ -68,19 +68,19 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool			obtain_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
+		bool				obtain_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
 
 		/**
 		 * @brief	Tries to find an item with the specified name in the
 		 * 			player's room. If it gets find, it will be removed from
 		 * 			the room and added to the player's item list.
 		 * @param	item_name	The name of the item to find.
-		 * @returns	`true` if the item was successfully added to the players
-		 * 			item list. `false` otherwise (including not finding
-		 * 			the item in the room).
+		 * @returns	The item found if the item was successfully added to the
+		 * 			player's item list. `nullptr` otherwise (including not
+		 * 			finding the item in the room).
 		 * @note	`item_name` can be either a name or an id.
 		 */
-		bool			obtain_item(const std::string& item_name) noexcept;
+		Item				*obtain_item(const std::string& item_name) noexcept;
 
 		/**
 		 * @brief		Adds the specified item to the current room's item list
@@ -91,7 +91,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool			drop_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
+		bool				drop_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
 
 		/**
 		 * @brief	Tries to find an item with the specified name in the
@@ -103,7 +103,7 @@ class Player final: public Fighter
 		 * 			the item in the room).
 		 * @note	`item_name` can be either a name or an id.
 		 */
-		bool			drop_item(const std::string& item_name) noexcept;
+		Item				*drop_item(const std::string& item_name) noexcept;
 
 		// Enchantments --
 
@@ -142,13 +142,22 @@ class Player final: public Fighter
 		 * @note	If the quest is already in the list, it will not be added.
 		 */
 		bool			obtain_quest(Quest& quest) noexcept TAP_COLD;
+		std::string		quests_to_json_format(void) const noexcept;
+		void			complete_quest(Quest& q) noexcept;
+		void			complete_defeat_quests(const std::string& enemy_name) noexcept;
+		void			complete_collect_quests(const std::string& item_name) noexcept;
+		void			complete_area_quests(const std::string& area_id) noexcept;
+		void 			complete_gold_quests(void) noexcept;
+		void 			complete_level_quests(void) noexcept;
 
 		// Gold --
 
+		void			gain_gold(unsigned int quantity) noexcept;
+
 		/**
-		 * @brief	Tries to consume a specified ammount of gold. If the player
+		 * @brief	Tries to consume a specified amount of gold. If the player
 		 * 			does not have enough gold, it won't be consumed.
-		 * @param	quantity	The ammount of gold to consume.
+		 * @param	quantity	The amount of gold to consume.
 		 * @returns	`true` if the player had enough gold to spend and it was
 		 * 			successfully consumed, `false` if the player does not have
 		 * 			enough gold.
@@ -158,9 +167,9 @@ class Player final: public Fighter
 
 		/**
 		 * @brief	Unlike the `spend_gold` method, this one will always
-		 * 			consume the specified ammount of gold, setting it to 0
+		 * 			consume the specified amount of gold, setting it to 0
 		 * 			if the player has less gold than the specified one.
-		 * @param	quantity	The ammount of gold to consume.
+		 * @param	quantity	The amount of gold to consume.
 		 */
 		void			lose_gold(unsigned int quantity) noexcept;
 
@@ -190,12 +199,17 @@ class Player final: public Fighter
 		// Fight --
 
 		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL;
+		void			add_beaten_enemy(const std::string& id) noexcept;
 		FighterType		get_type(void) const noexcept override;
+
+		// Stats --
+
+		void			level_up(void) noexcept;
 
 		// Interactions --
 
-		void			talk_with(Character& character);
-		void			on_talk(Player& player) noexcept override;
+		void				talk_with(Character& character);
+		const std::string	on_talk(Player& player) noexcept override;
 
 		// User --
 

@@ -25,8 +25,6 @@ class QuestGiver final: public NPC
 	private:
 		Quest				quest;
 		t_quest_dialogues	dialogues;
-		unsigned int		gold_reward;
-		Item				*item_reward;
 
 		static unsigned int				available_id;	// Defined in QuestGiver.cpp
 		static const std::string		PREFIX;	// Defined in QuestGiver.cpp
@@ -36,7 +34,7 @@ class QuestGiver final: public NPC
 	public:
 		// Constructors -------------------------------------------------------
 
-		QuestGiver(const std::string& name, const std::string& description, Quest& quest, const t_quest_dialogues& dialogues, unsigned int gold_reward, Item *item_reward);
+		QuestGiver(const std::string& name, const std::string& description, Quest& quest, const t_quest_dialogues& dialogues);
 
 		/**
 		 * @note	It is not allowed to make copies because each quest giver should be unique.
@@ -59,5 +57,13 @@ class QuestGiver final: public NPC
 
 		// Utils --------------------------------------------------------------
 
-		void	on_talk(Player& player) noexcept override;
+		const std::string	on_talk(Player& player) noexcept override;
+
+		/**
+		 * @brief	Gives the quest to the player that requeted it.
+		 * @param	player	The player that requested the quest.
+		 * @returns	Empty string if the player already has the quest.
+		 * 			The quest in json format otherwise.
+		 */
+		std::string			request_quest(Player& player) noexcept;
 };

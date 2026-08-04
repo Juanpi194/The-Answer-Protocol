@@ -12,7 +12,7 @@ BATTLE_SRC = $(addprefix $(SRC_FOLDER)/$(BATTLE_FOLDER)/, \
 
 CHARACTERS_FOLDER = characters
 CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
-					Character.cpp Enchanter.cpp enemies/Enemy.cpp \
+					Character.cpp Enchanter.cpp Enemy.cpp \
 					Fighter.cpp enemies/Goblin.cpp Merchant.cpp Narrator.cpp \
 					NPC.cpp Player.cpp QuestGiver.cpp)
 
@@ -28,6 +28,10 @@ FACTORIES_FOLDER = factories
 FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/$(FACTORIES_FOLDER)/, \
 					EnchantmentFactory.cpp EnemyFactory.cpp ItemFactory.cpp)
 
+GROUP_FOLDER = group
+GROUP_SRC = $(addprefix $(SRC_FOLDER)/$(GROUP_FOLDER)/, \
+				Group.cpp)
+
 ITEMS_FOLDER = items
 ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				Armor.cpp Consumable.cpp Gear.cpp Inventory.cpp Item.cpp \
@@ -36,10 +40,10 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				armor/IronArmor.cpp armor/SpikeArmor.cpp armor/SteelArmor.cpp \
 				chest/Chest.cpp chest/ChestKey.cpp \
 				consumables/Apple.cpp consumables/FirePotion.cpp consumables/HastePotion.cpp \
-				consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
-				weapons/BronzeShield.cpp weapons/BronzeSword.cpp weapons/FlameSword.cpp \
-				weapons/FrostSword.cpp weapons/IronShield.cpp weapons/IronSword.cpp \
-				weapons/SerratedSword.cpp weapons/SteelShield.cpp weapons/SteelSword.cpp )
+				consumables/HealingPotion.cpp consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
+				shields/BronzeShield.cpp shields/IronShield.cpp shields/SteelShield.cpp \
+				weapons/BronzeSword.cpp weapons/FlameSword.cpp weapons/FrostSword.cpp \
+				weapons/IronSword.cpp weapons/SerratedSword.cpp weapons/SteelSword.cpp )
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \
@@ -51,7 +55,7 @@ PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
 
 PROTOCOL_FOLDER = protocol
 PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
-				responses.cpp)
+				events.cpp responses.cpp)
 
 QUESTS_FOLDER = quests
 QUESTS_SRC = $(addprefix $(SRC_FOLDER)/$(QUESTS_FOLDER)/, \
@@ -71,12 +75,11 @@ WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
 SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(FACTORIES_SRC) \
-		$(ITEMS_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+		$(GROUP_SRC) $(ITEMS_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
-
-FLAGS = $(VERSION_FLAG) -I $(INC_FOLDER)
+FLAGS = $(VERSION_FLAG) $(FSANITIZE) -I $(INC_FOLDER)
 FSANITIZE = -g -fsanitize=thread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter

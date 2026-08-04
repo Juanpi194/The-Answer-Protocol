@@ -6,7 +6,7 @@
 #include "items/chest/ChestKey.hpp"
 #include "factories/ItemFactory.hpp"
 #include "utils/utils.hpp"
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 #include "characters/Player.hpp"
 
 std::list<Item*>	Chest::open(void)

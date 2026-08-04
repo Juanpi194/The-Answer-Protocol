@@ -1,5 +1,6 @@
 #include "server/Server.hpp"
 
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <cstring>
 #include <thread>
@@ -8,6 +9,8 @@
 #include "utils/utils.hpp"
 #include "commands/CommandHandler.hpp"
 #include "commands/commandparser.hpp"
+#include "group/Group.hpp"
+#include "protocol/events.hpp"
 #include "protocol/responses.hpp"
 
 const std::string	ServerError::DEFAULT_MSG = "Server initialization failed.";
@@ -66,9 +69,17 @@ PlayerConnection	*Server::setup_client(const int fd)
 	ssize_t				bytes;
 	bool				reconnecting;
 	std::string			msg_for_client;
+	sockaddr_in			addr;
+	socklen_t			len = sizeof(addr);
+	char				ip[INET_ADDRSTRLEN];
 
 	if (fd < 0)
 		return (nullptr);
+
+	// Getting ip
+	getpeername(fd, (sockaddr *)&addr, &len);
+	inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+
 	if (send(fd, welcome_msg.c_str(), welcome_msg.size(), 0) == -1)
 		return (nullptr);
 	client = nullptr;
@@ -123,13 +134,13 @@ PlayerConnection	*Server::setup_client(const int fd)
 				{
 					msg_for_client = err(ErrorCode::BANNED_PLAYER);
 					if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
-						return (nullptr);
+						return (log(err(ErrorCode::SEND_FAILED), LogLevel::ERROR), nullptr);
 					continue;
 				}
 
 				// Finding client.
 				std::lock_guard<std::mutex>	lock(clients_mtx);
-				client = search_client_by_name(cmd.args[0]);
+				client = search_client_by_name_nolock(cmd.args[0]);
 				if (!client)
 				{
 					clients.emplace_back(cmd.args[0], fd, this);
@@ -151,10 +162,11 @@ PlayerConnection	*Server::setup_client(const int fd)
 	}
 	if (!client)
 		return (nullptr);
+	client->set_ip(ip);
+	log("Client connected: '" + client->get_player().get_name() + "' from " + ip, LogLevel::INFO);
 	msg_for_client = ok("connected");
 	if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
 		return (nullptr);
-	announce_connection(*client);
 	return (client);
 }
 
@@ -172,9 +184,7 @@ void				Server::client_thread(int fd)
 		close(fd);
 		return;
 	}
-
-	if (!client->get_player().get_current_room())
-		world->get_spawn_room()->add_player(&client->get_player());
+	push_join(client);
 
 	// After the PlayerConnection is initiated, all this is correct.
 	const int	client_fd = client->get_client_fd();
@@ -205,9 +215,11 @@ void				Server::client_thread(int fd)
 		outbox_msgs = client->get_player().drain_outbox();
 		for (const std::string& outbox_msg: outbox_msgs)
 		{
+			log("Response to '" + client->get_player().get_name() + "': " + outbox_msg, LogLevel::INFO);
 			bytes = send(client_fd, (outbox_msg).c_str(), (outbox_msg).size(), MSG_NOSIGNAL);
 			if (bytes == -1)
 			{
+				log(err(ErrorCode::SEND_FAILED), LogLevel::ERROR);
 				client->disconnect();
 				break;
 			}
@@ -215,8 +227,9 @@ void				Server::client_thread(int fd)
 		if (client->is_quitting())
 			client->disconnect();
 	}
+	log("Client disconnected: '" + client->get_player().get_name() + "' from " + client->get_ip(), LogLevel::INFO);
 	if (on)
-		announce_disconnection(*client);
+		push_leave(client);
 	client->disconnect();
 }
 
@@ -233,13 +246,15 @@ void				Server::accept_loop(void)
 				break;	// Server was closed.
 			continue;	// Error while accepting.
 		}
+		if (is_connection_flooding())
+			log("Possible rapid connections (connection flooding)", LogLevel::WARNING);
 		log("Creating thread with fd " + std::to_string(fd) + "...", LogLevel::DEBUG);
 		thread_list.emplace_back(&Server::client_thread, this, fd);
 		log("New thread with fd " + std::to_string(fd) + " launched.", LogLevel::DEBUG);
 	}
 }
 
-PlayerConnection	*Server::search_client_by_name(const std::string& name) noexcept
+PlayerConnection	*Server::search_client_by_name_nolock(const std::string& name) noexcept
 {
 	for (PlayerConnection& client: clients)
 		if (client.get_player().get_name() == name)
@@ -254,7 +269,9 @@ Server::Server(void):
 	owner(nullptr),
 	world(nullptr),
 	on(false),
-	running(true)
+	running(true),
+	conn_window(0),
+	conn_count(0)
 {
 	// TODO: Give json_path so a specific World can be created
 }
@@ -313,7 +330,7 @@ void	Server::set_running(bool running) noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Server::start(void)
+void				Server::start(void)
 {
 	if (on)
 	{
@@ -328,7 +345,7 @@ void	Server::start(void)
 	accept_thread = std::thread(&Server::accept_loop, this);
 }
 
-void	Server::stop(void)
+void				Server::stop(void)
 {
 	if (!on)
 	{
@@ -362,7 +379,7 @@ void	Server::stop(void)
 	}
 }
 
-void	Server::send_msg_to(int dst, const std::string& msg)
+void				Server::send_msg_to(int dst, const std::string& msg)
 {
 	PlayerConnection	*target;
 
@@ -373,7 +390,7 @@ void	Server::send_msg_to(int dst, const std::string& msg)
 		target->get_player().send_to_outbox(msg);	
 }
 
-void	Server::broadcast(const std::string& msg, int fd_excluded)
+void				Server::broadcast(const std::string& msg, int fd_excluded)
 {
 	std::lock_guard<std::mutex>	lock(clients_mtx);
 
@@ -382,31 +399,85 @@ void	Server::broadcast(const std::string& msg, int fd_excluded)
 			client.get_player().send_to_outbox(msg);
 }
 
-void	Server::announce_connection(PlayerConnection& player)
+void				Server::group_broadcast(Group& group, const std::string& msg, int fd_excluded)
 {
-	broadcast("Player '" + player.get_player().get_name() + "' connected.", player.get_client_fd());
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+
+	for (PlayerConnection *member: group.get_members())
+		if (member->get_client_fd() != fd_excluded)
+			member->get_player().send_to_outbox(msg);
 }
 
-void	Server::announce_disconnection(PlayerConnection& player)
-{
-	broadcast("Player '" + player.get_player().get_name() + "' disconnected.", player.get_client_fd());
-}
-
-void	Server::push_command(const t_command& cmd)
+void				Server::push_command(const t_command& cmd)
 {
 	std::lock_guard<std::mutex>	lock(cmd_mtx);
 
 	cmd_queue.push_back(cmd);
 }
 
-void	Server::game_loop(void)
+void				Server::push_join(PlayerConnection* client)
+{
+	std::lock_guard<std::mutex>	lock(joins_mtx);
+	pending_joins.push_back(client);
+}
+
+void				Server::push_leave(PlayerConnection *client)
+{
+	std::lock_guard<std::mutex>	lock(leaves_mtx);
+	pending_leaves.push_back(client);
+}
+
+void				Server::game_loop(void)
 {
 	Command		cmd;
 	t_command	cmd_info;
 	bool		got_one;
+	bool		joined;
+	bool		left;
 
 	while (running)
 	{
+		// Joining clients
+		joined = false;
+		{
+			std::lock_guard<std::mutex>	lock(joins_mtx);
+
+			for (PlayerConnection *client: pending_joins)
+			{
+				if (!client->get_player().get_current_room())
+				{
+					Player&	p = client->get_player();
+					world->get_spawn_room()->add_player(&client->get_player());
+					world->get_spawn_room()->room_broadcast(evt_presence_enter(p.get_name()), &p);
+					joined = true;
+				}
+			}
+			pending_joins.clear();
+		}
+		if (joined)
+			broadcast(evt_stats(count_clients()));
+
+		// Leaving clients
+		left = false;
+		{
+			std::lock_guard<std::mutex>	lock(leaves_mtx);
+
+			for (PlayerConnection *client: pending_leaves)
+			{
+				Player&	p = client->get_player();
+				Room	*room = p.get_current_room();
+				if (room)
+				{
+					room->room_broadcast(evt_presence_leave(p.get_name()), &p);
+					room->remove_player(&p);
+					left = true;
+				}
+			}
+		}
+		if (left)
+			broadcast(evt_stats(count_clients()));
+
+		// Reading if there is a command
 		got_one = false;
 		{
 			std::lock_guard<std::mutex>	lock(cmd_mtx);
@@ -417,8 +488,13 @@ void	Server::game_loop(void)
 				got_one = true;
 			}
 		}
+
+		// Executing found command
 		if (got_one && cmd_info.sender->is_connected())
 		{
+			log("Command from '" + cmd_info.sender->get_player().get_name() + "': " + cmd_info.text, LogLevel::INFO);
+			if (cmd_info.sender->is_flooding())
+				log("Possible command flooding from '" + cmd_info.sender->get_player().get_name() + "'", LogLevel::WARNING);
 			assert(world != nullptr && "World cannot be nullptr.");
 			try
 			{
@@ -427,15 +503,13 @@ void	Server::game_loop(void)
 			}
 			catch (const CommandParseError& e)
 			{
-				// TODO: Mandar al error el tipo de error, poniéndole a la excepción un tipo de error en concreto.
-				// TODO: El salto de linea debería venir ya en el e.what, generado al llamar a err(tipo de error)
-				(*cmd_info.sender).get_player().send_to_outbox(std::string(e.what(), strlen(e.what())) + '\n');
+				(*cmd_info.sender).get_player().send_to_outbox(e.what());
 				log(e.what(), LogLevel::ERROR);
 				continue;
 			}
 		}
 		else
-			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			std::this_thread::sleep_for(std::chrono::milliseconds(GAME_LOOP_MS_CD));
 	}
 }
 
@@ -446,6 +520,28 @@ PlayerConnection	*Server::find_client_by_fd(int fd) noexcept
 	for (PlayerConnection& client: clients)
 		if (client.get_client_fd() == fd)
 			return (&client);
+	return (nullptr);
+}
+
+PlayerConnection	*Server::search_client_by_name(const std::string& name) noexcept
+{
+	std::lock_guard<std::mutex>	lock(clients_mtx);
+
+	for (PlayerConnection& client: clients)
+		if (client.get_player().get_name() == name)
+			return (&client);
+	return (nullptr);
+}
+
+Group				*Server::find_group_by_leader(PlayerConnection& leader) noexcept
+{
+	if (!leader.get_group())
+		return (nullptr);
+
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	for (Group& group: groups)
+		if (group.get_leader() == &leader)
+			return (&group);
 	return (nullptr);
 }
 
@@ -518,11 +614,7 @@ bool				Server::ban_client(const std::string& name) noexcept
 {
 	PlayerConnection			*client;
 
-	// Looking for a client with that name.
-	{
-		std::lock_guard<std::mutex>	lock(clients_mtx);
-		client = search_client_by_name(name);
-	}
+	client = search_client_by_name(name);
 	if (!client)
 		return (false);	// Client not found.
 
@@ -560,4 +652,91 @@ std::string			Server::get_commands_instructions(void) const noexcept
 	result += '\n';
 	result += bars;
 	return (result);
+}
+
+size_t				Server::count_clients(void) noexcept
+{
+	std::lock_guard<std::mutex>	lock(clients_mtx);
+	size_t	count;
+
+	count = 0;
+	for (PlayerConnection& client: clients)
+		if (client.is_connected())
+			count += 1;
+	return (count);
+}
+
+Group				*Server::create_group(PlayerConnection& leader)
+{
+	if (leader.get_group())
+		return (nullptr);
+
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	groups.emplace_back(leader);
+	leader.set_group(&groups.back());
+	return (&groups.back());
+}
+
+bool				Server::invite_group(PlayerConnection& inviter, PlayerConnection& target)
+{
+	if (!inviter.get_group())
+		return (false);
+
+	// Inviting target
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	if (!inviter.get_group()->invite_member(target))
+		return (false);
+	return (true);
+}
+
+Group				*Server::join_group(PlayerConnection& member, PlayerConnection& leader)
+{
+	Group						*target_group;
+	
+	target_group = nullptr;
+
+	// Looking for target group
+	{
+		std::lock_guard<std::mutex>	lock(groups_mtx);
+		for (Group& group: groups)
+			if (group.get_leader() == &leader)
+				target_group = &group;
+	}
+	if (!target_group)
+		return (nullptr);
+	if (target_group->accept_member(member))
+		return (target_group);
+	return (nullptr);
+}
+
+bool				Server::leave_group(PlayerConnection& member)
+{
+	Group	*group;
+
+	group = member.get_group();
+	if (!group)
+		return (false);
+
+	std::lock_guard<std::mutex>	lock(groups_mtx);
+	if (!group->remove_member(member))
+		return (false);
+	if (group->get_members().empty())
+		groups.remove(*group);
+	return (true);
+}
+
+bool				Server::is_connection_flooding(void) noexcept
+{
+	std::time_t	now;
+
+	now = std::time(nullptr);
+	if (now - conn_window >= 1)
+	{
+		conn_window = now;
+		conn_count = 0;
+	}
+	conn_count++;
+	if (conn_count > MAX_CONNS_PER_SEC)
+		return (true);
+	return (false);
 }

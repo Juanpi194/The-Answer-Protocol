@@ -4,7 +4,7 @@
 
 #include "utils/utils.hpp"
 #include "utils/types.hpp"
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
 #include "items/chest/Chest.hpp"
@@ -222,15 +222,15 @@ void				Room::remove_player(Player *player)
 	player->set_current_room(nullptr);
 }
 
-void				Room::clear(void)
+void				Room::room_broadcast(const std::string& msg, Player *excluded)
 {
-	// TODO: Kick players (setting their room to nullptr), free items, ...
+	for (Player *p: player_list)
+		if (p != excluded)
+			p->send_to_outbox(msg);
 }
 
 const std::string	Room::look(void) const noexcept
 {
-	// TODO: Add chest and extras.
-	// ? REVIEW: Full review of everything.
 	std::string	result;
 	bool		first;
 

@@ -57,3 +57,21 @@ Item	*Inventory::find_item_by_name(const std::string& item_name) const
 			return (item_in_list);
 	return (nullptr);
 }
+
+const std::string	Inventory::to_json_format(void) const noexcept
+{
+	std::string				result;
+	bool					first;
+
+	result = "[";
+	first = true;
+	for (Item *item: items)
+	{
+		if (!first)
+			result += ", ";
+		result += "\"" + item->get_id() + "\"";
+		first = false;
+	}
+	result += "]";
+	return (result);
+}

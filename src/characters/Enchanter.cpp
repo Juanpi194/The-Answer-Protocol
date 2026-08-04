@@ -53,20 +53,20 @@ const std::map<Enchantment*, unsigned int>&	Enchanter::get_enchantments_to_sell(
 
 // Utils ----------------------------------------------------------------------
 
-void	Enchanter::on_talk(Player& player) noexcept
+const std::string	Enchanter::on_talk(Player& player) noexcept
 {
 	std::string	products;
 
 	// ? REVIEW: Logic and format ...
 	products = "===";
-	player.send_to_outbox("Welcome!");
+	products += "Welcome!";
 	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
 	{
 		products += "\n";
 		products += (enchantment_and_price.first->get_name() + " - " + std::to_string(enchantment_and_price.second));
 	}
 	products += "\n===";
-	player.send_to_outbox(products);
+	return (products);
 	// TODO: Logic...
 }
 

@@ -33,5 +33,5 @@ class Character
 
 		// Utils --------------------------------------------------------------
 
-		virtual void	on_talk(Player& player) noexcept = 0;
+		virtual const std::string	on_talk(Player& player) noexcept = 0;
 };

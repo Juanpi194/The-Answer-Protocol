@@ -58,7 +58,7 @@ class Enchanter final: public NPC, public Vendor
 
 		// Utils --------------------------------------------------------------
 
-		void	on_talk(Player& player) noexcept override;
+		const std::string	on_talk(Player& player) noexcept override;
 
 		/**
 		 * @brief	Tries to enchant the specified gear with the specified

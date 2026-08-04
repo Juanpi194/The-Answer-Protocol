@@ -1,4 +1,4 @@
-#include "items/weapons/BronzeShield.hpp"
+#include "items/shields/BronzeShield.hpp"
 
 unsigned int		BronzeShield::available_id = 0;
 const std::string	BronzeShield::PREFIX = "bronze_shield.";

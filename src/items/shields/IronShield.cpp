@@ -1,4 +1,4 @@
-#include "items/weapons/IronShield.hpp"
+#include "items/shields/IronShield.hpp"
 
 unsigned int		IronShield::available_id = 0;
 const std::string	IronShield::PREFIX = "iron_shield.";
