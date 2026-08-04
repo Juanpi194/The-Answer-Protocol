@@ -81,6 +81,24 @@ std::string	err(ErrorCode err_code)
 		case ErrorCode::IN_BATTLE:
 			result = "415 IN_BATTLE";
 			break;
+		case ErrorCode::NPC_NOT_VENDOR:
+			result = "416 NPC_NOT_VENDOR";
+			break;
+		case ErrorCode::NPC_NOT_ENCHANTER:
+			result = "417 NPC_NOT_ENCHANTER";
+			break;
+		case ErrorCode::NO_CHEST:
+			result = "418 NO_CHEST";
+			break;
+		case ErrorCode::CHEST_ALREADY_OPENED:
+			result = "419 CHEST_ALREADY_OPENED";
+			break;
+		case ErrorCode::GUARDIAN_NOT_BEATEN:
+			result = "420 GUARDIAN_NOT_BEATEN";
+			break;
+		case ErrorCode::NO_KEY:
+			result = "421 NO_KEY";
+			break;
 		case ErrorCode::CONNECTION_FAILED:
 			result = "900 CONNECTION_FAILED";
 			break;
@@ -173,6 +191,24 @@ std::string	get_err_description(ErrorCode err_code)
 			break;
 		case ErrorCode::IN_BATTLE:
 			result = "The client is in battle, cannot execute all commands";
+			break;
+		case ErrorCode::NPC_NOT_VENDOR:
+			result = "NPC cannot sell items (not a vendor)";
+			break;
+		case ErrorCode::NPC_NOT_ENCHANTER:
+			result = "NPC cannot enchant items (not an enchanter)";
+			break;
+		case ErrorCode::NO_CHEST:
+			result = "There is no chest in this room";
+			break;
+		case ErrorCode::CHEST_ALREADY_OPENED:
+			result = "The chest was already opened";
+			break;
+		case ErrorCode::GUARDIAN_NOT_BEATEN:
+			result = "The chest's guardian must be defeated first";
+			break;
+		case ErrorCode::NO_KEY:
+			result = "Player has no key to open the chest";
 			break;
 		case ErrorCode::CONNECTION_FAILED:
 			result = "Connection establishment failed";

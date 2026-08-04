@@ -30,6 +30,12 @@ std::string	command_type_to_string(CommandType type)
 			return ("INVENTORY");
 		case CommandType::TALK:
 			return ("TALK");
+		case CommandType::OPEN:
+			return ("OPEN");
+		case CommandType::BUY:
+			return ("BUY");
+		case CommandType::ENCHANT:
+			return ("ENCHANT");
 		case CommandType::ATTACK:
 			return ("ATTACK");
 		case CommandType::DEFEND:

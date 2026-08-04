@@ -14,7 +14,8 @@ static const char *GROUP_SUBCOMMANDS[] =
 	"INVITE",
 	"LEAVE",
 	"KICK",
-	"CREATE"
+	"CREATE",
+	"JOIN"
 };
 
 static void	split_first_token(const std::string& str,
@@ -111,7 +112,7 @@ static Command	parse_group(const std::string& rest)
 	if (subcommand.empty())
 		return (Command{CommandType::GROUP, {}});
 
-	if (!is_one_of(subcommand, GROUP_SUBCOMMANDS, 4))
+	if (!is_one_of(subcommand, GROUP_SUBCOMMANDS, 5))
 		throw CommandParseError(ErrorCode::INVALID_ARGUMENT);
 
 	if (subcommand == "LEAVE" || subcommand == "CREATE")
@@ -129,7 +130,22 @@ static Command	parse_group(const std::string& rest)
 
 	return (Command{CommandType::GROUP, {subcommand, target}});
 }
-//Valida los subcomandos de GROUP (INVITE, LEAVE, KICK o CREATE) y sus argumentos
+//Valida los subcomandos de GROUP (INVITE, LEAVE, KICK, CREATE o JOIN) y sus argumentos
+
+// Exige 2 argumentos: encantamiento (una palabra) y el item a encantar (texto libre). Usado por ENCHANT.
+static Command	parse_enchant(const std::string& rest)
+{
+	std::string	enchantment;
+	std::string	item;
+
+	split_first_token(rest, enchantment, item);
+
+	if (enchantment.empty() || item.empty())
+		throw CommandParseError(ErrorCode::WRONG_ARGUMENTS);
+
+	return (Command{CommandType::ENCHANT, {enchantment, item}});
+}
+//Separa el encantamiento (primera palabra) del item a encantar (resto de la línea).
 
 Command	CommandParser::parse(const std::string& line)
 {
@@ -199,6 +215,15 @@ Command	CommandParser::parse(const std::string& line)
 
 	if (keyword == "TALK")
 		return (parse_text_argument(CommandType::TALK, rest));
+
+	if (keyword == "OPEN")
+		return (parse_no_arguments(CommandType::OPEN, rest));
+
+	if (keyword == "BUY")
+		return (parse_text_argument(CommandType::BUY, rest));
+
+	if (keyword == "ENCHANT")
+		return (parse_enchant(rest));
 
 	if (keyword == "CHAT")
 		return (parse_chat(rest));

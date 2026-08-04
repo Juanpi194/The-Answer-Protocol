@@ -498,11 +498,11 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			cmd_quests(player);
 			break;
 		case CommandType::HELP:
-			cmd_help(cmd, connection);
+			cmd_help(connection);
 			break;
 		default:
 			// It should never get to this point, all types should be managed.
 			player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 	}
-	// TODO: Add OPEN, HELP, BUY and ENCHANT commands (and fix GROUP JOIN) y GROUP KICK
+	// TODO: Add OPEN, BUY and ENCHANT commands, and GROUP KICK
 }
