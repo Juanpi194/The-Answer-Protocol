@@ -13,7 +13,9 @@ BATTLE_SRC = $(addprefix $(SRC_FOLDER)/$(BATTLE_FOLDER)/, \
 CHARACTERS_FOLDER = characters
 CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/$(CHARACTERS_FOLDER)/, \
 					Character.cpp Enchanter.cpp Enemy.cpp \
-					Fighter.cpp enemies/Goblin.cpp Merchant.cpp Narrator.cpp \
+					Fighter.cpp enemies/Goblin.cpp enemies/Ogre.cpp enemies/Shade.cpp \
+					enemies/Wizard.cpp enemies/Shadow.cpp enemies/Dragon.cpp \
+					Merchant.cpp Narrator.cpp \
 					NPC.cpp Player.cpp QuestGiver.cpp)
 
 COMMANDS_FOLDER = commands
@@ -47,7 +49,7 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 
 PARSER_FOLDER = parser
 PARSER_SRC = $(addprefix $(SRC_FOLDER)/$(PARSER_FOLDER)/, \
-				enemyparser.cpp itemparser.cpp jsonconfig.cpp npcparser.cpp roomparser.cpp)
+				itemparser.cpp jsonconfig.cpp npcparser.cpp roomparser.cpp)
 
 PROTOCOLFOLDER = parser
 PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/$(PROTOCOL_FOLDER)/, \
@@ -75,7 +77,7 @@ WORLD_SRC = $(addprefix $(SRC_FOLDER)/$(WORLD_FOLDER)/, \
 				Room.cpp World.cpp)
 
 SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(FACTORIES_SRC) \
-		$(GROUP_SRC) $(ITEMS_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
+		$(GROUP_SRC) $(ITEMS_SRC) $(PARSER_SRC) $(PROTOCOL_SRC) $(QUESTS_SRC) $(SERVER_SRC) $(UTILS_SRC) $(WORLD_SRC)
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 

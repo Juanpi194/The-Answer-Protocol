@@ -1,34 +1,34 @@
-#include "characters/enemies/Goblin.hpp"
+#include "characters/enemies/Ogre.hpp"
 
-unsigned int		Goblin::available_id = 0;
-const std::string	Goblin::PREFIX = "goblin.";
-const std::string	Goblin::NAME = "Goblin";
-const std::string	Goblin::DESCRIPTION = "A small, foolish creature.";
-const t_stats		Goblin::DEFAULT_STATS = {1, 7, 2, 2, 1, 7, 2, 2, 1};
+unsigned int		Ogre::available_id = 0;
+const std::string	Ogre::PREFIX = "ogre.";
+const std::string	Ogre::NAME = "Ogre";
+const std::string	Ogre::DESCRIPTION = "A huge and brutal beast.";
+const t_stats		Ogre::DEFAULT_STATS = {2, 15, 4, 3, 1, 15, 4, 3, 1};
 
 // Constructors ---------------------------------------------------------------
 
-Goblin::Goblin(void):
+Ogre::Ogre(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
 	// TODO: Maybe add a default armor and weapon?
 }
 
-Goblin::Goblin(const Goblin& goblin):
+Ogre::Ogre(const Ogre& ogre):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
 }
 
-Goblin	*Goblin::clone(void) const noexcept
+Ogre	*Ogre::clone(void) const noexcept
 {
-	return (new Goblin());
+	return (new Ogre());
 }
 
 // Utils ----------------------------------------------------------------------
 
-FightChoice	Goblin::choose_action(void) const noexcept
+FightChoice	Ogre::choose_action(void) const noexcept
 {
 	// TODO: Logic...
 

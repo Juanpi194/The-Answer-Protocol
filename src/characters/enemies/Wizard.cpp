@@ -1,34 +1,34 @@
-#include "characters/enemies/Goblin.hpp"
+#include "characters/enemies/Wizard.hpp"
 
-unsigned int		Goblin::available_id = 0;
-const std::string	Goblin::PREFIX = "goblin.";
-const std::string	Goblin::NAME = "Goblin";
-const std::string	Goblin::DESCRIPTION = "A small, foolish creature.";
-const t_stats		Goblin::DEFAULT_STATS = {1, 7, 2, 2, 1, 7, 2, 2, 1};
+unsigned int		Wizard::available_id = 0;
+const std::string	Wizard::PREFIX = "wizard.";
+const std::string	Wizard::NAME = "Wizard";
+const std::string	Wizard::DESCRIPTION = "A skilled elemental spellcaster.";
+const t_stats		Wizard::DEFAULT_STATS = {3, 20, 5, 3, 3, 20, 5, 3, 3};
 
 // Constructors ---------------------------------------------------------------
 
-Goblin::Goblin(void):
+Wizard::Wizard(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
 	// TODO: Maybe add a default armor and weapon?
 }
 
-Goblin::Goblin(const Goblin& goblin):
+Wizard::Wizard(const Wizard& wizard):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
 }
 
-Goblin	*Goblin::clone(void) const noexcept
+Wizard	*Wizard::clone(void) const noexcept
 {
-	return (new Goblin());
+	return (new Wizard());
 }
 
 // Utils ----------------------------------------------------------------------
 
-FightChoice	Goblin::choose_action(void) const noexcept
+FightChoice	Wizard::choose_action(void) const noexcept
 {
 	// TODO: Logic...
 

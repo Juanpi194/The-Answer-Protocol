@@ -1,4 +1,4 @@
-# Reglas para Claude
+<!-- # Reglas para Claude
 
 - NUNCA modifiques nada de mi proyecto. No tienes permiso para añadir ni eliminar nada, solo leer y evaluar.
 
@@ -13,4 +13,4 @@ Gran parte del proyecto lo estoy llevando a lo grande. Tengo en mente añadir mu
 
 
 
-
+ -->

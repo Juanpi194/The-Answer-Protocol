@@ -1,5 +1,7 @@
 #include "parser/roomparser.hpp"
 #include <unordered_map>
+#include "characters/Enemy.hpp"
+#include "factories/EnemyFactory.hpp"
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
 #include "world/Room.hpp"
@@ -8,14 +10,36 @@
 // Crea un nombre más corto (RoomMap) para un mapa que relaciona el id de una habitación con su objeto Room.
 typedef std::unordered_map<std::string, Room*> RoomMap;
 
+static NPC *create_enemy(const nlohmann::json& room_json)
+{
+	const std::string id = room_json["id"];
+
+	if (!room_json.contains("enemy"))
+		return (nullptr);
+
+	const std::string enemy_name = room_json["enemy"];
+
+	try
+	{
+		return (EnemyFactory::create_from_name(enemy_name));
+	}
+	catch (const std::exception& e)
+	{
+		log("Room '" + id + "' has an invalid enemy: " + e.what(),
+			LogLevel::WARNING);
+	}
+	return (nullptr);
+}
+
 static Room *create_room(const nlohmann::json& room_json)
 {
 	const std::string id = room_json["id"];
 	const std::string name = room_json["name"];
 	const std::string description = room_json["description"];
 	std::list<Item*> items;
+	NPC *enemy = create_enemy(room_json);
 
-	return (new Room(id, name, description, nullptr, false, items));
+	return (new Room(id, name, description, enemy, false, items));
 }
 
 static void connect_exits(const nlohmann::json& room_json,
