@@ -8,7 +8,6 @@
 
 Enchantment	*EnchantmentFactory::create_from_name(const std::string& enchantment_name)
 {
-	// ? REVIEW: Should trim_str be used?
 	std::string	temp = enchantment_name;
 
 	trim_str(temp);
@@ -16,7 +15,6 @@ Enchantment	*EnchantmentFactory::create_from_name(const std::string& enchantment
 		return (create_flame());
 	if (temp == Freeze::NAME)
 		return (create_freeze());
-	// TODO: Add more enchantments.
 	throw std::invalid_argument("No enchantment matches the name '" + enchantment_name + "'.");
 }
 

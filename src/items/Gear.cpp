@@ -32,7 +32,5 @@ Enchantment	*Gear::get_enchantment(void) const noexcept
 
 void	Gear::set_enchantment(Enchantment *enchantment)
 {
-	// ? REVIEW: Should this method check if the enchantment can be set?
-	// ?		 Or should it be a quick and dangerous way to set an enchantment?
 	this->enchantment = enchantment;
 }

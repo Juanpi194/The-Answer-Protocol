@@ -23,10 +23,6 @@ class Flame final: public Enchantment
 	
 		Flame&	operator=(const Flame& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	effect(Fighter& user, Fighter& affected) const noexcept override;

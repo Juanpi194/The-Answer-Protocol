@@ -27,10 +27,6 @@ class FlameSword final: public Weapon, public SpecialEffectGear
 
 		FlameSword&	operator=(const FlameSword& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------
 
 		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;

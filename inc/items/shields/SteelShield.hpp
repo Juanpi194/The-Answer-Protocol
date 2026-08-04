@@ -23,11 +23,4 @@ class SteelShield final: public Shield
 
 		SteelShield&	operator=(const SteelShield& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getter to static var
-
-		// Utils --------------------------------------------------------------
-
-		// TODO: Funcs
 };

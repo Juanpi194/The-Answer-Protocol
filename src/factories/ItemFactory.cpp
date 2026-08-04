@@ -30,7 +30,6 @@ std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void) noexcept
 {
 	std::map<Item*, unsigned int>	pool;
 
-	// TODO: Add more items to the pool
 	pool[create_apple()] = 50;
 	pool[create_bronze_armor()] = 30;
 	pool[create_bronze_shield()] = 30;
@@ -57,7 +56,6 @@ std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void) noexcept
 
 Item							*ItemFactory::create_from_name(const std::string& item_name)
 {
-	// ? REVIEW: Should trim_str be used?
 	std::string	temp = item_name;
 
 	trim_str(temp);
@@ -103,7 +101,6 @@ Item							*ItemFactory::create_from_name(const std::string& item_name)
 		return (create_steel_shield());
 	if (temp == SteelSword::NAME)
 		return (create_steel_sword());
-	// TODO: Add more items.
 	throw std::invalid_argument("No item matches the name '" + item_name + "'.");
 }
 

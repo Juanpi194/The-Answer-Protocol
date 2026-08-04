@@ -45,6 +45,4 @@ class Item
 
 		// Utils --------------------------------------------------------------
 
-		// ! FIXME: Delete this method.
-		// virtual void	use(void) noexcept = 0;
 };

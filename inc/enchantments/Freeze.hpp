@@ -23,10 +23,6 @@ class Freeze final: public Enchantment
 	
 		Freeze&	operator=(const Freeze& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	effect(Fighter& user, Fighter& affected) const noexcept override;

@@ -34,6 +34,4 @@ class Armor: public Gear
 		const unsigned int	get_damage_reduction(void) const noexcept;
 		unsigned int		get_reduced_damage(void) const noexcept;
 
-		// Utils --------------------------------------------------------------
-
 };

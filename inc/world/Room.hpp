@@ -62,6 +62,13 @@ class Room
 		const std::list<Player*>& 			get_player_list(void) const noexcept;
 		const std::map<Direction, Room*>&	get_adjacent_rooms(void) const noexcept;
 
+		/**
+		 * @brief	Sets a room as adjacent to this one.
+		 * @param	direction	The direction the new room will be added to.
+		 * @param	room		Pointer to the new room to add.
+		 * @note	No checks will be done (except checking if
+		 * 			`room` is `nullptr`).
+		 */
 		void	set_adjacent_room(Direction direction, Room *room);
 
 		// Utils --------------------------------------------------------------

@@ -33,10 +33,6 @@ class EmberArmor final: public Armor, public SpecialEffectGear
 
 		EmberArmor&	operator=(const EmberArmor& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;

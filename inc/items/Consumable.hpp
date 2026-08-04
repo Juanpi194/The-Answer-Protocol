@@ -17,10 +17,6 @@ class Consumable: public Item
 
 		Consumable&	operator=(const Consumable& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		virtual void	consume(Fighter& user) noexcept = 0;

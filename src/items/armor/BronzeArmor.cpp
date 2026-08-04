@@ -5,11 +5,6 @@ const std::string	BronzeArmor::PREFIX = "bronze_armor.";
 const std::string	BronzeArmor::NAME = "Bronze Armor";
 const std::string	BronzeArmor::DESCRIPTION = "Reduces incoming damage";
 
-// void	BronzeArmor::special_use(void) noexcept
-// {
-// 	// TODO: Logic...
-// }
-
 // Constructors ---------------------------------------------------------------
 
 BronzeArmor::BronzeArmor(void):

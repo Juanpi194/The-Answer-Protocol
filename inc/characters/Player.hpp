@@ -204,7 +204,6 @@ class Player final: public Fighter
 
 		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL;
 		void			add_beaten_enemy(const std::string& id) noexcept;
-		FighterType		get_type(void) const noexcept override;
 
 		// Stats --
 
@@ -212,7 +211,6 @@ class Player final: public Fighter
 
 		// Interactions --
 
-		void				talk_with(Character& character);
 		const std::string	on_talk(Player& player) noexcept override;
 
 		// User --

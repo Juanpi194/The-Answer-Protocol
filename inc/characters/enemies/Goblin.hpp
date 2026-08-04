@@ -24,10 +24,6 @@ class Goblin final: public Enemy
 
 		Goblin&	operator=(const Goblin& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the goblin and their getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		FightChoice	choose_action(void) const noexcept override;

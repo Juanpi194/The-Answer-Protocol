@@ -24,10 +24,6 @@ class HastePotion final: public Consumable
 
 		HastePotion&	operator=(const HastePotion& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	consume(Fighter& user) noexcept override;

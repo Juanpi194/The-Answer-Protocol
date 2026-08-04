@@ -23,11 +23,4 @@ class BronzeShield final: public Shield
 
 		BronzeShield&	operator=(const BronzeShield& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getter to static var
-
-		// Utils --------------------------------------------------------------
-
-		// TODO: Funcs
 };

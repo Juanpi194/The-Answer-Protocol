@@ -58,7 +58,7 @@ const std::string	Enchanter::on_talk(Player& player) noexcept
 	std::string	products;
 
 	// ? REVIEW: Logic and format ...
-	products = "===";
+	products = "===\n";
 	products += "Welcome!";
 	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
 	{
@@ -67,7 +67,6 @@ const std::string	Enchanter::on_talk(Player& player) noexcept
 	}
 	products += "\n===";
 	return (products);
-	// TODO: Logic...
 }
 
 bool	Enchanter::on_enchant(Player &player, const std::string& gear, const std::string& enchantment)

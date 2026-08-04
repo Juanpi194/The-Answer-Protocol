@@ -26,9 +26,4 @@ class SteelArmor final: public Armor
 
 		SteelArmor&	operator=(const SteelArmor& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
-		// Utils --------------------------------------------------------------
 };

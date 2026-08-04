@@ -42,8 +42,11 @@ std::string	status_to_string(const Status status) noexcept
 
 bool	Fighter::validate_stats(t_stats stats)
 {
-	// TODO: Add validations
-	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH)
+	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH ||
+			stats.defense < MIN_DEFENSE || stats.defense > MAX_DEFENSE || stats.speed < MIN_SPEED || stats.speed > MAX_SPEED)
+		return (false);
+	if (stats.hp != stats.current_hp || stats.strength != stats.current_strength ||
+			stats.defense != stats.current_defense || stats.speed != stats.current_speed)
 		return (false);
 	return (true);
 }

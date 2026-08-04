@@ -33,10 +33,6 @@ class FrostArmor final: public Armor, public SpecialEffectGear
 
 		FrostArmor&	operator=(const FrostArmor& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;

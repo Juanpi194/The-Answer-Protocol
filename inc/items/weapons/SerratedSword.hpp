@@ -27,10 +27,6 @@ class SerratedSword final: public Weapon, public SpecialEffectGear
 
 		SerratedSword&	operator=(const SerratedSword& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------
 
 		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;

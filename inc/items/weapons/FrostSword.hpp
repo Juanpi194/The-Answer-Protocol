@@ -27,10 +27,6 @@ class FrostSword final: public Weapon, public SpecialEffectGear
 
 		FrostSword&	operator=(const FrostSword& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------
 
 		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;

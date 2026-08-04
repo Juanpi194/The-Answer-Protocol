@@ -27,10 +27,6 @@ class SpikeShield final: public Shield, public OnContactShield
 
 		SpikeShield&	operator=(const SpikeShield& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getter to static var
-
 		// Utils --------------------------------------------------------------
 
 		void	on_contact(Fighter& user, Fighter& attacker) noexcept override;

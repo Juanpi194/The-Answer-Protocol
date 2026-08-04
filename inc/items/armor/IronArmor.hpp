@@ -26,9 +26,4 @@ class IronArmor final: public Armor
 
 		IronArmor&	operator=(const IronArmor& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
-		// Utils --------------------------------------------------------------
 };

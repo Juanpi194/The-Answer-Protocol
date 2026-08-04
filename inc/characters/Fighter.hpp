@@ -44,13 +44,6 @@ struct t_stats
 	unsigned int	current_speed;
 };
 
-// ? REVIEW: Is this the best way to make this?
-enum class FighterType
-{
-	Player,
-	Enemy
-};
-
 enum class FightAction
 {
 	NONE,
@@ -139,8 +132,6 @@ class Fighter: public virtual Character
 		void	set_status(Status status) noexcept;
 
 		// Utils --------------------------------------------------------------
-
-		virtual FighterType	get_type() const noexcept = 0;
 
 		// Actions --
 

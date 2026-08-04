@@ -25,9 +25,4 @@ class IronSword final: public Weapon
 
 		IronSword&	operator=(const IronSword& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
-		// Utils --------------------------------------------------------------
 };

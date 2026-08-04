@@ -26,9 +26,4 @@ class SteelSword final: public Weapon
 
 		SteelSword&	operator=(const SteelSword& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
-		// Utils --------------------------------------------------------------
 };

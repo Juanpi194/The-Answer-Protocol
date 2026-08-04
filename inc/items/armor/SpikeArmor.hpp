@@ -34,10 +34,6 @@ class SpikeArmor final: public Armor, public SpecialEffectGear
 
 		SpikeArmor&	operator=(const SpikeArmor& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	special_effect(Fighter& user, Fighter& opponent) noexcept override;

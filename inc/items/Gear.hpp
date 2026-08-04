@@ -41,11 +41,11 @@ class Gear: public Item
 		GearType	get_gear_type(void) const noexcept;
 		Enchantment	*get_enchantment(void) const noexcept;
 
+		/**
+		 * @brief	Sets the enchantment to the gear.
+		 * @param	enchantment	The enchantment to apply.
+		 * @note	No checks will be done.
+		 */
 		void	set_enchantment(Enchantment *enchantment);
 
-		// Utils --------------------------------------------------------------
-
-		// TODO: Add utils functions. Do not override the use method.
-		// ? REVIEW: If the use method is going to have same logic in Weapon and in Armor
-		// ? 		 move the method to Gear class.
 };

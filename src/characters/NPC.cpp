@@ -59,7 +59,3 @@ std::string	NPC::get_description(void) const noexcept
 {
 	return (description);
 }
-
-// Utils ----------------------------------------------------------------------
-
-// TODO: Add utils functions

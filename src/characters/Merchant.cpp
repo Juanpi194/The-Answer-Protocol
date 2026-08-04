@@ -43,7 +43,7 @@ const std::string	Merchant::on_talk(Player& player) noexcept
 	std::string	products;
 
 	// ? REVIEW: Logic and format ...
-	products = "===";
+	products = "===\n";
 	products += "Welcome!";
 	for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
 	{
@@ -52,7 +52,6 @@ const std::string	Merchant::on_talk(Player& player) noexcept
 	}
 	products += "\n===";
 	return (products);
-	// TODO: Logic...
 }
 
 bool	Merchant::on_buy(Player& player, const std::string& product) noexcept

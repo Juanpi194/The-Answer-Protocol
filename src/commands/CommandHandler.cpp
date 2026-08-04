@@ -336,7 +336,6 @@ static void		cmd_talk(const Command& cmd, Player& player)
  */
 static void		cmd_fight(Player& player)
 {
-	// ? REVIEW: All this logic and messages.
 	Room	*player_room;
 	Enemy	*enemy;
 
@@ -546,7 +545,6 @@ static void		cmd_help(PlayerConnection& conn)
 
 void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, World& world)
 {
-	// ? REVIEW: Recheck messages sent to the user.
 	Player&	player = connection.get_player();
 
 	// If player is in battle, only some specific commands will be allowed.

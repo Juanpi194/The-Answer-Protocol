@@ -24,10 +24,6 @@ class Apple final: public Consumable
 
 		Apple&	operator=(const Apple& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	consume(Fighter& user) noexcept override;

@@ -26,7 +26,6 @@ class Enemy: public NPC, public Fighter
 		// Utils --------------------------------------------------------------
 
 		const std::string	on_talk(Player& player) noexcept override;
-		FighterType			get_type(void) const noexcept override;
 
 		/**
 		 * @brief	Each enemy type chooses which action to perform their own
