@@ -21,7 +21,7 @@ class Enchanter final: public NPC, public Vendor
 
 		static unsigned int			available_id;	// Defined in Enchanter.cpp
 		static const std::string	PREFIX;	// Definied in Enchanter.cpp
-		
+
 		/**
 		 * @brief	Applies the specified enchantment to a gear item if the item can
 		 * 			get the provided enchantment.
