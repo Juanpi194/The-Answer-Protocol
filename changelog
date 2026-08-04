@@ -11,6 +11,9 @@ Quitar jugador de la sala si se desconecta, y volver a meterlo cuando se conecte
 Más información para los usuarios
 Password class for ServerOwner
 
+BATTLE
+NPC FACTORY
+
 QUESTIONS ---------
 Should a npc factory be made (Each npcs has its own name and stuff, automatic factory might not make sense)
 Enchantment ids???
