@@ -43,7 +43,7 @@ const std::string	Merchant::on_talk(Player& player) noexcept
 	std::string	products;
 
 	// ? REVIEW: Logic and format ...
-	products = "===";
+	products = "===\n";
 	products += "Welcome!";
 	for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
 	{
@@ -52,10 +52,9 @@ const std::string	Merchant::on_talk(Player& player) noexcept
 	}
 	products += "\n===";
 	return (products);
-	// TODO: Logic...
 }
 
-void	Merchant::on_buy(Player& player, const std::string& product) noexcept
+bool	Merchant::on_buy(Player& player, const std::string& product) noexcept
 {
 	Item			*item_found;
 	unsigned int	price;
@@ -70,16 +69,9 @@ void	Merchant::on_buy(Player& player, const std::string& product) noexcept
 		}
 	}
 	if (!item_found)
-	{
-		log("Item '" + product + "' is not sold at '" + get_name() + "'s shop.", LogLevel::INFO);
-		player.send_to_outbox("We don't sell '" + product + "' here.");
-		return;
-	}
+		return (false);
 	if (!player.spend_gold(price))
-		player.send_to_outbox("You don't have enough money for that.");
-	else
-	{
-		player.send_to_outbox("Here you go.");
-		player.get_inventory().add_item(item_found->clone());
-	}
+		return (false);
+	player.get_inventory().add_item(item_found->clone());
+	return (true);
 }

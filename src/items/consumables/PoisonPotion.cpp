@@ -1,5 +1,7 @@
 #include "items/consumables/PoisonPotion.hpp"
 
+#include "characters/Fighter.hpp"
+
 
 unsigned int		PoisonPotion::available_id = 0;
 const std::string	PoisonPotion::PREFIX = "poison_potion.";
@@ -27,5 +29,6 @@ PoisonPotion	*PoisonPotion::clone(void) const noexcept
 
 void	PoisonPotion::consume(Fighter& user) noexcept
 {
-	// TODO: Add poison effect logic...
+	if (user.get_status() == Status::POISONED)
+		user.set_status(Status::HEALTHY);
 }

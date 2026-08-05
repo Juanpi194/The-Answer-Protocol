@@ -1,6 +1,6 @@
 #pragma once
 
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 
 class Goblin final: public Enemy
 {
@@ -23,10 +23,6 @@ class Goblin final: public Enemy
 		// Operators ----------------------------------------------------------
 
 		Goblin&	operator=(const Goblin& other) = delete;
-
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the goblin and their getters and setters
 
 		// Utils --------------------------------------------------------------
 

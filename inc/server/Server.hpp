@@ -65,6 +65,12 @@ class Server
 		 */
 		std::atomic<bool>				running;
 
+		// Connections limit --
+
+		std::time_t						conn_window;
+		unsigned int					conn_count;
+		static constexpr unsigned int	MAX_CONNS_PER_SEC = 5;
+
 		std::list<PlayerConnection>		clients;
 		std::mutex						clients_mtx;
 
@@ -293,4 +299,10 @@ class Server
 		 * 			`false` otherwise.
 		 */
 		bool				leave_group(PlayerConnection& member);
+
+		/**
+		 * @brief	Detects if there are too many connections at the same time.
+		 * @return	`true` if the limit was passed. `false` otherwise.
+		 */
+		bool				is_connection_flooding(void) noexcept;
 };

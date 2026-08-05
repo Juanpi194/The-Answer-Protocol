@@ -5,11 +5,6 @@ const std::string	SteelSword::PREFIX = "steel_sword.";
 const std::string	SteelSword::NAME = "Steel Sword";
 const std::string	SteelSword::DESCRIPTION = "Applies extra damage";
 
-// void	SteelSword::special_use(void) noexcept
-// {
-// 	// TODO: Logic...
-// }
-
 // Constructors ---------------------------------------------------------------
 
 SteelSword::SteelSword(void):

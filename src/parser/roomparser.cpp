@@ -1,69 +1,77 @@
 #include "parser/roomparser.hpp"
+#include <stdexcept>
 #include <unordered_map>
+#include "characters/Enemy.hpp"
+#include "factories/EnemyFactory.hpp"
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
 #include "world/Room.hpp"
-#include "items/Item.hpp"
-#include "characters/NPC.hpp"
+
 
 // Crea un nombre más corto (RoomMap) para un mapa que relaciona el id de una habitación con su objeto Room.
 typedef std::unordered_map<std::string, Room*> RoomMap;
 
-// MODIFIED: ahora lee "items" (array de claves) y "npc" (clave suelta) del
-// JSON de la sala, y mueve los Item*/NPC* correspondientes desde los mapas
-// globales -- antes siempre se creaba con item_list vacía y npc=nullptr,
-// así que ninguna sala terminaba con nada dentro.
-static Room *create_room(const nlohmann::json& room_json,
-						  std::map<std::string, Item*>& items,
-						  std::map<std::string, NPC*>& npcs)
+static NPC *create_enemy(const nlohmann::json& room_json)
+{
+	const std::string id = room_json["id"];
+
+	if (!room_json.contains("enemy"))
+		return (nullptr);
+
+	const std::string enemy_name = room_json["enemy"];
+
+	try
+	{
+		return (EnemyFactory::create_from_name(enemy_name));
+	}
+	catch (const std::exception& e)
+	{
+		log("Room '" + id + "' has an invalid enemy: " + e.what(),
+			LogLevel::WARNING);
+	}
+	return (nullptr);
+}
+
+static Room *create_room(const nlohmann::json& room_json)
 {
 	const std::string id = room_json["id"];
 	const std::string name = room_json["name"];
 	const std::string description = room_json["description"];
-	std::list<Item*> room_items;
-	NPC *room_npc = nullptr;
+	std::list<Item*> items;
+	NPC *enemy = create_enemy(room_json);
 
-	if (room_json.contains("items") && room_json["items"].is_array())
+	return (new Room(id, name, description, enemy, false, items));
+}
+
+static Room *build_room(const nlohmann::json& room_json)
+{
+	const std::string id = room_json.value("id", "unknown");
+
+	try
 	{
-		for (const auto& item_key_json : room_json["items"])
-		{
-			const std::string item_key = item_key_json.get<std::string>();
-			auto found = items.find(item_key);
-
-			if (found == items.end())
-			{
-				log("Room '" + id + "' references unknown item '" + item_key + "'.",
-					LogLevel::WARNING);
-				continue;
-			}
-			room_items.push_back(found->second);
-			items.erase(found); // consumido -- ahora es de esta sala
-		}
+		return (create_room(room_json));
 	}
-
-	if (room_json.contains("npc") && room_json["npc"].is_string())
+	catch (const std::exception& e)
 	{
-		const std::string npc_key = room_json["npc"].get<std::string>();
-		auto found = npcs.find(npc_key);
-
-		if (found == npcs.end())
-			log("Room '" + id + "' references unknown npc '" + npc_key + "'.",
-				LogLevel::WARNING);
-		else
-		{
-			room_npc = found->second;
-			npcs.erase(found); // consumido -- ahora es de esta sala
-		}
+		log(
+			"Could not create room '"
+			+ id + "': "
+			+ e.what(),
+			LogLevel::WARNING);
 	}
-
-	return (new Room(id, name, description, room_npc, false, room_items));
+	return (nullptr);
 }
 
 static void connect_exits(const nlohmann::json& room_json,
 						  RoomMap& all_rooms)
 {
 	const std::string id = room_json["id"];
-	Room *current_room = all_rooms[id];
+	RoomMap::const_iterator room_it = all_rooms.find(id);
+
+	if (room_it == all_rooms.end())
+		return;
+
+	Room *current_room = room_it->second;
 
 	for (nlohmann::json::const_iterator it = room_json["exits"].begin();
 			it != room_json["exits"].end(); ++it)
@@ -90,9 +98,7 @@ static void connect_exits(const nlohmann::json& room_json,
 	}
 }
 
-std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json,
-									std::map<std::string, Item*>& items,
-									std::map<std::string, NPC*>& npcs)
+std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json)
 {
 	std::list<Room*> rooms;
 	RoomMap all_rooms;
@@ -106,7 +112,10 @@ std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json,
 	{
 		const nlohmann::json& room_json = *it;
 
-		Room *room = create_room(room_json, items, npcs);
+		Room *room = build_room(room_json);
+
+		if (room == nullptr)
+			continue;
 
 		rooms.push_back(room);
 		all_rooms[room_json["id"]] = room;

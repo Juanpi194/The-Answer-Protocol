@@ -24,10 +24,6 @@ class PoisonPotion final: public Consumable
 
 		PoisonPotion&	operator=(const PoisonPotion& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	consume(Fighter& user) noexcept override;

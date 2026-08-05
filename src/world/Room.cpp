@@ -4,10 +4,10 @@
 
 #include "utils/utils.hpp"
 #include "utils/types.hpp"
-#include "characters/enemies/Enemy.hpp" // MODIFIED: vuelta a la estructura de juanpi
+#include "characters/Enemy.hpp"
 #include "characters/NPC.hpp"
 #include "characters/Player.hpp"
-#include "items/chest/Chest.hpp" // MODIFIED: vuelta a la estructura de juanpi
+#include "items/chest/Chest.hpp"
 #include "items/Item.hpp"
 
 const std::string Room::PREFIX = "room.";
@@ -158,8 +158,6 @@ const std::map<Direction, Room*>&	Room::get_adjacent_rooms(void) const noexcept
 
 void	Room::set_adjacent_room(Direction direction, Room *room)
 {
-	// ? REVIEW: Is this method really needed? There is a method in World that connects two rooms.
-	// ?		 It can be used as a short and dangerous way to connect rooms. Make docstring if so.
 	if (!room)
 	{
 		log("Tried to connect a nullptr room to '" + name + "'.", LogLevel::WARNING);
@@ -231,8 +229,6 @@ void				Room::room_broadcast(const std::string& msg, Player *excluded)
 
 const std::string	Room::look(void) const noexcept
 {
-	// TODO: Add chest and extras.
-	// ? REVIEW: Full review of everything.
 	std::string	result;
 	bool		first;
 

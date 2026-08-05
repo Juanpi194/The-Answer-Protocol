@@ -25,10 +25,7 @@ class Enemy: public NPC, public Fighter
 
 		// Utils --------------------------------------------------------------
 
-		// MODIFIED: era "void", no coincidía con la virtual pura de
-		// Character (const std::string) -- no compilaba.
-		const std::string				on_talk(Player& player) noexcept override;
-		FighterType			get_type(void) const noexcept override;
+		const std::string	on_talk(Player& player) noexcept override;
 
 		/**
 		 * @brief	Each enemy type chooses which action to perform their own

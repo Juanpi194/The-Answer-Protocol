@@ -1,21 +1,42 @@
-// TODO: Change this file's name to main.cpp
-#include <string>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <cerrno>
 #include <iostream>
-#include <functional>
+#include <string>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
 #include "utils/utils.hpp"
-#include "commands/command.hpp"
-#include "commands/CommandHandler.hpp"
-#include "commands/commandparser.hpp"
+#include "quests/Quest.hpp"
+#include "battle/Battle.hpp"
+#include "characters/Character.hpp"
+#include "characters/Enchanter.hpp"
+#include "characters/Player.hpp"
+#include "characters/Fighter.hpp"
+#include "characters/enemies/Goblin.hpp"
+#include "characters/Merchant.hpp"
+#include "characters/QuestGiver.hpp"
+#include "characters/Vendor.hpp"
+#include "enchantments/Enchantment.hpp"
+#include "enchantments/Flame.hpp"
+#include "items/chest/Chest.hpp"
+#include "items/chest/ChestKey.hpp"
+#include "items/Consumable.hpp"
+#include "items/armor/IronArmor.hpp"
+#include "items/weapons/IronSword.hpp"
+#include "items/Item.hpp"
+#include "factories/ItemFactory.hpp"
+#include "libs/json.hpp"
+#include "quests/Quest.hpp"
 #include "server/PlayerConnection.hpp"
 #include "server/Server.hpp"
 #include "server/ServerOwner.hpp"
+#include "world/Room.hpp"
 #include "world/World.hpp"
+#include "commands/command.hpp"
+#include "commands/CommandHandler.hpp"
+#include "commands/commandparser.hpp"
+
 const std::string	DEFAULT_CLIENT_NAME = "Alberto";
 const std::string	DEFAULT_WORLD_NAME = "The Amazing World Of Gumball";
-const std::string	DEFAULT_WORLD_JSON = "map/default.json";
+const std::string	DEFAULT_WORLD_JSON = "map/full_map.json";
 static bool	read_command(std::string& out)
 {
 	std::getline(std::cin, out);

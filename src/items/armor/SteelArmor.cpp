@@ -5,11 +5,6 @@ const std::string	SteelArmor::PREFIX = "steel_armor.";
 const std::string	SteelArmor::NAME = "Steel Armor";
 const std::string	SteelArmor::DESCRIPTION = "Reduces incoming damage";
 
-// void	SteelArmor::special_use(void) noexcept
-// {
-// 	// TODO: Logic...
-// }
-
 // Constructors ---------------------------------------------------------------
 
 SteelArmor::SteelArmor(void):

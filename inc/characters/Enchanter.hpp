@@ -21,7 +21,7 @@ class Enchanter final: public NPC, public Vendor
 
 		static unsigned int			available_id;	// Defined in Enchanter.cpp
 		static const std::string	PREFIX;	// Definied in Enchanter.cpp
-		
+
 		/**
 		 * @brief	Applies the specified enchantment to a gear item if the item can
 		 * 			get the provided enchantment.
@@ -68,8 +68,9 @@ class Enchanter final: public NPC, public Vendor
 		 * @param	player	The player that tries to enchant the gear.
 		 * @param	gear	The gear being searched to apply the enchantment.
 		 * @param	enchantment	The enchantment searched to apply to `gear`.
+		 * @returns	`true` if enchantment was successfull, `false` otherwise.
 		 */
-		void	on_enchant(Player& player, const std::string& gear, const std::string& enchantment);
+		bool	on_enchant(Player& player, const std::string& gear, const std::string& enchantment);
 
-		void	on_buy(Player& player, const std::string& product) noexcept override;
+		bool	on_buy(Player& player, const std::string& product) noexcept override;
 };

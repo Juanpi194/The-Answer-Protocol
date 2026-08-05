@@ -26,6 +26,4 @@ class ChestKey final: public Item
 
 		// Utils --------------------------------------------------------------
 
-		// ! FIXME: Delete this method.
-		// void	use(void) noexcept override;
 };

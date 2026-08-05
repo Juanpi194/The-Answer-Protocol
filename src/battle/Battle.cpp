@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
-#include "characters/enemies/Enemy.hpp" // MODIFIED: vuelta a la estructura de juanpi
+#include "characters/Enemy.hpp"
 #include "characters/Player.hpp"
 
 void	Battle::set_winner(Fighter& winner) noexcept
@@ -93,6 +93,11 @@ bool			Battle::is_finished(void) const noexcept
 	return (finished);
 }
 
+Enemy			*Battle::get_original_enemy(void) const noexcept
+{
+	return (original_enemy);
+}
+
 void	Battle::set_finished(bool finished) noexcept
 {
 	this->finished = finished;
@@ -100,7 +105,7 @@ void	Battle::set_finished(bool finished) noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void	Battle::execute_turn(FightChoice player_choice) noexcept
+void		Battle::execute_turn(FightChoice player_choice) noexcept
 {
 	Fighter		*first;
 	Fighter		*second;
@@ -111,7 +116,7 @@ void	Battle::execute_turn(FightChoice player_choice) noexcept
 	FightChoice enemy_choice = enemy_copy->choose_action();
 
 	// Setting turn order...
-	if (blue.get_stats().current_speed >= red.get_stats().current_speed || player_choice.action == FightAction::DEFEND)
+	if (blue.get_effective_speed() >= red.get_effective_speed() || player_choice.action == FightAction::DEFEND)
 	{
 		first = &blue;
 		second = enemy_copy;
@@ -145,9 +150,31 @@ void	Battle::execute_turn(FightChoice player_choice) noexcept
 		red.set_last_action(enemy_choice.action);
 		blue.set_defending(false);
 		red.set_defending(false);
+		if (!finished)
+		{
+			blue.tick_status();
+			red.tick_status();
+			if (blue.get_stats().current_hp == 0)
+				set_winner(red);
+			else if (red.get_stats().current_hp == 0)
+				set_winner(blue);
+		}
 	}
 	catch (const std::invalid_argument& e)
 	{
-		// TODO: Backup for perform_action error.
+		log(std::string("Invalid action in battle turn: ") + e.what(), LogLevel::ERROR);
 	}
+}
+
+std::string	Battle::to_json_format(void) const noexcept
+{
+	std::string	result;
+
+	result = "{";
+	result += "\"blue\": ";
+	result += blue.status_json();
+	result += "\"red\": ";
+	result += red.status_json();
+	result += "}"; 
+	return (result);
 }

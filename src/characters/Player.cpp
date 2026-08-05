@@ -4,7 +4,7 @@
 
 #include "utils/utils.hpp"
 #include "battle/Battle.hpp"
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 #include "enchantments/Enchantment.hpp"
 #include "items/Item.hpp"
 #include "server/PlayerConnection.hpp"
@@ -14,7 +14,7 @@
 
 Player::Player(const std::string& name):
 	Character(name),
-	Fighter(name, {1, 10, 10, 10, 10, 10, 10, 10, 10}),
+	Fighter(name, {1, 10, 3, 2, 2, 10, 3, 2, 2}),
 	gold(STARTING_GOLD),
 	battle(nullptr)
 {
@@ -109,12 +109,12 @@ Item				*Player::obtain_item(const std::string& item_name) noexcept
 	{
 		return (log(e.what(), LogLevel::ERROR), nullptr);
 	}
+	complete_collect_quests(item_found->get_name());
 	return (log(item_found->get_name() + " was obtained from the room '" + current_room->get_name() + "'.", LogLevel::DEBUG), item_found);
 }
 
 bool				Player::drop_item(Item *item) noexcept
 {
-	// ? Review: Check logic and maybe add mutex...
 	bool	found;
 
 	found = false;
@@ -213,7 +213,95 @@ bool		Player::obtain_quest(Quest& quest) noexcept
 	return (log("Player '" + get_name() + "' received the quest '" + quest.get_name() + "'.", LogLevel::DEBUG), true);
 }
 
+std::string	Player::quests_to_json_format(void) const noexcept
+{
+	std::string	result;
+	bool		first;
+
+	first = true;
+	result = "[";
+	for (const Quest& q : quest_list)
+	{
+		if (!first)
+			result += ", ";
+		result += q.to_json_format();
+		first = false;
+	}
+	result += "]";
+	return (result);
+}
+
+void		Player::complete_quest(Quest& q) noexcept
+{
+	log("Quest '" + q.get_name() + "' completed by '" + get_name() + "'.", LogLevel::INFO);
+	q.set_completed(true);
+	gain_gold(q.get_gold_reward());
+	if (q.get_item_reward())
+		inventory.add_item(q.get_item_reward()->clone());
+}
+
+void		Player::complete_defeat_quests(const std::string& enemy_name) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::DEFEAT_ENEMY && q.get_objective().target == enemy_name)
+			complete_quest(q);
+	}
+}
+
+void		Player::complete_collect_quests(const std::string& item_name) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::COLLECT_ITEM && q.get_objective().target == item_name)
+			complete_quest(q);
+	}
+}
+
+void		Player::complete_area_quests(const std::string& area_id) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::REACH_AREA && q.get_objective().target == area_id)
+			complete_quest(q);
+	}
+}
+
+void 		Player::complete_gold_quests(void) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::EARN_GOLD && gold >= q.get_objective().amount)
+			complete_quest(q);
+	}
+}
+
+void 		Player::complete_level_quests(void) noexcept
+{
+	for (Quest& q: quest_list)
+	{
+		if (q.is_completed())
+			continue;
+		if (q.get_objective().type == ObjectiveType::EARN_GOLD && stats.level >= q.get_objective().amount)
+			complete_quest(q);
+	}
+}
+
 // Gold --
+
+void		Player::gain_gold(unsigned int quantity) noexcept
+{
+	gold += quantity;
+	complete_gold_quests();
+}
 
 bool		Player::spend_gold(unsigned int quantity) noexcept
 {
@@ -236,7 +324,6 @@ void		Player::lose_gold(unsigned int quantity) noexcept
 
 bool		Player::move(Direction direction) noexcept
 {
-	// ? REVIEW: Needed mutex?
 	Room	*adjacent;
 
 	// Checking room
@@ -281,19 +368,30 @@ bool		Player::is_enemy_beaten(Enemy *enemy) noexcept
 	return (false);
 }
 
-FighterType	Player::get_type(void) const noexcept
+void		Player::add_beaten_enemy(const std::string& id) noexcept
 {
-	return (FighterType::Player);
+	beaten_enemies_id.push_back(id);
+}
+
+// Stats --
+
+void		Player::level_up(void) noexcept
+{
+	stats.level++;
+	stats.hp += HP_PER_LEVEL;
+	stats.strength += STRENGTH_PER_LEVEL;
+	stats.defense += DEFENSE_PER_LEVEL;
+	stats.speed += SPEED_PER_LEVEL;
+
+	stats.current_hp += HP_PER_LEVEL;
+	stats.current_strength += STRENGTH_PER_LEVEL;
+	stats.current_defense += DEFENSE_PER_LEVEL;
+	stats.current_speed += SPEED_PER_LEVEL;
+
+	complete_level_quests();
 }
 
 // Interactions --
-
-void		Player::talk_with(Character& character)
-{
-	// TODO: Logic...
-	log("Player '" + get_name() + "' interacted with '" + character.get_name() + "'.", LogLevel::DEBUG);
-	character.on_talk(*this);
-}
 
 const std::string		Player::on_talk(Player& player) noexcept
 {

@@ -19,16 +19,8 @@ unsigned int	Enemy::get_gold(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-// MODIFIED: era "void", no coincidía con la virtual pura de Character
-// (const std::string) -- no compilaba.
 const std::string	Enemy::on_talk(Player& player) noexcept
 {
-	(void)player;
-	// TODO: Logic ...
+	// TODO: Enemy on talk messages ...
 	return ("");
-}
-
-FighterType	Enemy::get_type(void) const noexcept
-{
-	return (FighterType::Enemy);
 }

@@ -5,11 +5,8 @@
 #include "utils/utils.hpp"
 // MODIFIED: necesarios para la orquestación real de World(name, json_path)
 #include "parser/jsonconfig.hpp"
-#include "parser/itemparser.hpp"
-#include "parser/npcparser.hpp"
 #include "parser/roomparser.hpp"
-#include "items/Item.hpp"
-#include "characters/NPC.hpp"
+#include "characters/enemies/Goblin.hpp"
 
 /**
  * @brief	Obtains the opposite direction of the specified direction.
@@ -90,35 +87,22 @@ World::World(const std::string& name, const std::string& json_path):
 
 	// MODIFIED: orquestación real -- antes esto era una sala placeholder
 	// hardcodeada, sin pasar por el JSON en absoluto.
+	//
+	// NOTA IMPORTANTE: RoomParser, tal y como está ahora mismo, solo lee
+	// id/name/description/exits y, opcionalmente, un único "enemy" por
+	// sala (vía EnemyFactory) -- no coloca items ni NPCs genéricos
+	// (merchants, quest_givers...) en las salas todavía, aunque el JSON
+	// tenga una sección "items" (JsonConfig la exige presente, pero de
+	// momento no se usa para nada). Cuando esa parte esté lista, aquí es
+	// donde habría que enganchar ItemParser/NPCParser.
 	JsonConfig	config;
-	nlohmann::json	data = config.load_json(json_path); // valida el esquema, lanza si algo falta
+	nlohmann::json	data = config.load_json(json_path);
 
-	ItemParser	item_parser;
-	NPCParser	npc_parser;
 	RoomParser	room_parser;
-
-	// "npcs" no lo exige JsonConfig::validate() -- lo tratamos como
-	// opcional (un mundo sin NPCs es válido).
-	std::map<std::string, Item*>	items = item_parser.parse(data["items"]);
-	std::map<std::string, NPC*>	npcs = npc_parser.parse(data.value("npcs", nlohmann::json::object()));
-	std::list<Room*>				parsed_rooms = room_parser.parse(data["rooms"], items, npcs);
+	std::list<Room*> parsed_rooms = room_parser.parse(data["rooms"]);
 
 	for (Room *room: parsed_rooms)
 		rooms.push_back(room);
-
-	// Cualquier item/npc del JSON que ninguna sala haya reclamado se
-	// queda huérfano -- lo liberamos aquí para no perderlo (Room solo
-	// borra lo que tiene en su propia lista).
-	for (auto& [key, item]: items)
-	{
-		log("Item '" + key + "' was defined but not placed in any room.", LogLevel::WARNING);
-		delete (item);
-	}
-	for (auto& [key, npc]: npcs)
-	{
-		log("NPC '" + key + "' was defined but not placed in any room.", LogLevel::WARNING);
-		delete (npc);
-	}
 
 	const std::string spawn_id = data["world"]["spawn"];
 	for (Room *room: rooms)

@@ -5,6 +5,11 @@
 
 class Enemy;
 class Goblin;
+class Ogre;
+class Shade;
+class Wizard;
+class Shadow;
+class Dragon;
 
 class EnemyFactory
 {
@@ -14,4 +19,9 @@ class EnemyFactory
 		// Specific enemies ---------------------------------------------------
 
 		static Goblin	*create_goblin(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Ogre		*create_ogre(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Shade	*create_shade(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Wizard	*create_wizard(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Shadow	*create_shadow(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Dragon	*create_dragon(void) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 };

@@ -10,26 +10,15 @@ SRC_FOLDER = src
 INC_FOLDER = inc
 OBJ_FOLDER = obj
 
-# MODIFIED: Cosas que existen en el repo pero NO se listan aquí a propósito (quedan
-# fuera del build, sin tocarlas, hasta que estén terminadas):
-#   - src/factories/EnchantmentFactory.cpp y src/enchantments/EnchantmentFactory.cpp
-#     (dos versiones, ninguna conectada a nada todavía -- a revisar cuál
-#     de las dos es la buena cuando se termine esa parte)
-#   - src/factories/NpcPacificFactory.cpp (no compila tal cual: le falta
-#     el include de Enchanter.hpp, y tiene un typo NpcFactory/NpcPacificFactory)
-#   - src/protocol/command.cpp y src/protocol/commandparser.cpp (fork viejo,
-#     ya superado por src/commands/, pedido explícitamente no tocarlos)
-#   - src/parser/enemyparser.cpp (vacío, sin empezar)
-#   - inc/characters/Vendor.hpp, inc/items/SpecialEffectGear.hpp (solo
-#     cabecera, sin .cpp -- nada que compilar todavía)
-
 BATTLE_SRC = $(addprefix $(SRC_FOLDER)/battle/, \
 				Battle.cpp)
 
 CHARACTERS_SRC = $(addprefix $(SRC_FOLDER)/characters/, \
-					Character.cpp Enchanter.cpp Fighter.cpp Merchant.cpp \
-					NPC.cpp Narrator.cpp Player.cpp QuestGiver.cpp \
-					enemies/Enemy.cpp enemies/Goblin.cpp)
+					Character.cpp Enchanter.cpp Enemy.cpp Fighter.cpp \
+					Merchant.cpp NPC.cpp Narrator.cpp Player.cpp \
+					QuestGiver.cpp enemies/Goblin.cpp enemies/Ogre.cpp \
+					enemies/Shade.cpp enemies/Shadow.cpp enemies/Wizard.cpp \
+					enemies/Dragon.cpp)
 
 ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/enchantments/, \
 						Enchantment.cpp Flame.cpp Freeze.cpp)
@@ -45,19 +34,17 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/items/, \
 				consumables/HastePotion.cpp consumables/HealingPotion.cpp \
 				consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
 				shields/BronzeShield.cpp shields/IronShield.cpp \
-				shields/SteelShield.cpp \
+				shields/SpikeShield.cpp shields/SteelShield.cpp \
 				weapons/BronzeSword.cpp weapons/FlameSword.cpp \
 				weapons/FrostSword.cpp weapons/IronSword.cpp \
 				weapons/SerratedSword.cpp weapons/SteelSword.cpp)
 
 FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/factories/, \
-					EnemyFactory.cpp ItemFactory.cpp)
+					EnchantmentFactory.cpp EnemyFactory.cpp ItemFactory.cpp \
+					NpcPacificFactory.cpp)
 
 COMMANDS_SRC = $(addprefix $(SRC_FOLDER)/commands/, \
 					command.cpp CommandHandler.cpp commandparser.cpp)
-
-# MODIFIED: solo events.cpp/responses.cpp -- command.cpp/commandparser.cpp
-# de esta carpeta son el fork viejo, sin tocar, no entran en el build.
 
 PROTOCOL_SRC = $(addprefix $(SRC_FOLDER)/protocol/, \
 					events.cpp responses.cpp)
@@ -160,7 +147,6 @@ help:
 	@echo "  make fclean       - clean + remove binaries + remove installed dependencies (json.hpp, external/imgui)"
 	@echo "  make re           - fclean + all"
 
-# MODIFIED: ademas de json.hpp, ahora tambien trae ImGui si no esta ya.
 install:
 	curl -o inc/libs/json.hpp https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp
 	@if [ ! -d "$(IMGUI_DIR)" ]; then \
@@ -177,18 +163,18 @@ $(OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp | install
 	mkdir -p $(dir $@)
 	$(CC) $(FLAGS) $(DEBUG_FLAG) -c $< -o $@
 
-# MODIFIED: regla de compilacion para los .cpp de ImGui (A revisar)
 $(OBJ_FOLDER)/$(IMGUI_DIR)/%.o: $(IMGUI_DIR)/%.cpp | install
 	mkdir -p $(dir $@)
 	$(CC) $(VERSION_FLAG) $(GUI_INC) $(SDL_CFLAGS) -O2 -c $< -o $@
 
-# MODIFIED: all ahora compila los 3 ejecutables.
 all: server gui tui
 
 compile-debug: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) $(DEBUG_FLAG) -o $(PROGRAM_NAME)
 
-server: $(OBJS)
+server: $(PROGRAM_NAME)
+
+$(PROGRAM_NAME) : $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) -o $(PROGRAM_NAME)
 
 run-server:
@@ -197,16 +183,17 @@ run-server:
 debug-mode:
 	./$(PROGRAM_NAME) --debug
 
-# MODIFIED: TUI (cliente CLI que pide el subject aparte del server y la
-# GUI). Comparte $(OBJS) con todo lo demas -- no necesita SDL2 ni ImGui
-# para nada, CLI no depende de esas librerias.
-tui: $(OBJS)
+tui: $(TUI_PROGRAM_NAME)
+
+$(TUI_PROGRAM_NAME) : $(OBJS)
 	$(CC) $(FLAGS) $(TUI_ENTRY) $(OBJS) -o $(TUI_PROGRAM_NAME)
 
 run-tui:
 	./$(TUI_PROGRAM_NAME)
 
-gui: $(OBJS) $(IMGUI_OBJS)
+gui: $(GUI_PROGRAM_NAME)
+
+$(GUI_PROGRAM_NAME) : $(OBJS) $(IMGUI_OBJS)
 	$(CC) $(GUI_FLAGS) $(GUI_ENTRY) $(OBJS) $(IMGUI_OBJS) $(SDL_LIBS) $(GL_LIBS) -o $(GUI_PROGRAM_NAME)
 
 run-gui:
@@ -217,7 +204,7 @@ clean:
 
 fclean: clean
 	rm -f $(PROGRAM_NAME) $(TUI_PROGRAM_NAME) $(GUI_PROGRAM_NAME)
-	rm -rf external/imgui
+	rm -rf external
 	rm -f inc/libs/json.hpp
 
 re: fclean all

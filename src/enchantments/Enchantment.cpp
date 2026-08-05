@@ -7,13 +7,12 @@
 
 bool	Enchantment::validate_arguments(const std::string& name, const std::string& description)
 {
-	// TODO: Logic...
+	// TODO: Validation
 	return (true);
 }
 
 bool	Enchantment::can_apply(Gear& gear)
 {
-	// ? REVIEW: Maybe there is a more efficient way to check
 	for (GearType gear_type: allowed_gear_types)
 		if (gear.get_gear_type() == gear_type)
 			return (true);
@@ -59,9 +58,6 @@ const std::list<GearType>	Enchantment::get_allowed_gear_types(void) const noexce
 
 void	Enchantment::apply_to(Gear& gear)
 {
-	// ? REVIEW: Does this make sense?
 	if (can_apply(gear))
 		gear.set_enchantment(this);
-	else
-		log("Tried to enchant '" + gear.get_name() + "' with '" + name + "', but failed", LogLevel::WARNING);
 }

@@ -10,7 +10,7 @@ class IronShield final: public Shield
 	public:
 		static const std::string		NAME;	// Defined in IronShield.cpp
 		static const std::string		DESCRIPTION;	// Defined in IronShield.cpp
-		static constexpr unsigned int	MAX_USES = 5;
+		static constexpr unsigned int	MAX_USES = 7;
 
 		// Constructors -------------------------------------------------------
 
@@ -23,11 +23,4 @@ class IronShield final: public Shield
 
 		IronShield&	operator=(const IronShield& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getter to static var
-
-		// Utils --------------------------------------------------------------
-
-		// TODO: Funcs
 };

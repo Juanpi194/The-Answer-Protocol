@@ -6,7 +6,7 @@
 #include "items/chest/ChestKey.hpp"
 #include "factories/ItemFactory.hpp"
 #include "utils/utils.hpp"
-#include "characters/enemies/Enemy.hpp"
+#include "characters/Enemy.hpp"
 #include "characters/Player.hpp"
 
 std::list<Item*>	Chest::open(void)
@@ -100,8 +100,6 @@ std::list<Item*>	Chest::interact(Player& player)
 	// Removing the key
 	player.get_inventory().consume_item(*chest_key);
 
-	// ? REVIEW: Maybe instead of adding the items to the room,
-	// ?		 we should add them to the player.
 	result = open();
 	for (Item *item: result)
 		player.get_inventory().add_item(item);

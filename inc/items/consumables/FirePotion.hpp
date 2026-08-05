@@ -24,10 +24,6 @@ class FirePotion final: public Consumable
 
 		FirePotion&	operator=(const FirePotion& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
 		// Utils --------------------------------------------------------------
 
 		void	consume(Fighter& user) noexcept override;

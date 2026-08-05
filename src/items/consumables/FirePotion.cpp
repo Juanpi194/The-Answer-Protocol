@@ -1,5 +1,7 @@
 #include "items/consumables/FirePotion.hpp"
 
+#include "characters/Fighter.hpp"
+
 
 unsigned int		FirePotion::available_id = 0;
 const std::string	FirePotion::PREFIX = "fire_potion.";
@@ -27,5 +29,6 @@ FirePotion	*FirePotion::clone(void) const noexcept
 
 void	FirePotion::consume(Fighter& user) noexcept
 {
-	// TODO: Add fire effect logic...
+	if (user.get_status() == Status::BURNT)
+		user.set_status(Status::HEALTHY);
 }

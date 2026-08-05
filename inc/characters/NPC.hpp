@@ -40,7 +40,4 @@ class NPC: public virtual Character
 		std::string	get_id(void) const noexcept;
 		std::string	get_description(void) const noexcept;
 
-		// Utils --------------------------------------------------------------
-
-		// TODO: Util functions
 };

@@ -1,5 +1,6 @@
 #include "server/Server.hpp"
 
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <cstring>
 #include <thread>
@@ -68,9 +69,17 @@ PlayerConnection	*Server::setup_client(const int fd)
 	ssize_t				bytes;
 	bool				reconnecting;
 	std::string			msg_for_client;
+	sockaddr_in			addr;
+	socklen_t			len = sizeof(addr);
+	char				ip[INET_ADDRSTRLEN];
 
 	if (fd < 0)
 		return (nullptr);
+
+	// Getting ip
+	getpeername(fd, (sockaddr *)&addr, &len);
+	inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+
 	if (send(fd, welcome_msg.c_str(), welcome_msg.size(), 0) == -1)
 		return (nullptr);
 	client = nullptr;
@@ -153,6 +162,8 @@ PlayerConnection	*Server::setup_client(const int fd)
 	}
 	if (!client)
 		return (nullptr);
+	client->set_ip(ip);
+	log("Client connected: '" + client->get_player().get_name() + "' from " + ip, LogLevel::INFO);
 	msg_for_client = ok("connected");
 	if (send(fd, msg_for_client.c_str(), msg_for_client.size(), 0) == -1)
 		return (nullptr);
@@ -204,6 +215,7 @@ void				Server::client_thread(int fd)
 		outbox_msgs = client->get_player().drain_outbox();
 		for (const std::string& outbox_msg: outbox_msgs)
 		{
+			log("Response to '" + client->get_player().get_name() + "': " + outbox_msg, LogLevel::INFO);
 			bytes = send(client_fd, (outbox_msg).c_str(), (outbox_msg).size(), MSG_NOSIGNAL);
 			if (bytes == -1)
 			{
@@ -215,6 +227,7 @@ void				Server::client_thread(int fd)
 		if (client->is_quitting())
 			client->disconnect();
 	}
+	log("Client disconnected: '" + client->get_player().get_name() + "' from " + client->get_ip(), LogLevel::INFO);
 	if (on)
 		push_leave(client);
 	client->disconnect();
@@ -233,6 +246,8 @@ void				Server::accept_loop(void)
 				break;	// Server was closed.
 			continue;	// Error while accepting.
 		}
+		if (is_connection_flooding())
+			log("Possible rapid connections (connection flooding)", LogLevel::WARNING);
 		log("Creating thread with fd " + std::to_string(fd) + "...", LogLevel::DEBUG);
 		thread_list.emplace_back(&Server::client_thread, this, fd);
 		log("New thread with fd " + std::to_string(fd) + " launched.", LogLevel::DEBUG);
@@ -254,7 +269,9 @@ Server::Server(void):
 	owner(nullptr),
 	world(nullptr),
 	on(false),
-	running(true)
+	running(true),
+	conn_window(0),
+	conn_count(0)
 {
 	// TODO: Give json_path so a specific World can be created
 }
@@ -475,6 +492,9 @@ void				Server::game_loop(void)
 		// Executing found command
 		if (got_one && cmd_info.sender->is_connected())
 		{
+			log("Command from '" + cmd_info.sender->get_player().get_name() + "': " + cmd_info.text, LogLevel::INFO);
+			if (cmd_info.sender->is_flooding())
+				log("Possible command flooding from '" + cmd_info.sender->get_player().get_name() + "'", LogLevel::WARNING);
 			assert(world != nullptr && "World cannot be nullptr.");
 			try
 			{
@@ -703,4 +723,20 @@ bool				Server::leave_group(PlayerConnection& member)
 	if (group->get_members().empty())
 		groups.remove(*group);
 	return (true);
+}
+
+bool				Server::is_connection_flooding(void) noexcept
+{
+	std::time_t	now;
+
+	now = std::time(nullptr);
+	if (now - conn_window >= 1)
+	{
+		conn_window = now;
+		conn_count = 0;
+	}
+	conn_count++;
+	if (conn_count > MAX_CONNS_PER_SEC)
+		return (true);
+	return (false);
 }

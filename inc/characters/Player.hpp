@@ -32,6 +32,10 @@ class Player final: public Fighter
 		std::mutex						outbox_mtx;
 		Battle							*battle;
 
+		static constexpr unsigned int	HP_PER_LEVEL = 2;
+		static constexpr unsigned int	STRENGTH_PER_LEVEL = 1;
+		static constexpr unsigned int	DEFENSE_PER_LEVEL = 1;
+		static constexpr unsigned int	SPEED_PER_LEVEL = 1;
 		static constexpr unsigned int	STARTING_GOLD = 50;
 	public:
 		// Constructors -------------------------------------------------------
@@ -142,13 +146,22 @@ class Player final: public Fighter
 		 * @note	If the quest is already in the list, it will not be added.
 		 */
 		bool			obtain_quest(Quest& quest) noexcept TAP_COLD;
+		std::string		quests_to_json_format(void) const noexcept;
+		void			complete_quest(Quest& q) noexcept;
+		void			complete_defeat_quests(const std::string& enemy_name) noexcept;
+		void			complete_collect_quests(const std::string& item_name) noexcept;
+		void			complete_area_quests(const std::string& area_id) noexcept;
+		void 			complete_gold_quests(void) noexcept;
+		void 			complete_level_quests(void) noexcept;
 
 		// Gold --
 
+		void			gain_gold(unsigned int quantity) noexcept;
+
 		/**
-		 * @brief	Tries to consume a specified ammount of gold. If the player
+		 * @brief	Tries to consume a specified amount of gold. If the player
 		 * 			does not have enough gold, it won't be consumed.
-		 * @param	quantity	The ammount of gold to consume.
+		 * @param	quantity	The amount of gold to consume.
 		 * @returns	`true` if the player had enough gold to spend and it was
 		 * 			successfully consumed, `false` if the player does not have
 		 * 			enough gold.
@@ -158,9 +171,9 @@ class Player final: public Fighter
 
 		/**
 		 * @brief	Unlike the `spend_gold` method, this one will always
-		 * 			consume the specified ammount of gold, setting it to 0
+		 * 			consume the specified amount of gold, setting it to 0
 		 * 			if the player has less gold than the specified one.
-		 * @param	quantity	The ammount of gold to consume.
+		 * @param	quantity	The amount of gold to consume.
 		 */
 		void			lose_gold(unsigned int quantity) noexcept;
 
@@ -190,16 +203,17 @@ class Player final: public Fighter
 		// Fight --
 
 		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL;
-		FighterType		get_type(void) const noexcept override;
+		void			add_beaten_enemy(const std::string& id) noexcept;
+
+		// Stats --
+
+		void			level_up(void) noexcept;
 
 		// Interactions --
 
-		void				talk_with(Character& character);
 		const std::string	on_talk(Player& player) noexcept override;
 
 		// User --
-
-		// TODO: Finish documentation of the methods below.
 
 		/**
 		 * @brief	Sends a message to the fd of this player. If `client_fd`
@@ -208,5 +222,9 @@ class Player final: public Fighter
 		 */
 		void					send_to_outbox(const std::string& msg);
 
+		/**
+		 * @brief	Cleans player's outbox and returns it.
+		 * @returns	A list with all the messages from the outbox.
+		 */
 		std::list<std::string>	drain_outbox(void) TAP_UNUSED_RESULT;
 };

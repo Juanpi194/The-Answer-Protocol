@@ -13,10 +13,16 @@ enum Status
 	HEALTHY,
 	POISONED,
 	BURNT,
-	FROZEN,
-	BLEEDING,
-	CONFUSED
+	FROZEN
 };
+
+/**
+ * @brief	Casts the given status to string format.
+ * @param	status	The status to cast.
+ * @returns	The string format of `status`. If status is unknown,
+ * 			the word 'unknown' will be returned.
+ */
+std::string	status_to_string(const Status status) noexcept;
 
 /**
  * @param	level		The level of the fighter.
@@ -36,13 +42,6 @@ struct t_stats
 	unsigned int	current_strength;
 	unsigned int	current_defense;
 	unsigned int	current_speed;
-};
-
-// ? REVIEW: Is this the best way to make this?
-enum class FighterType
-{
-	Player,
-	Enemy
 };
 
 enum class FightAction
@@ -83,15 +82,14 @@ class Fighter: public virtual Character
 		FightAction	last_action;
 		bool		defending;
 
-		static constexpr unsigned int	MIN_HP = 10;
+		static constexpr unsigned int	MIN_HP = 5;
 		static constexpr unsigned int	MAX_HP = 100;
-		static constexpr unsigned int	MIN_STRENGTH = 5;
+		static constexpr unsigned int	MIN_STRENGTH = 1;
 		static constexpr unsigned int	MAX_STRENGTH = 80;
-		static constexpr unsigned int	MIN_DEFENSE = 3;
+		static constexpr unsigned int	MIN_DEFENSE = 1;
 		static constexpr unsigned int	MAX_DEFENSE = 90;
-		static constexpr unsigned int	MIN_SPEED = 3;
+		static constexpr unsigned int	MIN_SPEED = 1;
 		static constexpr unsigned int	MAX_SPEED = 70;
-		// TODO: Add more stats
 
 		/**
 		 * @brief	Validates if the provided stats for the fighter are valid.
@@ -135,7 +133,7 @@ class Fighter: public virtual Character
 
 		// Utils --------------------------------------------------------------
 
-		virtual FighterType	get_type() const noexcept = 0;
+		// Actions --
 
 		/**
 		 * @brief	Performs the selected action, done by the user. Only
@@ -155,23 +153,40 @@ class Fighter: public virtual Character
 		void				attack(Fighter& target) noexcept;
 		void				defend(void) noexcept;
 		bool				flee(Fighter& opponent) noexcept;
-		void				receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept;
-		void				apply_status(Status status) noexcept;
 		void				consume(Fighter& opponent, Consumable& consumable) noexcept;
 
-		/**
-		 * @brief	Heals the fighter for the specified ammount.
-		 * @param	ammount	The healing points to heal.
-		 */
-		void				heal(unsigned int ammount) noexcept;
+		// Status --
 
-		// TODO: Work in this docstring
+		void				apply_status(Status status) noexcept;
+		bool				can_apply_status(Status status) const noexcept;
+		void				tick_status(void) noexcept;
+
+		// Stats --
+
+		unsigned int		get_effective_speed(void) const noexcept;
+
+		/**
+		 * @brief	Heals the fighter for the specified amount.
+		 * @param	amount	The healing points to heal.
+		 */
+		void				heal(unsigned int amount) noexcept;
+
+		/**
+		 * @brief	Takes in mind the armor and other conditions to receive damage.
+		 */
+		void				receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept;
+
+		/**
+		 * @brief	Loses that amount of hp without any other consideration.
+		 */
+		void				lose_hp(unsigned int amount) noexcept;
+
 		/**
 		 * @brief	Changes the specified stat depending on the provided stage.
 		 * @param	stat	The stat to change.
-		 * @param	stage	Indicates how much the stat is going to change.
+		 * @param	amount	Indicates how much the stat is going to change.
 		 */
-		void				change_stat(Stat stat, int stage) noexcept;
+		void				change_stat(Stat stat, int amount) noexcept;
 
 		/**
 		 * @brief	Restores the specified stat. That means that the
@@ -186,4 +201,8 @@ class Fighter: public virtual Character
 		 * @param	hp	If set to `true`, hp will be reset too.
 		 */
 		void				reset_stats(bool hp = false) noexcept;
+
+		// STATUS command --
+
+		std::string			status_json(void) const noexcept;
 };

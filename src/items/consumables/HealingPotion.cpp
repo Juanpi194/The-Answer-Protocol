@@ -1,9 +1,11 @@
 #include "items/consumables/HealingPotion.hpp"
 
+#include "characters/Fighter.hpp"
+
 unsigned int		HealingPotion::available_id = 0;
 const std::string	HealingPotion::PREFIX = "healing_potion.";
 const std::string	HealingPotion::NAME = "Healing Potion";
-const std::string	HealingPotion::DESCRIPTION = "Heals all user's hp.";
+const std::string	HealingPotion::DESCRIPTION = "Heals user's hp.";
 
 // Constructors ---------------------------------------------------------------
 
@@ -26,5 +28,5 @@ HealingPotion	*HealingPotion::clone(void) const noexcept
 
 void	HealingPotion::consume(Fighter& user) noexcept
 {
-	// TODO: Add heal and restore strength stat...
+	user.heal(HEALING_POINTS);
 }

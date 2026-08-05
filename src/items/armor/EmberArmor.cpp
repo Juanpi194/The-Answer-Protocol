@@ -27,5 +27,5 @@ EmberArmor	*EmberArmor::clone(void) const noexcept
 
 void	EmberArmor::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
-	// TODO: Apply burn to opponent
+	opponent.apply_status(APPLIED_STATUS);
 }

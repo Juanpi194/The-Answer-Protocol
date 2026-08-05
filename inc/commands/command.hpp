@@ -15,6 +15,9 @@ enum class CommandType
 	DROP,
 	INVENTORY,
 	TALK,
+	OPEN,
+	BUY,
+	ENCHANT,
 	ATTACK,
 	DEFEND,
 	FLEE,
@@ -24,6 +27,7 @@ enum class CommandType
 	QUEST,
 	QUESTS,
 	WHO,
+	HELP,
 	GROUP,
 	QUIT
 };

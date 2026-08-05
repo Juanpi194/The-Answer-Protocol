@@ -1,5 +1,7 @@
 #include "items/consumables/IcePotion.hpp"
 
+#include "characters/Fighter.hpp"
+
 
 unsigned int		IcePotion::available_id = 0;
 const std::string	IcePotion::PREFIX = "ice_potion.";
@@ -27,5 +29,6 @@ IcePotion	*IcePotion::clone(void) const noexcept
 
 void	IcePotion::consume(Fighter& user) noexcept
 {
-	// TODO: Add ice effect logic...
+	if (user.get_status() == Status::FROZEN)
+		user.set_status(Status::HEALTHY);
 }

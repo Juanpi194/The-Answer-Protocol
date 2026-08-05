@@ -1,5 +1,6 @@
 #pragma once
 
+#include "characters/Fighter.hpp"
 #include "items/SpecialEffectGear.hpp"
 #include "items/Weapon.hpp"
 
@@ -12,7 +13,8 @@ class FrostSword final: public Weapon, public SpecialEffectGear
 	public:
 		static const std::string		NAME;	// Defined in FrostSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in FrostSword.cpp
-		static constexpr unsigned int	EXTRA_DAMAGE = 6;
+		static constexpr unsigned int	EXTRA_DAMAGE = 7;
+		static constexpr Status			APPLIED_STATUS = Status::FROZEN;
 
 		// Constructors -------------------------------------------------------
 
@@ -24,10 +26,6 @@ class FrostSword final: public Weapon, public SpecialEffectGear
 		// Operators ----------------------------------------------------------
 
 		FrostSword&	operator=(const FrostSword& other) = delete;
-
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
 
 		// Utils --------------------------------------------------
 

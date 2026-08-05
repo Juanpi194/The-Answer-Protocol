@@ -6,8 +6,6 @@ class Fighter;
 
 class Consumable: public Item
 {
-	private:
-		// TODO: Add some attributes
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -18,10 +16,6 @@ class Consumable: public Item
 		// Operators ----------------------------------------------------------
 
 		Consumable&	operator=(const Consumable& other) = delete;
-
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Getters and setters
 
 		// Utils --------------------------------------------------------------
 

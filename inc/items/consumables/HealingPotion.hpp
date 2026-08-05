@@ -11,7 +11,7 @@ class HealingPotion final: public Consumable
 	public:
 		static const std::string		NAME;	// Defined in HealingPotion.cpp
 		static const std::string		DESCRIPTION;	// Defined in HealingPotion.cpp
-		static constexpr unsigned int	HEALING_POINTS = 5;
+		static constexpr unsigned int	HEALING_POINTS = 8;
 
 		// Constructors -------------------------------------------------------
 
@@ -23,10 +23,6 @@ class HealingPotion final: public Consumable
 		// Operators ----------------------------------------------------------
 
 		HealingPotion&	operator=(const HealingPotion& other) = delete;
-
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
 
 		// Utils --------------------------------------------------------------
 
