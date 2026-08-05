@@ -213,25 +213,6 @@ std::string	get_err_description(ErrorCode err_code)
 		case ErrorCode::IN_BATTLE:
 			result = "The client is in battle, cannot execute all commands";
 			break;
-<<<<<<< HEAD
-		case ErrorCode::NPC_NOT_VENDOR:
-			result = "NPC cannot sell items (not a vendor)";
-			break;
-		case ErrorCode::NPC_NOT_ENCHANTER:
-			result = "NPC cannot enchant items (not an enchanter)";
-			break;
-		case ErrorCode::NO_CHEST:
-			result = "There is no chest in this room";
-			break;
-		case ErrorCode::CHEST_ALREADY_OPENED:
-			result = "The chest was already opened";
-			break;
-		case ErrorCode::GUARDIAN_NOT_BEATEN:
-			result = "The chest's guardian must be defeated first";
-			break;
-		case ErrorCode::NO_KEY:
-			result = "Player has no key to open the chest";
-=======
 		case ErrorCode::NPC_NOT_MERCHANT:
 			result = "The npc is not a merchant";
 			break;
@@ -270,7 +251,6 @@ std::string	get_err_description(ErrorCode err_code)
 			break;
 		case ErrorCode::SHIELD_ON_COOLDOWN:
 			result = "Shield was used last turn";
->>>>>>> origin/juanpi
 			break;
 		case ErrorCode::CONNECTION_FAILED:
 			result = "Connection establishment failed";

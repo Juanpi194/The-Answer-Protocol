@@ -613,6 +613,15 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 		case CommandType::QUESTS:
 			cmd_quests(player);
 			break;
+		case CommandType::OPEN:
+			cmd_open(player);
+			break;
+		case CommandType::BUY:
+			cmd_buy(cmd, player);
+			break;
+		case CommandType::ENCHANT:
+			cmd_enchant(cmd, player);
+			break;
 		case CommandType::HELP:
 			cmd_help(connection);
 			break;
@@ -620,5 +629,4 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			// It should never get to this point, all types should be managed.
 			player.send_to_outbox(err(ErrorCode::UNEXPECTED_ERROR));
 	}
-	// TODO: Add OPEN, BUY and ENCHANT commands, and GROUP KICK
 }
