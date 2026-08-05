@@ -34,9 +34,4 @@ class Armor: public Gear
 		const unsigned int	get_damage_reduction(void) const noexcept;
 		unsigned int		get_reduced_damage(void) const noexcept;
 
-		// Utils --------------------------------------------------------------
-
-		// void	use(void) noexcept override;
-
-		virtual void	reduce_damage(Fighter& armor_user, Fighter& attacker, unsigned int& incoming_damage) noexcept;
 };

@@ -1,10 +1,11 @@
 #include "items/consumables/Apple.hpp"
 
+#include "characters/Fighter.hpp"
 
 unsigned int		Apple::available_id = 0;
 const std::string	Apple::PREFIX = "apple.";
 const std::string	Apple::NAME = "Apple";
-const std::string	Apple::DESCRIPTION = "Heals for a bit, and restores the strength of the user.";
+const std::string	Apple::DESCRIPTION = "Heals for a bit, and restores the strength of the user if it was lowered.";
 
 // Constructors ---------------------------------------------------------------
 
@@ -27,5 +28,7 @@ Apple	*Apple::clone(void) const noexcept
 
 void	Apple::consume(Fighter& user) noexcept
 {
-	// TODO: Add heal and restore strength stat...
+	user.heal(HEALING_POINTS);
+	if (user.get_stats().current_strength < user.get_stats().strength)
+    	user.restore_stat(Stat::STRENGTH);
 }

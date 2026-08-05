@@ -5,12 +5,12 @@
 
 static std::string	timestamp(void) noexcept
 {
-    std::time_t	now;
-    char		buf[32];
+	std::time_t	now;
+	char		buf[32];
 
 	now = std::time(nullptr);
-    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-    return (buf);
+	std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+	return (buf);
 }
 
 void				log(const std::string& msg, LogLevel level) noexcept

@@ -32,6 +32,10 @@ class Player final: public Fighter
 		std::mutex						outbox_mtx;
 		Battle							*battle;
 
+		static constexpr unsigned int	HP_PER_LEVEL = 2;
+		static constexpr unsigned int	STRENGTH_PER_LEVEL = 1;
+		static constexpr unsigned int	DEFENSE_PER_LEVEL = 1;
+		static constexpr unsigned int	SPEED_PER_LEVEL = 1;
 		static constexpr unsigned int	STARTING_GOLD = 50;
 	public:
 		// Constructors -------------------------------------------------------
@@ -200,7 +204,6 @@ class Player final: public Fighter
 
 		bool			is_enemy_beaten(Enemy *enemy) noexcept TAP_NONNULL;
 		void			add_beaten_enemy(const std::string& id) noexcept;
-		FighterType		get_type(void) const noexcept override;
 
 		// Stats --
 
@@ -208,12 +211,9 @@ class Player final: public Fighter
 
 		// Interactions --
 
-		void				talk_with(Character& character);
 		const std::string	on_talk(Player& player) noexcept override;
 
 		// User --
-
-		// TODO: Finish documentation of the methods below.
 
 		/**
 		 * @brief	Sends a message to the fd of this player. If `client_fd`
@@ -222,5 +222,9 @@ class Player final: public Fighter
 		 */
 		void					send_to_outbox(const std::string& msg);
 
+		/**
+		 * @brief	Cleans player's outbox and returns it.
+		 * @returns	A list with all the messages from the outbox.
+		 */
 		std::list<std::string>	drain_outbox(void) TAP_UNUSED_RESULT;
 };

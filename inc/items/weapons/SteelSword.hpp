@@ -13,7 +13,7 @@ class SteelSword final: public Weapon
 	public:
 		static const std::string		NAME;	// Defined in SteelSword.cpp
 		static const std::string		DESCRIPTION;	// Defined in SteelSword.cpp
-		static constexpr unsigned int	EXTRA_DAMAGE = 7;
+		static constexpr unsigned int	EXTRA_DAMAGE = 4;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,9 +26,4 @@ class SteelSword final: public Weapon
 
 		SteelSword&	operator=(const SteelSword& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
-		// Utils --------------------------------------------------------------
 };

@@ -158,8 +158,6 @@ const std::map<Direction, Room*>&	Room::get_adjacent_rooms(void) const noexcept
 
 void	Room::set_adjacent_room(Direction direction, Room *room)
 {
-	// ? REVIEW: Is this method really needed? There is a method in World that connects two rooms.
-	// ?		 It can be used as a short and dangerous way to connect rooms. Make docstring if so.
 	if (!room)
 	{
 		log("Tried to connect a nullptr room to '" + name + "'.", LogLevel::WARNING);

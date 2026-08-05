@@ -13,7 +13,7 @@ class BronzeArmor final: public Armor
 	public:
 		static const std::string		NAME;	// Defined in BronzeArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in BronzeArmor.cpp
-		static constexpr unsigned int	DAMAGE_REDUCTION = 3;
+		static constexpr unsigned int	DAMAGE_REDUCTION = 2;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,9 +26,4 @@ class BronzeArmor final: public Armor
 
 		BronzeArmor&	operator=(const BronzeArmor& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
-
-		// Utils --------------------------------------------------------------
 };

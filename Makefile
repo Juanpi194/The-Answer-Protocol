@@ -28,7 +28,8 @@ ENCHANTMENTS_SRC = $(addprefix $(SRC_FOLDER)/$(ENCHANTMENTS_FOLDER)/, \
  
 FACTORIES_FOLDER = factories
 FACTORIES_SRC = $(addprefix $(SRC_FOLDER)/$(FACTORIES_FOLDER)/, \
-					EnchantmentFactory.cpp EnemyFactory.cpp ItemFactory.cpp)
+					EnchantmentFactory.cpp EnemyFactory.cpp ItemFactory.cpp \
+					NpcPacificFactory.cpp)
 
 GROUP_FOLDER = group
 GROUP_SRC = $(addprefix $(SRC_FOLDER)/$(GROUP_FOLDER)/, \
@@ -43,7 +44,8 @@ ITEMS_SRC = $(addprefix $(SRC_FOLDER)/$(ITEMS_FOLDER)/, \
 				chest/Chest.cpp chest/ChestKey.cpp \
 				consumables/Apple.cpp consumables/FirePotion.cpp consumables/HastePotion.cpp \
 				consumables/HealingPotion.cpp consumables/IcePotion.cpp consumables/PoisonPotion.cpp \
-				shields/BronzeShield.cpp shields/IronShield.cpp shields/SteelShield.cpp \
+				shields/BronzeShield.cpp shields/IronShield.cpp shields/SpikeShield.cpp \
+				shields/SteelShield.cpp \
 				weapons/BronzeSword.cpp weapons/FlameSword.cpp weapons/FrostSword.cpp \
 				weapons/IronSword.cpp weapons/SerratedSword.cpp weapons/SteelSword.cpp )
 

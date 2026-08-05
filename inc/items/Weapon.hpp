@@ -34,9 +34,4 @@ class Weapon: public Gear
 		const unsigned int	get_extra_damage(void) const noexcept;
 		unsigned int		get_total_extra_damage(void) const noexcept;
 
-		// Utils --------------------------------------------------------------
-
-		// void	use(void) noexcept override;
-
-		virtual void	apply_extra_damage(Fighter& user, Fighter& target, unsigned int initial_damage) noexcept;
 };

@@ -1,5 +1,7 @@
 #include "items/consumables/HastePotion.hpp"
 
+#include "characters/Fighter.hpp"
+
 
 unsigned int		HastePotion::available_id = 0;
 const std::string	HastePotion::PREFIX = "haste_potion.";
@@ -27,5 +29,5 @@ HastePotion	*HastePotion::clone(void) const noexcept
 
 void	HastePotion::consume(Fighter& user) noexcept
 {
-	// TODO: Add haste effect logic...
+	user.change_stat(Stat::SPEED, HASTE_POINTS);
 }

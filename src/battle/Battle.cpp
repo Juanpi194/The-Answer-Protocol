@@ -116,7 +116,7 @@ void		Battle::execute_turn(FightChoice player_choice) noexcept
 	FightChoice enemy_choice = enemy_copy->choose_action();
 
 	// Setting turn order...
-	if (blue.get_stats().current_speed >= red.get_stats().current_speed || player_choice.action == FightAction::DEFEND)
+	if (blue.get_effective_speed() >= red.get_effective_speed() || player_choice.action == FightAction::DEFEND)
 	{
 		first = &blue;
 		second = enemy_copy;
@@ -150,10 +150,19 @@ void		Battle::execute_turn(FightChoice player_choice) noexcept
 		red.set_last_action(enemy_choice.action);
 		blue.set_defending(false);
 		red.set_defending(false);
+		if (!finished)
+		{
+			blue.tick_status();
+			red.tick_status();
+			if (blue.get_stats().current_hp == 0)
+				set_winner(red);
+			else if (red.get_stats().current_hp == 0)
+				set_winner(blue);
+		}
 	}
 	catch (const std::invalid_argument& e)
 	{
-		// TODO: Backup for perform_action error.
+		log(std::string("Invalid action in battle turn: ") + e.what(), LogLevel::ERROR);
 	}
 }
 
@@ -161,11 +170,11 @@ std::string	Battle::to_json_format(void) const noexcept
 {
 	std::string	result;
 
-	result = "[";
+	result = "{";
 	result += "\"blue\": ";
 	result += blue.status_json();
 	result += "\"red\": ";
 	result += red.status_json();
-	result += "]"; 
+	result += "}"; 
 	return (result);
 }

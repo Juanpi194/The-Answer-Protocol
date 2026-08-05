@@ -12,7 +12,6 @@ class Narrator final: public NPC
 	public:
 		// Constructors -------------------------------------------------------
 
-		// ! FIXME: Change sentences logic
 		Narrator(const std::string& name, const std::string& description, const std::string& sentence);
 
 		/**

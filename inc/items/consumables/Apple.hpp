@@ -11,7 +11,7 @@ class Apple final: public Consumable
 	public:
 		static const std::string		NAME;	// Defined in Apple.cpp
 		static const std::string		DESCRIPTION;	// Defined in Apple.cpp
-		static constexpr unsigned int	HEALING_POINTS = 5;
+		static constexpr unsigned int	HEALING_POINTS = 3;
 
 		// Constructors -------------------------------------------------------
 
@@ -23,10 +23,6 @@ class Apple final: public Consumable
 		// Operators ----------------------------------------------------------
 
 		Apple&	operator=(const Apple& other) = delete;
-
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
 
 		// Utils --------------------------------------------------------------
 

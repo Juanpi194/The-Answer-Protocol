@@ -1,5 +1,6 @@
 #pragma once
 
+#include "characters/Fighter.hpp"
 #include "items/Armor.hpp"
 #include "items/SpecialEffectGear.hpp"
 
@@ -13,12 +14,13 @@ class FrostArmor final: public Armor, public SpecialEffectGear
 		/**
 		 * @brief	Duration of the freeze effect applied to the attacker.
 		 */
-		static constexpr unsigned int	FREEZE_DURATION = 2;
+		// static constexpr unsigned int	FREEZE_DURATION = 2;
 
 	public:
 		static const std::string		NAME;	// Defined in FrostArmor.cpp
 		static const std::string		DESCRIPTION;	// Defined in FrostArmor.cpp
-		static constexpr unsigned int	DAMAGE_REDUCTION = 2;
+		static constexpr unsigned int	DAMAGE_REDUCTION = 6;
+		static constexpr Status			APPLIED_STATUS = Status::FROZEN;
 
 		// Constructors -------------------------------------------------------
 
@@ -30,10 +32,6 @@ class FrostArmor final: public Armor, public SpecialEffectGear
 		// Operators ----------------------------------------------------------
 
 		FrostArmor&	operator=(const FrostArmor& other) = delete;
-
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getters and setters for future attributes.
 
 		// Utils --------------------------------------------------------------
 

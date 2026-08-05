@@ -22,14 +22,3 @@ unsigned int		Weapon::get_total_extra_damage(void) const noexcept
 }
 
 // Utils ----------------------------------------------------------------------
-
-// void	Weapon::use(void) noexcept
-// {
-// 	// TODO: Logic...
-// 	special_use();
-// }
-
-void	Weapon::apply_extra_damage(Fighter& user, Fighter& target, unsigned int initial_damage) noexcept
-{
-	// TODO: Logic...
-}

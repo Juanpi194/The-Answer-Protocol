@@ -5,11 +5,6 @@ const std::string	IronSword::PREFIX = "iron_sword.";
 const std::string	IronSword::NAME = "Iron Sword";
 const std::string	IronSword::DESCRIPTION = "Applies extra damage";
 
-// void	IronSword::special_use(void) noexcept
-// {
-// 	// TODO: Logic...
-// }
-
 // Constructors ---------------------------------------------------------------
 
 IronSword::IronSword(void):

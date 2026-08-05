@@ -76,9 +76,6 @@ class World
 
 		// Utils --------------------------------------------------------------
 
-		// ? REVIEW: Does this method make sense?
-		// void	reset_world(void);
-
 		/**
 		 * @brief	Adds a new room to the world, connecting it to an already
 		 * 			existing room in the world in a specified direction from

@@ -10,7 +10,7 @@ class BronzeShield final: public Shield
 	public:
 		static const std::string		NAME;	// Defined in BronzeShield.cpp
 		static const std::string		DESCRIPTION;	// Defined in BronzeShield.cpp
-		static constexpr unsigned int	MAX_USES = 5;
+		static constexpr unsigned int	MAX_USES = 2;
 
 		// Constructors -------------------------------------------------------
 
@@ -23,11 +23,4 @@ class BronzeShield final: public Shield
 
 		BronzeShield&	operator=(const BronzeShield& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add getter to static var
-
-		// Utils --------------------------------------------------------------
-
-		// TODO: Funcs
 };

@@ -115,7 +115,6 @@ Item				*Player::obtain_item(const std::string& item_name) noexcept
 
 bool				Player::drop_item(Item *item) noexcept
 {
-	// ? Review: Check logic and maybe add mutex...
 	bool	found;
 
 	found = false;
@@ -325,7 +324,6 @@ void		Player::lose_gold(unsigned int quantity) noexcept
 
 bool		Player::move(Direction direction) noexcept
 {
-	// ? REVIEW: Needed mutex?
 	Room	*adjacent;
 
 	// Checking room
@@ -375,28 +373,25 @@ void		Player::add_beaten_enemy(const std::string& id) noexcept
 	beaten_enemies_id.push_back(id);
 }
 
-FighterType	Player::get_type(void) const noexcept
-{
-	return (FighterType::Player);
-}
-
 // Stats --
 
 void		Player::level_up(void) noexcept
 {
-	// TODO: change stats...
+	stats.level++;
+	stats.hp += HP_PER_LEVEL;
+	stats.strength += STRENGTH_PER_LEVEL;
+	stats.defense += DEFENSE_PER_LEVEL;
+	stats.speed += SPEED_PER_LEVEL;
+
+	stats.current_hp += HP_PER_LEVEL;
+	stats.current_strength += STRENGTH_PER_LEVEL;
+	stats.current_defense += DEFENSE_PER_LEVEL;
+	stats.current_speed += SPEED_PER_LEVEL;
 
 	complete_level_quests();
 }
 
 // Interactions --
-
-void		Player::talk_with(Character& character)
-{
-	// TODO: Logic...
-	log("Player '" + get_name() + "' interacted with '" + character.get_name() + "'.", LogLevel::DEBUG);
-	character.on_talk(*this);
-}
 
 const std::string		Player::on_talk(Player& player) noexcept
 {

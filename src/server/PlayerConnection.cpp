@@ -28,7 +28,6 @@ PlayerConnection::PlayerConnection(const std::string& name, int client_fd, Serve
 
 PlayerConnection::~PlayerConnection(void)
 {
-	// TODO: Close fd, ...
 	if (client_fd >= 0)
 		close(client_fd);
 }
@@ -137,7 +136,7 @@ bool	PlayerConnection::is_flooding(void) noexcept
 	std::time_t	now;
 
 	now = std::time(nullptr);
-	if (now - flood_window >= 1)   // empezó un segundo nuevo -> reinicio
+	if (now - flood_window >= 1)
 	{
 		flood_window = now;
 		cmd_count = 0;

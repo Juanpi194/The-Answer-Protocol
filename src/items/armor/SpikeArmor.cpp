@@ -27,5 +27,6 @@ SpikeArmor	*SpikeArmor::clone(void) const noexcept
 
 void	SpikeArmor::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
-	// TODO: Apply damage to opponent
+	opponent.lose_hp(REFLECT_DAMAGE);
+	opponent.apply_status(APPLIED_STATUS);
 }

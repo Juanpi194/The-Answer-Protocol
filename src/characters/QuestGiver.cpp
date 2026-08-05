@@ -15,7 +15,6 @@ QuestGiver::QuestGiver(const std::string& name, const std::string& description, 
 	quest(quest),
 	dialogues(dialogues)
 {
-	// ? REVIEW: Check each dialogue format and gold reward?
 }
 
 // Getters and setters --------------------------------------------------------

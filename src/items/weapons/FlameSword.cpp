@@ -26,5 +26,5 @@ FlameSword	*FlameSword::clone(void) const noexcept
 
 void	FlameSword::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
-	// TODO: Apply burn to opponent, ...
+	opponent.apply_status(APPLIED_STATUS);
 }

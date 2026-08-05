@@ -4,12 +4,24 @@
 
 #include "battle/Battle.hpp"
 #include "characters/Player.hpp"
+#include "enchantments/Enchantment.hpp"
 #include "items/Armor.hpp"
 #include "items/Consumable.hpp"
+#include "items/OnContactShield.hpp"
 #include "items/Shield.hpp"
 #include "items/SpecialEffectGear.hpp"
 #include "items/Weapon.hpp"
 #include "utils/utils.hpp"
+
+static unsigned int apply_stage(unsigned int current, int amount)
+{
+	int	result;
+
+	result = (int)current + amount;
+	if (result < 1)
+		result = 1;
+	return (result);
+}
 
 std::string	status_to_string(const Status status) noexcept
 {
@@ -23,10 +35,6 @@ std::string	status_to_string(const Status status) noexcept
 			return ("burnt");
 		case Status::FROZEN:
 			return ("frozen");
-		case Status::BLEEDING:
-			return ("bleeding");
-		case Status::CONFUSED:
-			return ("confused");
 		default:
 			return ("unknown");
 	}
@@ -34,8 +42,11 @@ std::string	status_to_string(const Status status) noexcept
 
 bool	Fighter::validate_stats(t_stats stats)
 {
-	// TODO: Add validations
-	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH)
+	if (stats.hp < MIN_HP || stats.hp > MAX_HP || stats.strength < MIN_STRENGTH || stats.strength > MAX_STRENGTH ||
+			stats.defense < MIN_DEFENSE || stats.defense > MAX_DEFENSE || stats.speed < MIN_SPEED || stats.speed > MAX_SPEED)
+		return (false);
+	if (stats.hp != stats.current_hp || stats.strength != stats.current_strength ||
+			stats.defense != stats.current_defense || stats.speed != stats.current_speed)
 		return (false);
 	return (true);
 }
@@ -146,7 +157,9 @@ void	Fighter::set_status(Status status) noexcept
 
 // Utils ----------------------------------------------------------------------
 
-void		Fighter::perform_action(Fighter& opponent, FightChoice choice)
+// Actions --
+
+void			Fighter::perform_action(Fighter& opponent, FightChoice choice)
 {
 	switch (choice.action)
 	{
@@ -165,7 +178,7 @@ void		Fighter::perform_action(Fighter& opponent, FightChoice choice)
 	}
 }
 
-void		Fighter::attack(Fighter& target) noexcept
+void			Fighter::attack(Fighter& target) noexcept
 {
 	unsigned int		final_strength;
 	SpecialEffectGear	*special_weapon;
@@ -173,14 +186,35 @@ void		Fighter::attack(Fighter& target) noexcept
 	// If target is defending
 	if (target.is_defending())
 	{
-		target.get_shield()->protect(target, *this);
+		Shield			*shield;
+		OnContactShield	*on_contact;
+
+		shield = target.get_shield();
+		assert(shield != nullptr && "Shield cannot be nullptr if the target is defending");
+		shield->protect(target, *this);
+
+		// Special use (on contact shield) --
+		on_contact = dynamic_cast<OnContactShield*>(shield);
+		if (on_contact)
+			on_contact->on_contact(target, *this);
+
+		// Checking shield status
+		if (shield->get_uses() >= shield->get_max_uses())
+		{
+			delete (shield);
+			target.set_shield(nullptr);
+		}
 		return;
 	}
 
 	// Calculating damage
 	final_strength = (stats.current_strength / 2);
 	if (weapon)
+	{
 		final_strength += weapon->get_extra_damage() / 3;
+		if (weapon->get_enchantment())
+			weapon->get_enchantment()->effect(*this, target);
+	}
 
 	// Special effect
 	special_weapon = dynamic_cast<SpecialEffectGear*>(weapon);
@@ -191,24 +225,83 @@ void		Fighter::attack(Fighter& target) noexcept
 	target.receive_damage(*this, final_strength);
 }
 
-void		Fighter::defend(void) noexcept
+void			Fighter::defend(void) noexcept
 {
-	if (shield)
+	if (shield && last_action != FightAction::DEFEND)
 		defending = true;
 }
 
-bool		Fighter::flee(Fighter& opponent) noexcept
+bool			Fighter::flee(Fighter& opponent) noexcept
 {
 	// TODO: Randomly choose, having in mind the opponent...
 	return (true);
 }
 
-void		Fighter::consume(Fighter& opponent, Consumable& consumable) noexcept
+void			Fighter::consume(Fighter& opponent, Consumable& consumable) noexcept
 {
-	// TODO: Logic
+	consumable.consume(*this);
+
+	// The selected item should always be in the fighter's inventory.
+	inventory.consume_item(consumable);
 }
 
-void		Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept
+// Status --
+
+void			Fighter::apply_status(Status status) noexcept
+{
+	if (can_apply_status(status))
+		this->status = status;
+}
+
+bool			Fighter::can_apply_status(Status status) const noexcept
+{
+	GearType	type;
+
+	if (!armor)
+		return (true);
+	type = armor->get_gear_type();
+	if (status == Status::FROZEN && type == GearType::FIRE)
+		return (false);
+	if (status == Status::BURNT && type == GearType::ICE)
+		return (false);
+	return (true);
+}
+
+void			Fighter::tick_status(void) noexcept
+{
+	unsigned int	dmg;
+
+	if (status != Status::BURNT && status != Status::POISONED)
+		return;
+	if (status == Status::BURNT)
+		dmg = stats.hp / 6;
+	else if (status == Status::POISONED)
+		dmg = stats.hp / 8;
+	else
+		dmg = 0;
+	lose_hp(dmg);
+}
+
+// Stats --
+
+unsigned int	Fighter::get_effective_speed(void) const noexcept
+{
+	if (status == Status::FROZEN)
+		return (stats.current_speed / 2);
+	return (stats.current_speed);
+}
+
+void			Fighter::heal(unsigned int amount) noexcept
+{
+	unsigned int	missing;
+
+	missing = stats.hp - stats.current_hp;
+	if (amount > missing)
+		amount = missing;
+	stats.current_hp += amount;
+}
+
+void			Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) noexcept
 {
 	unsigned int		final_defense;
 	SpecialEffectGear	*special_armor;
@@ -242,22 +335,25 @@ void		Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) n
 	log("'" + attacker.get_name() + "' hit '" + get_name() + "' for " + std::to_string(incoming_damage) + " damage.", LogLevel::INFO);
 }
 
-void		Fighter::apply_status(Status status) noexcept
+void			Fighter::lose_hp(unsigned int amount) noexcept
 {
-	// TODO: Logic...
+	if (stats.current_hp > amount)
+		stats.current_hp -= amount;
+	else
+		stats.current_hp = 0;
 }
 
-void		Fighter::heal(unsigned int amount) noexcept
+void			Fighter::change_stat(Stat stat, int amount) noexcept
 {
-	// TODO: Logic...
+	if (stat == Stat::STRENGTH)
+		stats.current_strength = apply_stage(stats.current_strength, amount);
+	else if (stat == Stat::DEFENSE)
+		stats.current_defense = apply_stage(stats.current_defense, amount);
+	else if (stat == Stat::SPEED)
+		stats.current_speed = apply_stage(stats.current_speed, amount);
 }
 
-void		Fighter::change_stat(Stat stat, int stage) noexcept
-{
-	// TODO: Logic...
-}
-
-void		Fighter::restore_stat(Stat stat) noexcept
+void			Fighter::restore_stat(Stat stat) noexcept
 {
 	if (stat == Stat::HP)
 		stats.current_hp = stats.hp;
@@ -269,7 +365,7 @@ void		Fighter::restore_stat(Stat stat) noexcept
 		stats.current_speed = stats.speed;
 }
 
-void		Fighter::reset_stats(bool hp) noexcept
+void			Fighter::reset_stats(bool hp) noexcept
 {
 	if (hp)
 		restore_stat(Stat::HP);
@@ -278,7 +374,9 @@ void		Fighter::reset_stats(bool hp) noexcept
 	restore_stat(Stat::SPEED);
 }
 
-std::string	Fighter::status_json(void) const noexcept
+// STATUS command --
+
+std::string		Fighter::status_json(void) const noexcept
 {
 	std::string	result;
 
