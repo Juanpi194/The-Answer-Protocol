@@ -14,7 +14,28 @@
 #include "factories/EnchantmentFactory.hpp"
 #include "factories/ItemFactory.hpp"
 #include "items/consumables/Apple.hpp"
+#include "items/consumables/FirePotion.hpp"
+#include "items/consumables/IcePotion.hpp"
+#include "items/consumables/HastePotion.hpp"
+#include "items/consumables/HealingPotion.hpp"
+#include "items/consumables/PoisonPotion.hpp"
+#include "items/shields/BronzeShield.hpp"
+#include "items/shields/IronShield.hpp"
+#include "items/shields/SpikeShield.hpp"
+#include "items/shields/SteelShield.hpp"
+#include "items/weapons/BronzeSword.hpp"
+#include "items/weapons/FlameSword.hpp"
+#include "items/weapons/FrostSword.hpp"
+#include "items/weapons/IronSword.hpp"
+#include "items/weapons/SerratedSword.hpp"
+#include "items/weapons/SteelSword.hpp"
 #include "items/armor/BronzeArmor.hpp"
+#include "items/armor/EmberArmor.hpp"
+#include "items/armor/FrostArmor.hpp"
+#include "items/armor/IronArmor.hpp"
+#include "items/armor/SpikeArmor.hpp"
+#include "items/armor/SteelArmor.hpp"
+
 
 // Specific enemies -----------------------------------------------------------
 
@@ -24,9 +45,7 @@ Enchanter	*NpcPacificFactory::create_enchanter_basic(const std::string& name, co
 {
 	std::map<Enchantment*, unsigned int>	pool;
 
-	// TODO: Other enchantments
 	pool[EnchantmentFactory::create_flame()] = 50;
-	pool[EnchantmentFactory::create_freeze()] = 80;
 	return (new Enchanter(name, description, pool));
 }
 
@@ -34,8 +53,6 @@ Enchanter	*NpcPacificFactory::create_enchanter_advanced(const std::string& name,
 {
 	std::map<Enchantment*, unsigned int>	pool;
 
-	// TODO: Other enchantments
-	pool[EnchantmentFactory::create_flame()] = 50;
 	pool[EnchantmentFactory::create_freeze()] = 80;
 	return (new Enchanter(name, description, pool));
 }
@@ -46,9 +63,24 @@ Merchant	*NpcPacificFactory::create_merchant_basic(const std::string& name, cons
 {
 	std::map<Item*, unsigned int>	pool;
 
-	// TODO: Other items
 	pool[ItemFactory::create_apple()] = 5;
+	pool[ItemFactory::create_healing_potion()] = 10;
+	pool[ItemFactory::create_poison_potion()] = 12;
+
+	pool[ItemFactory::create_bronze_armor()] = 20;
+	pool[ItemFactory::create_steel_armor()] = 30;
+	pool[ItemFactory::create_iron_armor()] = 40;
 	pool[ItemFactory::create_bronze_armor()] = 30;
+
+	pool[ItemFactory::create_bronze_shield()] = 15;
+	pool[ItemFactory::create_iron_shield()] = 15;
+
+	pool[ItemFactory::create_bronze_sword()] = 18;
+	pool[ItemFactory::create_iron_sword()] = 18;
+	pool[ItemFactory::create_steel_sword()] = 18;
+
+
+
 	return (new Merchant(name, description, pool));
 }
 
@@ -56,9 +88,24 @@ Merchant	*NpcPacificFactory::create_merchant_advanced(const std::string& name, c
 {
 	std::map<Item*, unsigned int>	pool;
 
-	// TODO: Other items
 	pool[ItemFactory::create_apple()] = 5;
-	pool[ItemFactory::create_bronze_armor()] = 30;
+	pool[ItemFactory::create_fire_potion()] = 12;
+	pool[ItemFactory::create_ice_potion()] = 12;
+	pool[ItemFactory::create_haste_potion()] = 12;
+
+	pool[ItemFactory::create_ember_armor()] = 30;
+	pool[ItemFactory::create_frost_armor()] = 30;
+	pool[ItemFactory::create_spike_armor()] = 30;
+
+	pool[ItemFactory::create_spike_shield()] = 16;
+	pool[ItemFactory::create_steel_shield()] = 16;
+
+	pool[ItemFactory::create_flame_sword()] = 18;
+	pool[ItemFactory::create_frost_sword()] = 18;
+	pool[ItemFactory::create_serrated_sword()] = 18;
+
+
+
 	return (new Merchant(name, description, pool));
 }
 

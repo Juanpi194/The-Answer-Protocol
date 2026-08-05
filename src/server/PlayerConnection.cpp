@@ -21,9 +21,6 @@ PlayerConnection::PlayerConnection(const std::string& name, int client_fd, Serve
 	flood_window(0),
 	cmd_count(0)
 {
-	// if (!server)
-	// 	throw std::invalid_argument("Player connection must be addressed to a server when being created.");
-	// TODO: Check if player name or fd is already in the server
 }
 
 PlayerConnection::~PlayerConnection(void)

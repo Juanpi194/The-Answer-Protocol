@@ -27,6 +27,7 @@ class SpikeShield;
 class SteelArmor;
 class SteelShield;
 class SteelSword;
+class HealingPotion;
 
 class ItemFactory
 {
@@ -71,4 +72,5 @@ class ItemFactory
 		static SteelArmor		*create_steel_armor(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static SteelShield		*create_steel_shield(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static SteelSword		*create_steel_sword(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static HealingPotion	*create_healing_potion(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 };

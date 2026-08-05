@@ -233,7 +233,6 @@ void			Fighter::defend(void) noexcept
 
 bool			Fighter::flee(Fighter& opponent) noexcept
 {
-	// TODO: Randomly choose, having in mind the opponent...
 	return (true);
 }
 
