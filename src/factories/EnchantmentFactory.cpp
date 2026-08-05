@@ -20,12 +20,12 @@ Enchantment	*EnchantmentFactory::create_from_name(const std::string& enchantment
 
 // Specific enchantments ------------------------------------------------------
 
-Flame	*EnchantmentFactory::create_flame(void) noexcept
+Flame	*EnchantmentFactory::create_flame(void)
 {
 	return (new Flame());
 }
 
-Freeze	*EnchantmentFactory::create_freeze(void) noexcept
+Freeze	*EnchantmentFactory::create_freeze(void)
 {
 	return (new Freeze());
 }

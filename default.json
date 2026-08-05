@@ -8,6 +8,7 @@
       "id": "room.entrance",
       "name": "Shelter Entrance",
       "description": "A quiet hall where the adventure begins.",
+      "npc": "merchant",
       "exits": {
         "north": "room.forest"
       }

@@ -33,32 +33,32 @@ Enemy	*EnemyFactory::create_from_name(const std::string& enemy_name)
 
 // Specific enemies -----------------------------------------------------------
 
-Goblin	*EnemyFactory::create_goblin(void) noexcept
+Goblin	*EnemyFactory::create_goblin(void)
 {
 	return (new Goblin());
 }
 
-Ogre	*EnemyFactory::create_ogre(void) noexcept
+Ogre	*EnemyFactory::create_ogre(void)
 {
 	return (new Ogre());
 }
 
-Shade	*EnemyFactory::create_shade(void) noexcept
+Shade	*EnemyFactory::create_shade(void)
 {
 	return (new Shade());
 }
 
-Wizard	*EnemyFactory::create_wizard(void) noexcept
+Wizard	*EnemyFactory::create_wizard(void)
 {
 	return (new Wizard());
 }
 
-Shadow	*EnemyFactory::create_shadow(void) noexcept
+Shadow	*EnemyFactory::create_shadow(void)
 {
 	return (new Shadow());
 }
 
-Dragon	*EnemyFactory::create_dragon(void) noexcept
+Dragon	*EnemyFactory::create_dragon(void)
 {
 	return (new Dragon());
 }

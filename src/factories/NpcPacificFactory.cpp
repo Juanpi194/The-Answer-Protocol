@@ -20,7 +20,7 @@
 
 // Enchanter --
 
-Enchanter	*NpcPacificFactory::create_enchanter_basic(const std::string& name, const std::string& description) noexcept
+Enchanter	*NpcPacificFactory::create_enchanter_basic(const std::string& name, const std::string& description)
 {
 	std::map<Enchantment*, unsigned int>	pool;
 
@@ -30,7 +30,7 @@ Enchanter	*NpcPacificFactory::create_enchanter_basic(const std::string& name, co
 	return (new Enchanter(name, description, pool));
 }
 
-Enchanter	*NpcPacificFactory::create_enchanter_advanced(const std::string& name, const std::string& description) noexcept
+Enchanter	*NpcPacificFactory::create_enchanter_advanced(const std::string& name, const std::string& description)
 {
 	std::map<Enchantment*, unsigned int>	pool;
 
@@ -42,7 +42,7 @@ Enchanter	*NpcPacificFactory::create_enchanter_advanced(const std::string& name,
 
 // Merchant --
 
-Merchant	*NpcPacificFactory::create_merchant_basic(const std::string& name, const std::string& description) noexcept
+Merchant	*NpcPacificFactory::create_merchant_basic(const std::string& name, const std::string& description)
 {
 	std::map<Item*, unsigned int>	pool;
 
@@ -52,7 +52,7 @@ Merchant	*NpcPacificFactory::create_merchant_basic(const std::string& name, cons
 	return (new Merchant(name, description, pool));
 }
 
-Merchant	*NpcPacificFactory::create_merchant_advanced(const std::string& name, const std::string& description) noexcept
+Merchant	*NpcPacificFactory::create_merchant_advanced(const std::string& name, const std::string& description)
 {
 	std::map<Item*, unsigned int>	pool;
 
@@ -64,14 +64,14 @@ Merchant	*NpcPacificFactory::create_merchant_advanced(const std::string& name, c
 
 // Narrator --
 
-Narrator	*NpcPacificFactory::create_narrator(const std::string& name, const std::string& description, const std::string& sentence) noexcept
+Narrator	*NpcPacificFactory::create_narrator(const std::string& name, const std::string& description, const std::string& sentence)
 {
 	return (new Narrator(name, description, sentence));
 }
 
 // Quest giver --
 
-QuestGiver	*NpcPacificFactory::create_quest_giver(const std::string& name, const std::string& description, Quest& quest, t_quest_dialogues dialogues) noexcept
+QuestGiver	*NpcPacificFactory::create_quest_giver(const std::string& name, const std::string& description, Quest& quest, t_quest_dialogues dialogues)
 {
 	return (new QuestGiver(name, description, quest, dialogues));
 }

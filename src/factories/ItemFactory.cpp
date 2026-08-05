@@ -26,7 +26,7 @@
 #include "items/weapons/SerratedSword.hpp"
 #include "items/weapons/SteelSword.hpp"
 
-std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void) noexcept
+std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void)
 {
 	std::map<Item*, unsigned int>	pool;
 
@@ -106,112 +106,112 @@ Item							*ItemFactory::create_from_name(const std::string& item_name)
 
 // Specific items -------------------------------------------------------------
 
-Apple			*ItemFactory::create_apple(void) noexcept
+Apple			*ItemFactory::create_apple(void)
 {
 	return (new Apple());
 }
 
-BronzeArmor		*ItemFactory::create_bronze_armor(void) noexcept
+BronzeArmor		*ItemFactory::create_bronze_armor(void)
 {
 	return (new BronzeArmor());
 }
 
-BronzeShield	*ItemFactory::create_bronze_shield(void) noexcept
+BronzeShield	*ItemFactory::create_bronze_shield(void)
 {
 	return (new BronzeShield());
 }
 
-BronzeSword		*ItemFactory::create_bronze_sword(void) noexcept
+BronzeSword		*ItemFactory::create_bronze_sword(void)
 {
 	return (new BronzeSword());
 }
 
-ChestKey		*ItemFactory::create_chest_key(void) noexcept
+ChestKey		*ItemFactory::create_chest_key(void)
 {
 	return (new ChestKey());
 }
 
-EmberArmor		*ItemFactory::create_ember_armor(void) noexcept
+EmberArmor		*ItemFactory::create_ember_armor(void)
 {
 	return (new EmberArmor());
 }
 
-FirePotion		*ItemFactory::create_fire_potion(void) noexcept
+FirePotion		*ItemFactory::create_fire_potion(void)
 {
 	return (new FirePotion());
 }
 
-FlameSword		*ItemFactory::create_flame_sword(void) noexcept
+FlameSword		*ItemFactory::create_flame_sword(void)
 {
 	return (new FlameSword());
 }
 
-FrostArmor		*ItemFactory::create_frost_armor(void) noexcept
+FrostArmor		*ItemFactory::create_frost_armor(void)
 {
 	return (new FrostArmor());
 }
 
-FrostSword		*ItemFactory::create_frost_sword(void) noexcept
+FrostSword		*ItemFactory::create_frost_sword(void)
 {
 	return (new FrostSword());
 }
 
-HastePotion		*ItemFactory::create_haste_potion(void) noexcept
+HastePotion		*ItemFactory::create_haste_potion(void)
 {
 	return (new HastePotion());
 }
 
-IcePotion		*ItemFactory::create_ice_potion(void) noexcept
+IcePotion		*ItemFactory::create_ice_potion(void)
 {
 	return (new IcePotion());
 }
 
-IronArmor		*ItemFactory::create_iron_armor(void) noexcept
+IronArmor		*ItemFactory::create_iron_armor(void)
 {
 	return (new IronArmor());
 }
 
-IronShield		*ItemFactory::create_iron_shield(void) noexcept
+IronShield		*ItemFactory::create_iron_shield(void)
 {
 	return (new IronShield());
 }
 
-IronSword		*ItemFactory::create_iron_sword(void) noexcept
+IronSword		*ItemFactory::create_iron_sword(void)
 {
 	return (new IronSword());
 }
 
-PoisonPotion	*ItemFactory::create_poison_potion(void) noexcept
+PoisonPotion	*ItemFactory::create_poison_potion(void)
 {
 	return (new PoisonPotion());
 }
 
-SerratedSword	*ItemFactory::create_serrated_sword(void) noexcept
+SerratedSword	*ItemFactory::create_serrated_sword(void)
 {
 	return (new SerratedSword());
 }
 
-SpikeArmor		*ItemFactory::create_spike_armor(void) noexcept
+SpikeArmor		*ItemFactory::create_spike_armor(void)
 {
 	return (new SpikeArmor());
 }
 
-SpikeShield		*ItemFactory::create_spike_shield(void) noexcept
+SpikeShield		*ItemFactory::create_spike_shield(void)
 {
 	return (new SpikeShield());
 }
 
-SteelArmor		*ItemFactory::create_steel_armor(void) noexcept
+SteelArmor		*ItemFactory::create_steel_armor(void)
 {
 	return (new SteelArmor());
 }
 
-SteelShield		*ItemFactory::create_steel_shield(void) noexcept
+SteelShield		*ItemFactory::create_steel_shield(void)
 {
 	return (new SteelShield());
 }
 
-SteelSword		*ItemFactory::create_steel_sword(void) noexcept
+SteelSword		*ItemFactory::create_steel_sword(void)
 {
 	return (new SteelSword());
 }

@@ -16,19 +16,19 @@ class NpcPacificFactory
 
 		// Enchanter --
 
-		static Enchanter	*create_enchanter_basic(const std::string& name, const std::string& description) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
-		static Enchanter	*create_enchanter_advanced(const std::string& name, const std::string& description) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Enchanter	*create_enchanter_basic(const std::string& name, const std::string& description) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Enchanter	*create_enchanter_advanced(const std::string& name, const std::string& description) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 
 		// Merchant --
 
-		static Merchant		*create_merchant_basic(const std::string& name, const std::string& description) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
-		static Merchant		*create_merchant_advanced(const std::string& name, const std::string& description) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Merchant		*create_merchant_basic(const std::string& name, const std::string& description) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Merchant		*create_merchant_advanced(const std::string& name, const std::string& description) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 
 		// Narrator --
 
-		static Narrator		*create_narrator(const std::string& name, const std::string& description, const std::string& sentence) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static Narrator		*create_narrator(const std::string& name, const std::string& description, const std::string& sentence) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 
 		// Quest giver --
 
-		static QuestGiver	*create_quest_giver(const std::string& name, const std::string& description, Quest& quest, t_quest_dialogues dialogues) noexcept TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static QuestGiver	*create_quest_giver(const std::string& name, const std::string& description, Quest& quest, t_quest_dialogues dialogues) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 };
