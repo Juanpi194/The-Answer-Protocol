@@ -3,6 +3,9 @@
 #include <stdexcept>
 
 #include "utils/utils.hpp"
+// MODIFIED: necesarios para la orquestación real de World(name, json_path)
+#include "parser/jsonconfig.hpp"
+#include "parser/roomparser.hpp"
 #include "characters/enemies/Goblin.hpp"
 
 /**
@@ -81,19 +84,40 @@ World::World(const std::string& name, const std::string& json_path):
 {
 	if (!validate_name(name) || !validate_json(json_path))
 		throw std::invalid_argument("World validation failed.");
-	// TODO: Create world with json config
 
-	// ! FIXME: Remove this temporal room when the parse is done.
-	std::list<Item*>	item_list;
-	NPC					*goblin = new Goblin();
-	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", goblin, false, item_list);
-	rooms.push_back(temp_spawn_room);
-	spawn_room = temp_spawn_room;
+	// MODIFIED: orquestación real -- antes esto era una sala placeholder
+	// hardcodeada, sin pasar por el JSON en absoluto.
+	//
+	// NOTA IMPORTANTE: RoomParser, tal y como está ahora mismo, solo lee
+	// id/name/description/exits y, opcionalmente, un único "enemy" por
+	// sala (vía EnemyFactory) -- no coloca items ni NPCs genéricos
+	// (merchants, quest_givers...) en las salas todavía, aunque el JSON
+	// tenga una sección "items" (JsonConfig la exige presente, pero de
+	// momento no se usa para nada). Cuando esa parte esté lista, aquí es
+	// donde habría que enganchar ItemParser/NPCParser.
+	JsonConfig	config;
+	nlohmann::json	data = config.load_json(json_path);
+
+	RoomParser	room_parser;
+	std::list<Room*> parsed_rooms = room_parser.parse(data["rooms"]);
+
+	for (Room *room: parsed_rooms)
+		rooms.push_back(room);
+
+	const std::string spawn_id = data["world"]["spawn"];
+	for (Room *room: rooms)
+	{
+		if (room->get_id() == spawn_id)
+		{
+			spawn_room = room;
+			break;
+		}
+	}
 
 	if (rooms.size() < 1)
 		throw std::runtime_error("World does not have any room.");
 	if (!spawn_room)
-		throw std::runtime_error("World MUST have a spawn room.");
+		throw std::runtime_error("World MUST have a spawn room (check 'world.spawn' matches a room id).");
 }
 
 World::~World(void)
