@@ -3,5 +3,5 @@
 #ifdef DEBUG_BUILD
 	LogLevel	current_level = DEBUG;
 #else
-	LogLevel	current_level = WARNING;
+	LogLevel	current_level = INFO;
 #endif
