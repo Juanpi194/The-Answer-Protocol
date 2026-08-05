@@ -17,7 +17,9 @@ Ogre::Ogre(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
-	// TODO: Maybe add a default armor and weapon?
+	set_armor(ItemFactory::create_bronze_armor());
+	set_shield(ItemFactory::create_bronze_shield());
+	set_weapon(ItemFactory::create_bronze_sword());
 }
 
 Ogre::Ogre(const Ogre& ogre):

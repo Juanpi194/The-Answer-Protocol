@@ -24,10 +24,6 @@ class Ogre final: public Enemy
 
 		Ogre&	operator=(const Ogre& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the ogre and their getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		FightChoice	choose_action(void) const noexcept override;

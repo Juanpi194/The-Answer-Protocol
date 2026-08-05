@@ -24,10 +24,6 @@ class Shadow final: public Enemy
 
 		Shadow&	operator=(const Shadow& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the shadow and their getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		FightChoice	choose_action(void) const noexcept override;

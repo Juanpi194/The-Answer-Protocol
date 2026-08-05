@@ -24,10 +24,6 @@ class Dragon final: public Enemy
 
 		Dragon&	operator=(const Dragon& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the dragon and their getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		FightChoice	choose_action(void) const noexcept override;
