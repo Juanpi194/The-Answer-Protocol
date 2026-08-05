@@ -1,5 +1,8 @@
 #include "characters/enemies/Goblin.hpp"
 
+#include "factories/ItemFactory.hpp"
+#include "items/weapons/SteelSword.hpp"
+
 unsigned int		Goblin::available_id = 0;
 const std::string	Goblin::PREFIX = "goblin.";
 const std::string	Goblin::NAME = "Goblin";
@@ -12,7 +15,7 @@ Goblin::Goblin(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
-	// TODO: Maybe add a default armor and weapon?
+	set_weapon(ItemFactory::create_steel_sword());
 }
 
 Goblin::Goblin(const Goblin& goblin):
@@ -30,9 +33,10 @@ Goblin	*Goblin::clone(void) const noexcept
 
 FightChoice	Goblin::choose_action(void) const noexcept
 {
-	// TODO: Logic...
+	int	roll;
 
-	// Dumb example
-	FightChoice	choice = {FightAction::ATTACK};
-	return (choice);
+	roll = rand() % 3;
+	if (roll == 0)
+		return (FightChoice{FightAction::DEFEND});
+	return (FightChoice{FightAction::ATTACK});
 }

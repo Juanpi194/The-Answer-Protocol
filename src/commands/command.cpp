@@ -34,6 +34,8 @@ std::string	command_type_to_string(CommandType type)
 			return ("OPEN");
 		case CommandType::BUY:
 			return ("BUY");
+		case CommandType::EQUIP:
+			return ("EQUIP");
 		case CommandType::ENCHANT:
 			return ("ENCHANT");
 		case CommandType::ATTACK:
