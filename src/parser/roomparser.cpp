@@ -1,4 +1,5 @@
 #include "parser/roomparser.hpp"
+#include <stdexcept>
 #include <unordered_map>
 #include "characters/Enemy.hpp"
 #include "factories/EnemyFactory.hpp"
@@ -42,11 +43,35 @@ static Room *create_room(const nlohmann::json& room_json)
 	return (new Room(id, name, description, enemy, false, items));
 }
 
+static Room *build_room(const nlohmann::json& room_json)
+{
+	const std::string id = room_json.value("id", "unknown");
+
+	try
+	{
+		return (create_room(room_json));
+	}
+	catch (const std::exception& e)
+	{
+		log(
+			"Could not create room '"
+			+ id + "': "
+			+ e.what(),
+			LogLevel::WARNING);
+	}
+	return (nullptr);
+}
+
 static void connect_exits(const nlohmann::json& room_json,
 						  RoomMap& all_rooms)
 {
 	const std::string id = room_json["id"];
-	Room *current_room = all_rooms[id];
+	RoomMap::const_iterator room_it = all_rooms.find(id);
+
+	if (room_it == all_rooms.end())
+		return;
+
+	Room *current_room = room_it->second;
 
 	for (nlohmann::json::const_iterator it = room_json["exits"].begin();
 			it != room_json["exits"].end(); ++it)
@@ -87,7 +112,10 @@ std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json)
 	{
 		const nlohmann::json& room_json = *it;
 
-		Room *room = create_room(room_json);
+		Room *room = build_room(room_json);
+
+		if (room == nullptr)
+			continue;
 
 		rooms.push_back(room);
 		all_rooms[room_json["id"]] = room;
