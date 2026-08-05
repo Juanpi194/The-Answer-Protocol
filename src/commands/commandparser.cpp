@@ -222,6 +222,9 @@ Command	CommandParser::parse(const std::string& line)
 	if (keyword == "BUY")
 		return (parse_text_argument(CommandType::BUY, rest));
 
+	if (keyword == "EQUIP")
+		return (parse_text_argument(CommandType::EQUIP, rest));
+
 	if (keyword == "ENCHANT")
 		return (parse_enchant(rest));
 
