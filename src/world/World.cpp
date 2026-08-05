@@ -4,6 +4,9 @@
 
 #include "utils/utils.hpp"
 #include "characters/enemies/Goblin.hpp"
+#include "libs/json.hpp"
+#include "parser/jsonconfig.hpp"
+#include "parser/roomparser.hpp"
 
 /**
  * @brief	Obtains the opposite direction of the specified direction.
@@ -61,14 +64,8 @@ World::World(const std::string& name):
 {
 	if (!validate_name(name))
 		throw std::invalid_argument("World name validation failed.");
-	// TODO: Create default world
 
-	// ! FIXME: Remove this temporal room when the parse is done.
-	std::list<Item*>	item_list;
-	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", nullptr, false, item_list);
-	rooms.push_back(temp_spawn_room);
-	spawn_room = temp_spawn_room;
-
+	throw std::runtime_error("Feature not available yet");
 	if (rooms.size() < 1)
 		throw std::runtime_error("World does not have any room.");
 	if (!spawn_room)
@@ -81,16 +78,19 @@ World::World(const std::string& name, const std::string& json_path):
 {
 	if (!validate_name(name) || !validate_json(json_path))
 		throw std::invalid_argument("World validation failed.");
-	// TODO: Create world with json config
 
-	// ! FIXME: Remove this temporal room when the parse is done.
-	std::list<Item*>	item_list;
-	NPC					*goblin = new Goblin();
-	Room				*temp_spawn_room = new Room("room.holaaa", "Hola", "Pues no tengo ni idea tio", goblin, false, item_list);
-	rooms.push_back(temp_spawn_room);
-	spawn_room = temp_spawn_room;
+	nlohmann::json config = JsonConfig::load_json(json_path);
 
-	if (rooms.size() < 1)
+	rooms = RoomParser::parse(
+		config["rooms"],
+		config.value("npcs", nlohmann::json::object()));
+
+	if (rooms.empty())
+		spawn_room = nullptr;
+	else
+		spawn_room = rooms.front();
+
+	if (rooms.empty())
 		throw std::runtime_error("World does not have any room.");
 	if (!spawn_room)
 		throw std::runtime_error("World MUST have a spawn room.");

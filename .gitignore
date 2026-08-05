@@ -1,5 +1,4 @@
 obj
 *.out
 tap
-*.json
 *.txt

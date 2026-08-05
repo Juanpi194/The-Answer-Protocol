@@ -203,7 +203,7 @@ static NPC *build_quest_giver(const nlohmann::json& npc_json)
 }
 
 
-static NPC *build_npc(
+NPC *NPCParser::build_npc(
 	const std::string& id,
 	const nlohmann::json& npc_json)
 {
@@ -238,7 +238,7 @@ static void add_npc(
 {
 	try
 	{
-		NPC *npc = build_npc(id, npc_json);
+		NPC *npc = NPCParser::build_npc(id, npc_json);
 
 		if (npc != nullptr)
 			npcs.push_back(npc);

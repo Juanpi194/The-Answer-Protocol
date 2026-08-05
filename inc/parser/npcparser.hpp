@@ -9,7 +9,8 @@ class NPC;
 class NPCParser
 {
 	public:
-		std::list<NPC*>	parse(const nlohmann::json& npcs_json);
+		static std::list<NPC*>	parse(const nlohmann::json& npcs_json);
+		static NPC				*build_npc(const std::string& id, const nlohmann::json& npc_json);
 };
 
 #endif

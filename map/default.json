@@ -1,0 +1,61 @@
+{
+    "world": {
+        "name": "The Answer Protocol",
+        "spawn": "room.square"
+    },
+    "rooms": [
+        {
+            "id": "room.square",
+            "name": "Village Square",
+            "description": "A bustling square with cobblestone paths.",
+            "exits": { "north": "room.tavern", "east": "room.shop", "south": "room.gate" }
+        },
+        {
+            "id": "room.tavern",
+            "name": "The Prancing Pony",
+            "description": "A cozy tavern filled with warmth and laughter.",
+            "exits": { "south": "room.square", "east": "room.forge" }
+        },
+        {
+            "id": "room.forge",
+            "name": "Old Forge",
+            "description": "The heat from the furnace is almost unbearable.",
+            "exits": { "west": "room.tavern", "south": "room.shop" }
+        },
+        {
+            "id": "room.shop",
+            "name": "General Store",
+            "description": "Shelves lined with various goods and supplies.",
+            "exits": { "west": "room.square", "north": "room.forge" }
+        },
+        {
+            "id": "room.gate",
+            "name": "City Gate",
+            "description": "A tall stone gate marks the edge of the village.",
+            "exits": { "north": "room.square", "east": "room.road" },
+            "enemy": "Goblin"
+        },
+        {
+            "id": "room.road",
+            "name": "Forest Road",
+            "description": "A quiet dirt road winding into the trees.",
+            "exits": { "west": "room.gate", "north": "room.camp" },
+            "enemy": "Shade"
+        },
+        {
+            "id": "room.camp",
+            "name": "Abandoned Camp",
+            "description": "Ashes of an old campfire, long since gone cold.",
+            "exits": { "south": "room.road", "north": "room.cave" },
+            "enemy": "Ogre"
+        },
+        {
+            "id": "room.cave",
+            "name": "Dark Cave",
+            "description": "A cold draft flows from somewhere deep inside.",
+            "exits": { "south": "room.camp" },
+            "enemy": "Dragon"
+        }
+    ],
+    "items": {}
+}

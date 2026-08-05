@@ -9,7 +9,7 @@ class Room;
 class RoomParser
 {
 	public:
-		std::list<Room*>	parse(const nlohmann::json& rooms_json);
+		static std::list<Room*>	parse(const nlohmann::json& rooms_json, const nlohmann::json& npcs_json);
 };
 
 #endif
