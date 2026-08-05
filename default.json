@@ -1,0 +1,118 @@
+{
+  "world": {
+    "name": "The Answer Protocol",
+    "spawn": "room.entrance"
+  },
+  "rooms": [
+    {
+      "id": "room.entrance",
+      "name": "Shelter Entrance",
+      "description": "A quiet hall where the adventure begins.",
+      "exits": {
+        "north": "room.forest"
+      }
+    },
+    {
+      "id": "room.forest",
+      "name": "Whispering Woods",
+      "description": "Dense trees hide movement among the shadows.",
+      "enemy": "Goblin",
+      "exits": {
+        "south": "room.entrance",
+        "east": "room.mountain"
+      }
+    },
+    {
+      "id": "room.mountain",
+      "name": "Mountain Pass",
+      "description": "A rocky trail battered by the freezing wind.",
+      "npc": "narrator",
+      "exits": {
+        "west": "room.forest",
+        "north": "room.tower"
+      }
+    },
+    {
+      "id": "room.tower",
+      "name": "Sorcerer's Tower",
+      "description": "Arcane runes glow across the stone walls.",
+      "enemy": "Wizard",
+      "exits": {
+        "south": "room.mountain",
+        "east": "room.lair"
+      }
+    },
+    {
+      "id": "room.lair",
+      "name": "Dragon's Lair",
+      "description": "The air burns and the floor is covered in ash.",
+      "enemy": "Dragon",
+      "exits": {
+        "west": "room.tower"
+      }
+    }
+  ],
+  "items": {
+    "apple": {
+      "name": "Apple",
+      "description": "An apple that restores a little health."
+    },
+    "iron_sword": {
+      "name": "Iron Sword",
+      "description": "A reliable iron sword."
+    },
+    "bronze_shield": {
+      "name": "Bronze Shield",
+      "description": "A basic bronze shield."
+    },
+    "fire_potion": {
+      "name": "Fire Potion",
+      "description": "A potion that burns in your hands."
+    },
+    "chest_key": {
+      "name": "Chest Key",
+      "description": "Opens locked chests."
+    }
+  },
+  "npcs": {
+    "narrator": {
+      "name": "Narrator",
+      "description": "Guides adventurers through the world.",
+      "role": "narrator",
+      "sentence": "Welcome, traveler. Your story begins here."
+    },
+    "enchanter": {
+      "name": "Enchanter",
+      "description": "Imbues magical power into your items.",
+      "role": "enchanter",
+      "type": "basic"
+    },
+    "merchant": {
+      "name": "Merchant",
+      "description": "Trades in all kinds of goods.",
+      "role": "merchant",
+      "type": "advanced"
+    },
+    "forest_ranger": {
+      "name": "Forest Ranger",
+      "description": "Watches over the entrance to the forest.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "Clearing the Woods",
+        "description": "Defeat the goblin lurking in the forest.",
+        "gold_reward": 100,
+        "item_reward": "Iron Sword",
+        "objective": {
+          "type": "DEFEAT_ENEMY",
+          "target": "Goblin",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "The woods are no longer safe. I need your help.",
+        "already_given": "The goblin is still out there, hurry.",
+        "finished": "You did it. Take your reward, hero."
+      }
+    }
+  }
+}

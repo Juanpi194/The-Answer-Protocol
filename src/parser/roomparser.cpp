@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "characters/Enemy.hpp"
 #include "factories/EnemyFactory.hpp"
+#include "parser/npcparser.hpp"
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
 #include "world/Room.hpp"
@@ -32,24 +33,71 @@ static NPC *create_enemy(const nlohmann::json& room_json)
 	return (nullptr);
 }
 
-static Room *create_room(const nlohmann::json& room_json)
+static NPC *create_room_npc(const std::string& id,
+                            const nlohmann::json& room_json,
+                            const nlohmann::json& npcs_json)
+{
+	const std::string key = room_json["npc"];
+
+	if (!npcs_json.contains(key))
+	{
+		log("Room '" + id + "' references unknown npc '" + key + "'.",
+			LogLevel::WARNING);
+		return (nullptr);
+	}
+
+	try
+	{
+		return (NPCParser::build_npc("npc." + key, npcs_json[key]));
+	}
+	catch (const std::exception& e)
+	{
+		log("Room '" + id + "' has an invalid npc '" + key + "': "
+			+ e.what(), LogLevel::WARNING);
+		return (nullptr);
+	}
+}
+
+// Devuelve el NPC que ocupa la sala: enemigo, npc pacifico o nullptr.
+// Como Room tiene un unico slot, si vienen los dos campos, uno gana.
+static NPC *create_occupant(const nlohmann::json& room_json,
+                            const nlohmann::json& npcs_json)
+{
+	const std::string id = room_json["id"];
+	const bool has_enemy = room_json.contains("enemy");
+	const bool has_npc   = room_json.contains("npc");
+
+	if (has_enemy && has_npc)
+		log("Room '" + id + "' has both 'enemy' and 'npc'; using 'enemy'.",
+			LogLevel::WARNING);
+
+	if (has_enemy)
+		return (create_enemy(room_json));
+
+	if (has_npc)
+		return (create_room_npc(id, room_json, npcs_json));
+
+	return (nullptr);
+}
+
+static Room *create_room(const nlohmann::json& room_json, const nlohmann::json& npcs_json)
 {
 	const std::string id = room_json["id"];
 	const std::string name = room_json["name"];
 	const std::string description = room_json["description"];
 	std::list<Item*> items;
-	NPC *enemy = create_enemy(room_json);
 
-	return (new Room(id, name, description, enemy, false, items));
+	NPC	*npc = create_occupant(room_json, npcs_json);
+	return (new Room(id, name, description, npc, false, items));
 }
 
-static Room *build_room(const nlohmann::json& room_json)
+static Room *build_room(const nlohmann::json& room_json, const nlohmann::json& npcs_json)
 {
 	const std::string id = room_json.value("id", "unknown");
 
 	try
 	{
-		return (create_room(room_json));
+		return (create_room(room_json, npcs_json));
 	}
 	catch (const std::exception& e)
 	{
@@ -98,7 +146,7 @@ static void connect_exits(const nlohmann::json& room_json,
 	}
 }
 
-std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json)
+std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json, const nlohmann::json& npcs_json)
 {
 	std::list<Room*> rooms;
 	RoomMap all_rooms;
@@ -112,7 +160,7 @@ std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json)
 	{
 		const nlohmann::json& room_json = *it;
 
-		Room *room = build_room(room_json);
+		Room *room = build_room(room_json, npcs_json);
 
 		if (room == nullptr)
 			continue;

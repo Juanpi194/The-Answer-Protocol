@@ -7,9 +7,9 @@
 class JsonConfig
 {
 	public:
-		std::string read_file(const std::string& path);
-		nlohmann::json load_json(const std::string& path);
-		void validate(const nlohmann::json& json_data);
+		static std::string		read_file(const std::string& path);
+		static nlohmann::json	load_json(const std::string& path);
+		static void				validate(const nlohmann::json& json_data);
 };
 
 #endif
