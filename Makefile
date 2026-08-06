@@ -169,6 +169,26 @@ $(OBJ_FOLDER)/$(IMGUI_DIR)/%.o: $(IMGUI_DIR)/%.cpp | install
 
 all: server gui tui
 
+# MODIFIED: new target with sanitize to check thread problems.
+
+SANITIZE_OBJ_FOLDER = obj_sanitize
+SANITIZE_FLAGS = $(VERSION_FLAG) -g -fsanitize=thread -I $(INC_FOLDER) -pthread
+SANITIZE_OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(SANITIZE_OBJ_FOLDER)/%.o)
+PROGRAM_NAME_SANITIZE = tap_sanitize
+TUI_PROGRAM_NAME_SANITIZE = tap_tui_client_sanitize
+
+$(SANITIZE_OBJ_FOLDER)/%.o: $(SRC_FOLDER)/%.cpp | install
+	mkdir -p $(dir $@)
+	$(CC) $(SANITIZE_FLAGS) $(DEBUG_FLAG) -c $< -o $@
+
+all-sanitize: $(PROGRAM_NAME_SANITIZE) $(TUI_PROGRAM_NAME_SANITIZE)
+
+$(PROGRAM_NAME_SANITIZE): $(SANITIZE_OBJS)
+	$(CC) $(SANITIZE_FLAGS) $(ENTRY) $(SANITIZE_OBJS) -o $(PROGRAM_NAME_SANITIZE)
+
+$(TUI_PROGRAM_NAME_SANITIZE): $(SANITIZE_OBJS)
+	$(CC) $(SANITIZE_FLAGS) $(TUI_ENTRY) $(SANITIZE_OBJS) -o $(TUI_PROGRAM_NAME_SANITIZE)
+
 compile-debug: $(OBJS)
 	$(CC) $(FLAGS) $(ENTRY) $(OBJS) $(DEBUG_FLAG) -o $(PROGRAM_NAME)
 
@@ -207,8 +227,12 @@ fclean: clean
 	rm -rf $(IMGUI_DIR)
 	rm -f inc/libs/json.hpp
 
-re: fclean install all
+# MODIFIED: independent calls to fix a gui install problem
+re:
+	$(MAKE) fclean
+	$(MAKE) install
+	$(MAKE) all
 
-.PHONY: help install run-server run-gui run-tui valgrind-run debug-mode clean fclean re gui all compile-debug tui server
+.PHONY: help install run-server run-gui run-tui valgrind-run debug-mode clean fclean re gui all all-sanitize compile-debug tui server
 
 .DEFAULT_GOAL= all

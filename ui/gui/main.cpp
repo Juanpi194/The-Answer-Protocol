@@ -517,7 +517,7 @@ static void drawRoomWindow(CLI& client, WorldCache& world, std::vector<std::stri
         }
     }
 
-    // MODIFIED: NPC name cant be reconstructed from his ID, so the call needs to be
+    // MODIFIED: NPC name can't be reconstructed from his ID, so the call needs to be
     // by writing his name
     ImGui::Separator();
     ImGui::Text("NPC in this room:");

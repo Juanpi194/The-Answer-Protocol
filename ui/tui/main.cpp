@@ -7,11 +7,8 @@
 
 #include "ui/CLI.hpp"
 
-// ---------------------------------------------------------------------------
-// TUI (Terminal User Interface): el cliente CLI que pide el subject aparte
-// del server y de la GUI. Comparte CLI al 100% con ui/gui/main.cpp -- la
-// única diferencia es cómo se muestra lo que llega (aquí, texto plano).
-// ---------------------------------------------------------------------------
+
+// TUI (Terminal User Interface): 
 
 static void printMessages(CLI& client)
 {
@@ -60,17 +57,12 @@ int main(void)
         }
     });
 
-    // MODIFIED: Ctrl+D (EOF) y escribir "QUIT" ahora se comportan igual --
-    // el servidor manda "OK, bye" y CIERRA la conexión por su lado (ver
-    // cmd_quit en CommandHandler.cpp), así que en los dos casos avisamos
-    // al servidor primero, damos un pequeño margen para que llegue la
-    // despedida, y volvemos el control a la terminal sin más.
+    // MODIFIED: Ctrl+D (EOF) and "QUIT" same functionality
     while (client.isConnected())
     {
         if (!std::getline(std::cin, line))
         {
-            // Ctrl+D: el usuario no escribió QUIT, pero el efecto debe ser
-            // el mismo -- se lo decimos nosotros por él.
+            // Ctrl+D
             client.sendCommand("QUIT");
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
             break;
