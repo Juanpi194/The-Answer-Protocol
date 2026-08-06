@@ -1,6 +1,6 @@
 PROGRAM_NAME = tap
 
-ENTRY = tap.cpp
+ENTRY = main.cpp
 
 SRC_FOLDER = src
 INC_FOLDER = inc

@@ -1,4 +1,3 @@
-// TODO: Change this file's name to main.cpp, and make a main.hpp with all .h needed.
 #include <string>
 #include <sys/socket.h>
 #include <sys/time.h>

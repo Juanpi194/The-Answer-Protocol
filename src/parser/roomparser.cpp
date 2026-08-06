@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include "characters/Enemy.hpp"
 #include "factories/EnemyFactory.hpp"
+#include "factories/ItemFactory.hpp"
+#include "items/Item.hpp"
 #include "parser/npcparser.hpp"
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
@@ -80,24 +82,91 @@ static NPC *create_occupant(const nlohmann::json& room_json,
 	return (nullptr);
 }
 
-static Room *create_room(const nlohmann::json& room_json, const nlohmann::json& npcs_json)
+// Builds a single item from the room's item id, looking up its display
+// name in the global items dictionary and handing it to the ItemFactory.
+static Item *create_room_item(const std::string& room_id,
+                              const std::string& item_id,
+                              const nlohmann::json& items_json)
+{
+	if (!items_json.contains(item_id))
+	{
+		log("Room '" + room_id + "' references unknown item '" + item_id + "'.",
+			LogLevel::WARNING);
+		return (nullptr);
+	}
+
+	const std::string item_name = items_json[item_id].value("name", "");
+
+	try
+	{
+		return (ItemFactory::create_from_name(item_name));
+	}
+	catch (const std::exception& e)
+	{
+		log("Room '" + room_id + "' has an invalid item '" + item_id + "': "
+			+ e.what(), LogLevel::WARNING);
+	}
+	return (nullptr);
+}
+
+// Reads the room's optional "items" array (a list of item ids) and
+// resolves each one against the global items dictionary.
+static std::list<Item*> create_room_items(const nlohmann::json& room_json,
+                                          const nlohmann::json& items_json)
+{
+	std::list<Item*> items;
+	const std::string id = room_json["id"];
+
+	if (!room_json.contains("items"))
+		return (items);
+
+	if (!room_json["items"].is_array())
+	{
+		log("Room '" + id + "' has an 'items' field that is not an array; ignoring.",
+			LogLevel::WARNING);
+		return (items);
+	}
+
+	for (const nlohmann::json& item_entry : room_json["items"])
+	{
+		if (!item_entry.is_string())
+		{
+			log("Room '" + id + "' has a non-string entry in 'items'; ignoring.",
+				LogLevel::WARNING);
+			continue;
+		}
+
+		Item *item = create_room_item(id, item_entry.get<std::string>(), items_json);
+
+		if (item != nullptr)
+			items.push_back(item);
+	}
+
+	return (items);
+}
+
+static Room *create_room(const nlohmann::json& room_json,
+                         const nlohmann::json& npcs_json,
+                         const nlohmann::json& items_json)
 {
 	const std::string id = room_json["id"];
 	const std::string name = room_json["name"];
 	const std::string description = room_json["description"];
-	std::list<Item*> items;
+	std::list<Item*> items = create_room_items(room_json, items_json);
 
 	NPC	*npc = create_occupant(room_json, npcs_json);
 	return (new Room(id, name, description, npc, false, items));
 }
 
-static Room *build_room(const nlohmann::json& room_json, const nlohmann::json& npcs_json)
+static Room *build_room(const nlohmann::json& room_json,
+                        const nlohmann::json& npcs_json,
+                        const nlohmann::json& items_json)
 {
 	const std::string id = room_json.value("id", "unknown");
 
 	try
 	{
-		return (create_room(room_json, npcs_json));
+		return (create_room(room_json, npcs_json, items_json));
 	}
 	catch (const std::exception& e)
 	{
@@ -146,7 +215,7 @@ static void connect_exits(const nlohmann::json& room_json,
 	}
 }
 
-std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json, const nlohmann::json& npcs_json)
+std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json, const nlohmann::json& npcs_json, const nlohmann::json& items_json)
 {
 	std::list<Room*> rooms;
 	RoomMap all_rooms;
@@ -160,7 +229,7 @@ std::list<Room*> RoomParser::parse(const nlohmann::json& rooms_json, const nlohm
 	{
 		const nlohmann::json& room_json = *it;
 
-		Room *room = build_room(room_json, npcs_json);
+		Room *room = build_room(room_json, npcs_json, items_json);
 
 		if (room == nullptr)
 			continue;

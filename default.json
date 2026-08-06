@@ -1,55 +1,533 @@
 {
   "world": {
     "name": "The Answer Protocol",
-    "spawn": "room.entrance"
+    "spawn": "room.lobby"
   },
   "rooms": [
     {
-      "id": "room.entrance",
-      "name": "Shelter Entrance",
-      "description": "A quiet hall where the adventure begins.",
+      "id": "room.lobby",
+      "name": "Lobby",
+      "description": "A quiet hall where your journey begins.",
+      "exits": {
+        "north": "room.tutorial"
+      }
+    },
+    {
+      "id": "room.tutorial",
+      "name": "Tutorial",
+      "description": "Signs on the wall explain the basic controls.",
+      "exits": {
+        "south": "room.lobby",
+        "north": "room.narrator-room"
+      }
+    },
+    {
+      "id": "room.narrator-room",
+      "name": "Narrator's Room",
+      "description": "The Narrator greets you and hands you starter gear.",
+      "npc": "narrator",
+      "items": [
+        "apple",
+        "iron_sword",
+        "bronze_shield"
+      ],
+      "exits": {
+        "south": "room.tutorial",
+        "north": "room.first-path"
+      }
+    },
+    {
+      "id": "room.first-path",
+      "name": "First Path",
+      "description": "A stone corridor slopes down into the shelter.",
+      "exits": {
+        "south": "room.narrator-room",
+        "north": "room.plaza"
+      }
+    },
+    {
+      "id": "room.plaza",
+      "name": "Central Plaza",
+      "description": "The heart of the shelter. Shops lie west, the exit north.",
+      "exits": {
+        "south": "room.first-path",
+        "west": "room.crossroads",
+        "north": "room.path-guide"
+      }
+    },
+    {
+      "id": "room.crossroads",
+      "name": "Crossroads",
+      "description": "A mossy junction. Shops murmur nearby, the woods call west.",
+      "exits": {
+        "east": "room.plaza",
+        "north": "room.enchanter",
+        "south": "room.merchant",
+        "west": "room.woods-gate"
+      }
+    },
+    {
+      "id": "room.enchanter",
+      "name": "Enchanter",
+      "description": "A smoky workshop where gear can be imbued with power.",
+      "npc": "enchanter",
+      "exits": {
+        "south": "room.crossroads"
+      }
+    },
+    {
+      "id": "room.merchant",
+      "name": "Merchant",
+      "description": "A stall packed with wares, watched by a sharp-eyed trader.",
       "npc": "merchant",
       "exits": {
-        "north": "room.forest"
+        "north": "room.crossroads"
       }
     },
     {
-      "id": "room.forest",
-      "name": "Whispering Woods",
-      "description": "Dense trees hide movement among the shadows.",
+      "id": "room.woods-gate",
+      "name": "Woods Gate",
+      "description": "The path splits between the Forest and the Mountain.",
+      "exits": {
+        "east": "room.crossroads",
+        "west": "room.forest-entrance",
+        "south": "room.mountain-entry"
+      }
+    },
+    {
+      "id": "room.forest-entrance",
+      "name": "Forest Entrance",
+      "description": "Twisted trees block most of the light. Something stirs.",
+      "exits": {
+        "east": "room.woods-gate",
+        "north": "room.forest-scout"
+      }
+    },
+    {
+      "id": "room.forest-scout",
+      "name": "Forest Scout",
+      "description": "A nervous scout watches over the edge of the forest.",
+      "npc": "forest_scout",
+      "exits": {
+        "south": "room.forest-entrance",
+        "north": "room.forest-goblin"
+      }
+    },
+    {
+      "id": "room.forest-goblin",
+      "name": "Goblin Clearing",
+      "description": "A goblin leaps from the brush, ready to defend its turf.",
       "enemy": "Goblin",
       "exits": {
-        "south": "room.entrance",
-        "east": "room.mountain"
+        "south": "room.forest-scout",
+        "west": "room.forest-goblin-2",
+        "north": "room.forest-vault"
       }
     },
     {
-      "id": "room.mountain",
-      "name": "Mountain Pass",
-      "description": "A rocky trail battered by the freezing wind.",
-      "npc": "narrator",
+      "id": "room.forest-goblin-2",
+      "name": "Hidden Trail",
+      "description": "A second, craftier goblin guards a barely visible shortcut.",
+      "enemy": "Goblin",
       "exits": {
-        "west": "room.forest",
-        "north": "room.tower"
+        "east": "room.forest-goblin",
+        "north": "room.forest-reward"
       }
     },
     {
-      "id": "room.tower",
-      "name": "Sorcerer's Tower",
-      "description": "Arcane runes glow across the stone walls.",
+      "id": "room.forest-reward",
+      "name": "Forest Camp",
+      "description": "An abandoned camp full of loose coins and supplies.",
+      "npc": "forest_wanderer",
+      "items": [
+        "apple"
+      ],
+      "exits": {
+        "south": "room.forest-goblin-2"
+      }
+    },
+    {
+      "id": "room.forest-vault",
+      "name": "Forest Vault",
+      "description": "A reinforced wooden chest rests among tangled roots.",
+      "items": [
+        "chest_key",
+        "apple"
+      ],
+      "exits": {
+        "south": "room.forest-goblin",
+        "north": "room.forest-goblin-3"
+      }
+    },
+    {
+      "id": "room.forest-goblin-3",
+      "name": "Goblin Chief",
+      "description": "The strongest goblin around blocks your way, sneering.",
+      "enemy": "Goblin",
+      "exits": {
+        "south": "room.forest-vault",
+        "north": "room.forest-shrine"
+      }
+    },
+    {
+      "id": "room.forest-shrine",
+      "name": "Forest Shrine",
+      "description": "The Forest Elder waits by a final chest to honor your feat.",
+      "npc": "forest_elder",
+      "items": [
+        "iron_sword"
+      ],
+      "exits": {
+        "south": "room.forest-goblin-3"
+      }
+    },
+    {
+      "id": "room.mountain-entry",
+      "name": "Mountain Pass",
+      "description": "A windswept, rocky slope. Huge footprints mark the trail.",
+      "exits": {
+        "north": "room.woods-gate",
+        "south": "room.mountain-scout"
+      }
+    },
+    {
+      "id": "room.mountain-scout",
+      "name": "Mountain Scout",
+      "description": "A scout points nervously toward the ogres above.",
+      "npc": "mountain_scout",
+      "exits": {
+        "north": "room.mountain-entry",
+        "south": "room.mountain-ogre"
+      }
+    },
+    {
+      "id": "room.mountain-ogre",
+      "name": "Ogre Crossing",
+      "description": "A hulking ogre blocks the path, growling among the rocks.",
+      "enemy": "Ogre",
+      "exits": {
+        "north": "room.mountain-scout",
+        "west": "room.mountain-ogre-2",
+        "south": "room.mountain-vault"
+      }
+    },
+    {
+      "id": "room.mountain-ogre-2",
+      "name": "Hidden Crevice",
+      "description": "A smaller but fierce ogre guards a crack in the rock.",
+      "enemy": "Ogre",
+      "exits": {
+        "east": "room.mountain-ogre",
+        "south": "room.mountain-reward"
+      }
+    },
+    {
+      "id": "room.mountain-reward",
+      "name": "Mountain Camp",
+      "description": "A grateful traveler shares loot for clearing the crevice.",
+      "npc": "mountain_wanderer",
+      "items": [
+        "ice_potion"
+      ],
+      "exits": {
+        "north": "room.mountain-ogre-2"
+      }
+    },
+    {
+      "id": "room.mountain-vault",
+      "name": "Frozen Vault",
+      "description": "A metal chest gleams under the frost of a small cave.",
+      "items": [
+        "chest_key",
+        "ice_potion"
+      ],
+      "exits": {
+        "north": "room.mountain-ogre",
+        "south": "room.mountain-ogre-3"
+      }
+    },
+    {
+      "id": "room.mountain-ogre-3",
+      "name": "Ogre Chief",
+      "description": "The ogre chieftain awaits at the summit, guarding it.",
+      "enemy": "Ogre",
+      "exits": {
+        "north": "room.mountain-vault",
+        "south": "room.mountain-shrine"
+      }
+    },
+    {
+      "id": "room.mountain-shrine",
+      "name": "Mountain Shrine",
+      "description": "The Mountain Elder waits beside the region's final chest.",
+      "npc": "mountain_elder",
+      "items": [
+        "steel_shield"
+      ],
+      "exits": {
+        "north": "room.mountain-ogre-3"
+      }
+    },
+    {
+      "id": "room.path-guide",
+      "name": "Path Guide",
+      "description": "A wandering narrator comments on the roads ahead.",
+      "npc": "path_guide",
+      "exits": {
+        "south": "room.plaza",
+        "north": "room.kingdom-gate"
+      }
+    },
+    {
+      "id": "room.kingdom-gate",
+      "name": "Kingdom Gate",
+      "description": "Here the road forks toward the Frost and Fire Kingdoms.",
+      "exits": {
+        "south": "room.path-guide",
+        "west": "room.frost-entrance",
+        "east": "room.fire-entrance",
+        "north": "room.boss-gate"
+      }
+    },
+    {
+      "id": "room.frost-entrance",
+      "name": "Frost Kingdom",
+      "description": "A freezing wind sweeps through carved halls of ice.",
+      "exits": {
+        "east": "room.kingdom-gate",
+        "north": "room.frost-scout"
+      }
+    },
+    {
+      "id": "room.frost-scout",
+      "name": "Frost Sentinel",
+      "description": "A sentinel warns you about the wizard ruling these halls.",
+      "npc": "frost_scout",
+      "exits": {
+        "south": "room.frost-entrance",
+        "north": "room.frost-wizard"
+      }
+    },
+    {
+      "id": "room.frost-wizard",
+      "name": "Frost Wizard",
+      "description": "A frost-wrapped wizard hurls icy sparks around you.",
       "enemy": "Wizard",
       "exits": {
-        "south": "room.mountain",
-        "east": "room.lair"
+        "south": "room.frost-scout",
+        "west": "room.frost-shadow",
+        "north": "room.frost-vault"
       }
     },
     {
-      "id": "room.lair",
+      "id": "room.frost-shadow",
+      "name": "Icy Shadow",
+      "description": "A frozen shadow glides silently between the ice columns.",
+      "enemy": "Shadow",
+      "exits": {
+        "east": "room.frost-wizard",
+        "north": "room.frost-reward"
+      }
+    },
+    {
+      "id": "room.frost-reward",
+      "name": "Frozen Nook",
+      "description": "A small nook holds coins left by earlier adventurers.",
+      "npc": "frost_wanderer",
+      "items": [
+        "ice_potion"
+      ],
+      "exits": {
+        "south": "room.frost-shadow"
+      }
+    },
+    {
+      "id": "room.frost-vault",
+      "name": "Frost Vault",
+      "description": "An ice-coated chest glimmers under a faint blue light.",
+      "items": [
+        "chest_key",
+        "ice_potion"
+      ],
+      "exits": {
+        "south": "room.frost-wizard",
+        "north": "room.frost-wizard-2"
+      }
+    },
+    {
+      "id": "room.frost-wizard-2",
+      "name": "Ice Throne",
+      "description": "The Frost Archmage awaits atop a throne of solid ice.",
+      "enemy": "Wizard",
+      "exits": {
+        "south": "room.frost-vault",
+        "north": "room.frost-shrine"
+      }
+    },
+    {
+      "id": "room.frost-shrine",
+      "name": "Frost Shrine",
+      "description": "The Frost Elder waits by the kingdom's final chest for you.",
+      "npc": "frost_elder",
+      "items": [
+        "frost_sword"
+      ],
+      "exits": {
+        "south": "room.frost-wizard-2"
+      }
+    },
+    {
+      "id": "room.fire-entrance",
+      "name": "Fire Kingdom",
+      "description": "The heat is stifling. Lava cracks light blackened halls.",
+      "exits": {
+        "west": "room.kingdom-gate",
+        "north": "room.fire-scout"
+      }
+    },
+    {
+      "id": "room.fire-scout",
+      "name": "Fire Sentinel",
+      "description": "An ash-covered sentinel warns of the wizard who rules here.",
+      "npc": "fire_scout",
+      "exits": {
+        "south": "room.fire-entrance",
+        "north": "room.fire-wizard"
+      }
+    },
+    {
+      "id": "room.fire-wizard",
+      "name": "Fire Wizard",
+      "description": "A flame-wrapped wizard hurls burning sparks around you.",
+      "enemy": "Wizard",
+      "exits": {
+        "south": "room.fire-scout",
+        "east": "room.fire-shadow",
+        "north": "room.fire-vault"
+      }
+    },
+    {
+      "id": "room.fire-shadow",
+      "name": "Ember Shadow",
+      "description": "A burning shadow glides silently between charred pillars.",
+      "enemy": "Shadow",
+      "exits": {
+        "west": "room.fire-wizard",
+        "north": "room.fire-reward"
+      }
+    },
+    {
+      "id": "room.fire-reward",
+      "name": "Ashen Nook",
+      "description": "A small nook holds coins left by earlier adventurers.",
+      "npc": "fire_wanderer",
+      "items": [
+        "fire_potion"
+      ],
+      "exits": {
+        "south": "room.fire-shadow"
+      }
+    },
+    {
+      "id": "room.fire-vault",
+      "name": "Fire Vault",
+      "description": "A metal chest glows red-hot under an orange light.",
+      "items": [
+        "chest_key",
+        "fire_potion"
+      ],
+      "exits": {
+        "south": "room.fire-wizard",
+        "north": "room.fire-wizard-2"
+      }
+    },
+    {
+      "id": "room.fire-wizard-2",
+      "name": "Fire Throne",
+      "description": "The Fire Archmage awaits atop a throne wreathed in flame.",
+      "enemy": "Wizard",
+      "exits": {
+        "south": "room.fire-vault",
+        "north": "room.fire-shrine"
+      }
+    },
+    {
+      "id": "room.fire-shrine",
+      "name": "Fire Shrine",
+      "description": "The Fire Elder waits by the kingdom's final chest for you.",
+      "npc": "fire_elder",
+      "items": [
+        "flame_sword"
+      ],
+      "exits": {
+        "south": "room.fire-wizard-2"
+      }
+    },
+    {
+      "id": "room.boss-gate",
+      "name": "Sealed Gate",
+      "description": "A huge sealed door with four locks, one per honor earned.",
+      "exits": {
+        "south": "room.kingdom-gate",
+        "north": "room.dragon-fortress"
+      }
+    },
+    {
+      "id": "room.dragon-fortress",
+      "name": "Dragon Fortress",
+      "description": "Glowing runes line the walls of a fortress radiating heat.",
+      "exits": {
+        "south": "room.boss-gate",
+        "north": "room.council-room"
+      }
+    },
+    {
+      "id": "room.council-room",
+      "name": "Council Room",
+      "description": "The Narrator appears once more to advise you before the end.",
+      "npc": "council_narrator",
+      "exits": {
+        "south": "room.dragon-fortress",
+        "north": "room.shade-guard"
+      }
+    },
+    {
+      "id": "room.shade-guard",
+      "name": "Shade Sentinel",
+      "description": "A silent shade rises as the last guardian before the hall.",
+      "enemy": "Shade",
+      "exits": {
+        "south": "room.council-room",
+        "north": "room.goblin-guard"
+      }
+    },
+    {
+      "id": "room.goblin-guard",
+      "name": "Goblin Sentinel",
+      "description": "A battle-worn goblin veteran guards the final corridor.",
+      "enemy": "Goblin",
+      "exits": {
+        "south": "room.shade-guard",
+        "north": "room.final-gate"
+      }
+    },
+    {
+      "id": "room.final-gate",
+      "name": "Final Gate",
+      "description": "A silent guardian checks your honors before you pass.",
+      "npc": "gatekeeper",
+      "exits": {
+        "south": "room.goblin-guard",
+        "north": "room.dragon-lair"
+      }
+    },
+    {
+      "id": "room.dragon-lair",
       "name": "Dragon's Lair",
-      "description": "The air burns and the floor is covered in ash.",
+      "description": "The air burns and the floor is covered in ash and gold.",
       "enemy": "Dragon",
       "exits": {
-        "west": "room.tower"
+        "south": "room.final-gate"
       }
     }
   ],
@@ -66,13 +544,29 @@
       "name": "Bronze Shield",
       "description": "A basic bronze shield."
     },
+    "chest_key": {
+      "name": "Chest Key",
+      "description": "Opens locked chests."
+    },
+    "ice_potion": {
+      "name": "Ice Potion",
+      "description": "A brew that chills whoever drinks it."
+    },
     "fire_potion": {
       "name": "Fire Potion",
       "description": "A potion that burns in your hands."
     },
-    "chest_key": {
-      "name": "Chest Key",
-      "description": "Opens locked chests."
+    "frost_sword": {
+      "name": "Frost Sword",
+      "description": "A sword forged in eternal ice."
+    },
+    "flame_sword": {
+      "name": "Flame Sword",
+      "description": "A sword wreathed in living flame."
+    },
+    "steel_shield": {
+      "name": "Steel Shield",
+      "description": "A sturdy shield of steel."
     }
   },
   "npcs": {
@@ -80,7 +574,7 @@
       "name": "Narrator",
       "description": "Guides adventurers through the world.",
       "role": "narrator",
-      "sentence": "Welcome, traveler. Your story begins here."
+      "sentence": "Welcome, traveler. Here is what you need to begin."
     },
     "enchanter": {
       "name": "Enchanter",
@@ -94,9 +588,27 @@
       "role": "merchant",
       "type": "advanced"
     },
-    "forest_ranger": {
-      "name": "Forest Ranger",
-      "description": "Watches over the entrance to the forest.",
+    "path_guide": {
+      "name": "Path Guide",
+      "description": "Comments on the routes ahead. Optional to talk to.",
+      "role": "narrator",
+      "sentence": "West lies ice. East lies fire. Beyond, the dragon waits."
+    },
+    "council_narrator": {
+      "name": "Elder Narrator",
+      "description": "Advises the hero just before the final battle.",
+      "role": "narrator",
+      "sentence": "You have come far. May your honors open the last door."
+    },
+    "gatekeeper": {
+      "name": "Gatekeeper",
+      "description": "Checks the hero's honors before granting passage.",
+      "role": "narrator",
+      "sentence": "Your deeds precede you. You may enter the dragon's lair."
+    },
+    "forest_scout": {
+      "name": "Forest Scout",
+      "description": "Watches over the edge of the forest.",
       "role": "quest_giver",
       "quest": {
         "name": "Clearing the Woods",
@@ -114,6 +626,177 @@
         "already_given": "The goblin is still out there, hurry.",
         "finished": "You did it. Take your reward, hero."
       }
+    },
+    "forest_wanderer": {
+      "name": "Forest Wanderer",
+      "description": "A survivor who lost his gear in the forest.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "Lost in the Woods",
+        "description": "Find a chest key lost in the undergrowth.",
+        "gold_reward": 50,
+        "item_reward": "Apple",
+        "objective": {
+          "type": "COLLECT_ITEM",
+          "target": "Chest Key",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "I lost my supplies in the forest. Find that key for me.",
+        "already_given": "Still waiting on that key...",
+        "finished": "Thank you, traveler. Take this as thanks."
+      }
+    },
+    "forest_elder": {
+      "name": "Forest Elder",
+      "description": "Watches over the forest's final shrine.",
+      "role": "narrator",
+      "sentence": "You proved yourself against the goblins. Well done."
+    },
+    "mountain_scout": {
+      "name": "Mountain Scout",
+      "description": "Watches the slopes where ogres roam.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "Clearing the Peak",
+        "description": "Defeat the ogre blocking the mountain pass.",
+        "gold_reward": 120,
+        "item_reward": "Steel Shield",
+        "objective": {
+          "type": "DEFEAT_ENEMY",
+          "target": "Ogre",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "Ogres block the pass. I need someone to face them.",
+        "already_given": "The ogre is still out there, be careful.",
+        "finished": "Impressive. The mountain owes you one."
+      }
+    },
+    "mountain_wanderer": {
+      "name": "Mountain Wanderer",
+      "description": "A trader who lost cargo in a crevice.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "Lost Cargo",
+        "description": "Find a chest key lost among the rocks.",
+        "gold_reward": 50,
+        "item_reward": "Ice Potion",
+        "objective": {
+          "type": "COLLECT_ITEM",
+          "target": "Chest Key",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "My cargo fell into a crevice. A key should still be there.",
+        "already_given": "Still waiting on news of that key.",
+        "finished": "At last. Take this as a reward."
+      }
+    },
+    "mountain_elder": {
+      "name": "Mountain Elder",
+      "description": "Watches over the mountain's final shrine.",
+      "role": "narrator",
+      "sentence": "You tamed the ogres. The mountain welcomes you."
+    },
+    "frost_scout": {
+      "name": "Frost Sentinel",
+      "description": "Watches the frozen halls of the Frost Kingdom.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "The Frost Wizard",
+        "description": "Defeat the wizard ruling the Frost Kingdom.",
+        "gold_reward": 150,
+        "item_reward": "Frost Sword",
+        "objective": {
+          "type": "DEFEAT_ENEMY",
+          "target": "Wizard",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "A frost wizard rules these halls. No one has stopped him.",
+        "already_given": "The frost wizard still sits on his throne.",
+        "finished": "You defeated the wizard. The kingdom breathes again."
+      }
+    },
+    "frost_wanderer": {
+      "name": "Frost Wanderer",
+      "description": "An explorer who lost gear in the ice.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "Frozen Relic",
+        "description": "Find a chest key trapped in the ice.",
+        "gold_reward": 60,
+        "item_reward": "Ice Potion",
+        "objective": {
+          "type": "COLLECT_ITEM",
+          "target": "Chest Key",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "My key is trapped in the ice. Help me recover it.",
+        "already_given": "The ice still holds that key.",
+        "finished": "Thanks, this will help you on your journey."
+      }
+    },
+    "frost_elder": {
+      "name": "Frost Elder",
+      "description": "Watches over the Frost Kingdom's final shrine.",
+      "role": "narrator",
+      "sentence": "You braved the cold and its guardians. Well earned."
+    },
+    "fire_scout": {
+      "name": "Fire Sentinel",
+      "description": "Watches the burning halls of the Fire Kingdom.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "The Fire Wizard",
+        "description": "Defeat the wizard ruling the Fire Kingdom.",
+        "gold_reward": 150,
+        "item_reward": "Flame Sword",
+        "objective": {
+          "type": "DEFEAT_ENEMY",
+          "target": "Wizard",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "A fire wizard rules these halls. No one has stopped him.",
+        "already_given": "The fire wizard still sits on his throne.",
+        "finished": "You defeated the wizard. The kingdom breathes again."
+      }
+    },
+    "fire_wanderer": {
+      "name": "Fire Wanderer",
+      "description": "An explorer who lost gear in the embers.",
+      "role": "quest_giver",
+      "quest": {
+        "name": "Ashen Relic",
+        "description": "Find a chest key lost among the embers.",
+        "gold_reward": 60,
+        "item_reward": "Fire Potion",
+        "objective": {
+          "type": "COLLECT_ITEM",
+          "target": "Chest Key",
+          "amount": 1
+        }
+      },
+      "dialogues": {
+        "intro": "My key is lost in the embers. Help me recover it.",
+        "already_given": "The embers still hold that key.",
+        "finished": "Thanks, this will help you on your journey."
+      }
+    },
+    "fire_elder": {
+      "name": "Fire Elder",
+      "description": "Watches over the Fire Kingdom's final shrine.",
+      "role": "narrator",
+      "sentence": "You braved the flames and its guardians. Well earned."
     }
   }
 }
