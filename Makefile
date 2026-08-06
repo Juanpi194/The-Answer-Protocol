@@ -112,7 +112,7 @@ BOLD_OFF			:= \033[22m
 UNDERLINE			:= \033[4m
 UNDERLINE_OFF		:= \033[24m
 
-IMGUI_DIR = external/imgui
+IMGUI_DIR = inc/libs/imgui
 IMGUI_TAG = v1.90.9
 IMGUI_SRC = $(addprefix $(IMGUI_DIR)/, imgui.cpp imgui_draw.cpp imgui_tables.cpp imgui_widgets.cpp) \
 			$(addprefix $(IMGUI_DIR)/backends/, imgui_impl_sdl2.cpp imgui_impl_opengl3.cpp)
@@ -204,10 +204,10 @@ clean:
 
 fclean: clean
 	rm -f $(PROGRAM_NAME) $(TUI_PROGRAM_NAME) $(GUI_PROGRAM_NAME)
-	rm -rf external
+	rm -rf $(IMGUI_DIR)
 	rm -f inc/libs/json.hpp
 
-re: fclean all
+re: fclean install all
 
 .PHONY: help install run-server run-gui run-tui valgrind-run debug-mode clean fclean re gui all compile-debug tui server
 

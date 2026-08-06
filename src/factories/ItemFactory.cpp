@@ -25,6 +25,8 @@
 #include "items/weapons/IronSword.hpp"
 #include "items/weapons/SerratedSword.hpp"
 #include "items/weapons/SteelSword.hpp"
+// MODIFIED: HealingPotion.hpp was not called
+#include "items/consumables/HealingPotion.hpp"
 
 std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void)
 {
@@ -214,4 +216,10 @@ SteelShield		*ItemFactory::create_steel_shield(void)
 SteelSword		*ItemFactory::create_steel_sword(void)
 {
 	return (new SteelSword());
+}
+
+// MODIFIED: create_healing_potion() was not implemented
+HealingPotion *ItemFactory::create_healing_potion(void)
+{
+	return (new HealingPotion());
 }

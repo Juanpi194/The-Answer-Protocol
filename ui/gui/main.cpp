@@ -40,15 +40,7 @@ static std::string toUpperCopy(const std::string& text)
     return result;
 }
 
-// ---------------------------------------------------------------------------
-// WorldCache -- la copia local de "todo lo que el servidor nos ha contado
-// hasta ahora": la última sala vista (LOOK), las últimas stats (STATUS), el
-// último inventario (INVENTORY) y las últimas quests (QUESTS). No existe
-// ningún Player local (no hay modo Local) -- todo esto se reconstruye
-// interpretando el JSON de las respuestas reales del servidor. Vive solo
-// aquí (no en CLI, que sigue siendo puro transporte, ni se comparte con la
-// TUI) porque es una conveniencia de presentación exclusiva de la GUI.
-// ---------------------------------------------------------------------------
+// WorldCache: Copy in local of the information from world just to display in imgui
 struct RoomInfo
 {
     std::string                        id;
@@ -60,8 +52,7 @@ struct RoomInfo
     std::vector<std::string>           players;
 };
 
-// MODIFIED: stats reales, extraídas de la respuesta de STATUS
-// (Fighter::status_json en el servidor).
+// MODIFIED: status information in local.
 struct StatsInfo
 {
     bool         hasData = false;
@@ -76,8 +67,7 @@ struct StatsInfo
     std::string  status;
 };
 
-// MODIFIED: una misión, extraída de la respuesta de QUESTS/QUEST
-// (Quest::to_json_format en el servidor).
+// MODIFIED: quest recieved
 struct QuestInfo
 {
     std::string  quest_id;
@@ -87,14 +77,18 @@ struct QuestInfo
     std::string  status;
 };
 
+// MODIFIED: combat state
+struct CombatInfo
+{
+    bool      hasData = false;
+    StatsInfo blue; // tú
+    StatsInfo red;  // el enemigo
+};
+
 class WorldCache
 {
     public:
-        // MODIFIED: dispatcher único -- antes solo sabía interpretar
-        // respuestas de LOOK (buscaba "{" a pelo). Ahora también reconoce
-        // STATUS (objeto con "current_hp"), INVENTORY (array de strings) y
-        // QUESTS (array de objetos con "quest_id"), sin tocar CLI para
-        // nada -- todo el parseo sigue siendo cosa de la GUI.
+        // MODIFIED: Added receptions from server, as status, inventory, etc.
         void ingest(const std::string& line)
         {
             size_t jsonStart = line.find_first_of("{[");
@@ -108,11 +102,13 @@ class WorldCache
             }
             catch (const std::exception&)
             {
-                return; // no era JSON valido
+                return;
             }
 
             if (data.is_object() && data.contains("room"))
                 ingestRoom(data);
+            else if (data.is_object() && data.contains("blue") && data.contains("red"))
+                ingestCombat(data);
             else if (data.is_object() && data.contains("current_hp"))
                 ingestStats(data);
             else if (data.is_array())
@@ -128,6 +124,7 @@ class WorldCache
         const RoomInfo* getCurrentRoom() const { return getRoom(currentRoomId_); }
         const std::map<std::string, RoomInfo>& getRooms() const { return rooms_; }
         const StatsInfo& getStats() const { return stats_; }
+        const CombatInfo& getCombat() const { return combat_; }
         const std::vector<std::string>& getInventory() const { return inventory_; }
         const std::vector<QuestInfo>& getQuests() const { return quests_; }
 
@@ -135,6 +132,7 @@ class WorldCache
         std::map<std::string, RoomInfo> rooms_;
         std::string                     currentRoomId_;
         StatsInfo                       stats_;
+        CombatInfo                      combat_;
         std::vector<std::string>        inventory_;
         std::vector<QuestInfo>          quests_;
 
@@ -154,9 +152,7 @@ class WorldCache
                     if (it.value().is_string())
                         info.exits[it.key()] = it.value().get<std::string>();
 
-            // El servidor manda "items"/"npc" como el string "None" cuando
-            // estan vacios, y como array/string de verdad si no -- hay que
-            // comprobar el tipo antes de leer.
+            // Server can send a None call to this. Needs to check the type before use
             if (data.contains("items") && data["items"].is_array())
                 for (const auto& item : data["items"])
                     if (item.is_string())
@@ -181,7 +177,8 @@ class WorldCache
             currentRoomId_ = info.id;
         }
 
-        void ingestStats(const nlohmann::json& data)
+        // MODIFIED: Stats parser for display
+        static StatsInfo parseStatsObject(const nlohmann::json& data)
         {
             StatsInfo s;
             s.hasData = true;
@@ -194,15 +191,33 @@ class WorldCache
             s.current_speed = data.value("current_speed", 0u);
             s.speed = data.value("speed", 0u);
             s.status = data.value("status", "");
-            stats_ = s;
+            return s;
+        }
+
+        void ingestStats(const nlohmann::json& data)
+        {
+            stats_ = parseStatsObject(data);
+        }
+
+        // MODIFIED: Combat state
+        void ingestCombat(const nlohmann::json& data)
+        {
+            if (!data["blue"].is_object() || !data["red"].is_object())
+                return;
+
+            CombatInfo c;
+            c.hasData = true;
+            c.blue = parseStatsObject(data["blue"]);
+            c.red = parseStatsObject(data["red"]);
+            combat_ = c;
         }
 
         void ingestArray(const nlohmann::json& data)
         {
             if (data.empty())
-                return; // array vacio -- no hay forma de saber cual era, se deja el estado anterior
+                return;
 
-            // INVENTORY: array de strings (ids de item).
+            // INVENTORY
             if (data[0].is_string())
             {
                 std::vector<std::string> items;
@@ -213,7 +228,7 @@ class WorldCache
                 return;
             }
 
-            // QUESTS: array de objetos con "quest_id".
+            // QUESTS
             if (data[0].is_object() && data[0].contains("quest_id"))
             {
                 std::vector<QuestInfo> quests;
@@ -233,12 +248,7 @@ class WorldCache
         }
 };
 
-// ---------------------------------------------------------------------------
-// MODIFIED: paleta de color de ImGui -- un único slider (tono, 0..1) que
-// recalcula los colores de acento (botones, cabeceras, pestañas, sliders)
-// mediante HSV, sobre la base del tema oscuro. No es una lista de temas
-// fijos: mover el slider cambia el color en tiempo real.
-// ---------------------------------------------------------------------------
+// MODIFIED: imgui colors
 static void applyThemeHue(float hue)
 {
     ImGui::StyleColorsDark();
@@ -272,11 +282,6 @@ static void applyThemeHue(float hue)
     style.Colors[ImGuiCol_ResizeGripActive]  = active;
 }
 
-// ---------------------------------------------------------------------------
-// Pantalla de conexión: "nc host puerto", en un hilo aparte para no
-// bloquear el render mientras dura el connect() (ver historial: connect()
-// llamado directo desde el hilo principal congelaba toda la ventana).
-// ---------------------------------------------------------------------------
 static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMsg)
 {
     static char              inputBuf[128] = "";
@@ -351,9 +356,6 @@ static void drawConnectScreen(CLI& client, AppState& state, std::string& errorMs
     ImGui::End();
 }
 
-// ---------------------------------------------------------------------------
-// Mapa y sala actual -- igual que antes, sin cambios de fondo.
-// ---------------------------------------------------------------------------
 static ImVec2 directionOffset(const std::string& dir)
 {
     if (dir == "NORTH") return ImVec2(0, -1);
@@ -363,12 +365,7 @@ static ImVec2 directionOffset(const std::string& dir)
     return ImVec2(0, 0);
 }
 
-// MODIFIED: posición/tamaño ahora se calculan como fracción del tamaño real
-// de la ventana (io.DisplaySize) en cada frame, con ImGuiCond_Always --
-// antes eran coordenadas en píxeles fijas (pensadas para 1200x700), que no
-// se adaptaban si la ventana era más pequeña/grande o si el usuario la
-// redimensionaba (SDL_WINDOW_RESIZABLE está activo). Esto es lo que
-// causaba el problema de tamaños de ventana.
+// MODIFIED: Adaptative position and size of imgui windows
 static void drawMapWindow(const WorldCache& world, const ImVec2& pos, const ImVec2& size)
 {
     ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
@@ -434,7 +431,52 @@ static void drawMapWindow(const WorldCache& world, const ImVec2& pos, const ImVe
     ImGui::End();
 }
 
-static void drawRoomWindow(const WorldCache& world, const ImVec2& pos, const ImVec2& size)
+
+// MODIFIED: Recosntruct the real name of the item by his ID to use the buttons wothout
+// need of write the object name
+static std::string idToItemName(const std::string& itemId)
+{
+    std::string slug = itemId;
+
+    const std::string itemPrefix = "item.";
+    if (slug.rfind(itemPrefix, 0) == 0)
+        slug = slug.substr(itemPrefix.size());
+
+    size_t lastDot = slug.find_last_of('.');
+    if (lastDot != std::string::npos)
+    {
+        bool allDigits = true;
+        for (size_t i = lastDot + 1; i < slug.size(); ++i)
+            if (!std::isdigit(static_cast<unsigned char>(slug[i])))
+                allDigits = false;
+        if (allDigits)
+            slug = slug.substr(0, lastDot);
+    }
+
+    std::string name;
+    bool capitalizeNext = true;
+    for (char c : slug)
+    {
+        if (c == '_')
+        {
+            name += ' ';
+            capitalizeNext = true;
+        }
+        else if (capitalizeNext)
+        {
+            name += static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+            capitalizeNext = false;
+        }
+        else
+        {
+            name += c;
+        }
+    }
+    return name;
+}
+
+static void drawRoomWindow(CLI& client, WorldCache& world, std::vector<std::string>& log,
+                            const ImVec2& pos, const ImVec2& size)
 {
     ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
@@ -454,17 +496,70 @@ static void drawRoomWindow(const WorldCache& world, const ImVec2& pos, const ImV
     ImGui::Separator();
     ImGui::Text("Items in this room:");
     if (room->items.empty())
+    {
         ImGui::TextDisabled("(none)");
+    }
     else
-        for (const std::string& item : room->items)
-            ImGui::BulletText("%s", item.c_str());
+    {
+        for (const std::string& itemId : room->items)
+        {
+            std::string itemName = idToItemName(itemId);
+            ImGui::PushID(itemId.c_str());
+            ImGui::BulletText("%s", itemName.c_str());
+            ImGui::SameLine();
+            if (ImGui::SmallButton("Take"))
+            {
+                std::string cmd = "TAKE " + itemName;
+                client.sendCommand(cmd);
+                logMsg(log, "> " + cmd);
+            }
+            ImGui::PopID();
+        }
+    }
 
+    // MODIFIED: NPC name cant be reconstructed from his ID, so the call needs to be
+    // by writing his name
     ImGui::Separator();
     ImGui::Text("NPC in this room:");
     if (room->npc.empty())
+    {
         ImGui::TextDisabled("(none)");
+    }
     else
+    {
         ImGui::BulletText("%s", room->npc.c_str());
+
+        if (ImGui::SmallButton("Fight"))
+        {
+            client.sendCommand("FIGHT");
+            logMsg(log, "> FIGHT");
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Attack"))
+        {
+            client.sendCommand("ATTACK");
+            logMsg(log, "> ATTACK");
+        }
+
+        static char roomTalkBuf[128] = "";
+        ImGui::PushItemWidth(140);
+        ImGui::InputTextWithHint("##RoomTalkBuf", "NPC name", roomTalkBuf, IM_ARRAYSIZE(roomTalkBuf));
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Talk##Room") && roomTalkBuf[0] != '\0')
+        {
+            std::string cmd = std::string("TALK ") + roomTalkBuf;
+            client.sendCommand(cmd);
+            logMsg(log, "> " + cmd);
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Quest##Room") && roomTalkBuf[0] != '\0')
+        {
+            std::string cmd = std::string("QUEST ") + roomTalkBuf;
+            client.sendCommand(cmd);
+            logMsg(log, "> " + cmd);
+        }
+    }
 
     ImGui::Separator();
     ImGui::Text("Players here:");
@@ -477,23 +572,8 @@ static void drawRoomWindow(const WorldCache& world, const ImVec2& pos, const ImV
     ImGui::End();
 }
 
-// ---------------------------------------------------------------------------
-// Menú inferior: Actions / Inventory / Stats / Quests / Settings.
-//
-// MODIFIED: los botones de mover ya NO mandan un LOOK encadenado detrás --
-// eso lo probamos y rompía el comportamiento de los propios botones de
-// movimiento, así que se abandonó esa idea (queda tal cual estaba antes de
-// probarlo).
-//
-// MODIFIED: Talk/Take/Drop/Quest ahora son comandos reales mandados al
-// servidor (TALK <texto>, TAKE <texto>, DROP <texto>, QUEST <texto>), no la
-// lógica local antigua de un GameClient con objetos propios. Aviso
-// importante: el servidor espera el NOMBRE del NPC/item (p.ej. "Iron Sword"),
-// pero LOOK solo nos da su ID (p.ej. "item.iron_sword.0") -- por
-// eso son campos de texto libres en vez de botones automáticos por cada
-// item de la sala: no hay forma fiable de adivinar el nombre a partir del
-// ID con la información que manda el servidor ahora mismo.
-// ---------------------------------------------------------------------------
+
+// Main Menu: Actions / Inventory / Stats / Quests / Settings.
 static void drawMenuWindow(CLI& client, std::vector<std::string>& log, WorldCache& world,
                             const ImVec2& pos, const ImVec2& size, bool& quitRequested)
 {
@@ -588,8 +668,6 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log, WorldCach
             ImGui::EndTabItem();
         }
 
-        // MODIFIED: Inventory ahora muestra el inventario real (última
-        // respuesta de INVENTORY), no un placeholder.
         if (ImGui::BeginTabItem("Inventory"))
         {
             if (ImGui::Button("Refresh"))
@@ -633,8 +711,6 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log, WorldCach
             ImGui::EndTabItem();
         }
 
-        // MODIFIED: Stats ahora muestra las stats reales (última respuesta
-        // de STATUS), no un placeholder.
         if (ImGui::BeginTabItem("Stats"))
         {
             if (ImGui::Button("Refresh"))
@@ -664,8 +740,6 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log, WorldCach
             ImGui::EndTabItem();
         }
 
-        // MODIFIED: pestaña nueva -- misiones reales (última respuesta de
-        // QUESTS), con un campo para pedir una nueva misión a un NPC.
         if (ImGui::BeginTabItem("Quests"))
         {
             if (ImGui::Button("Refresh"))
@@ -710,8 +784,64 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log, WorldCach
             ImGui::EndTabItem();
         }
 
-        // MODIFIED: botón Exit (misma lógica que escribir QUIT en el chat)
-        // + slider de paleta de color.
+        // MODIFIED: combat window
+        if (ImGui::BeginTabItem("Combat"))
+        {
+            const CombatInfo& c = world.getCombat();
+            if (!c.hasData)
+            {
+                ImGui::TextDisabled("Not in a fight yet -- use \"Fight\"/\"Attack\" "
+                                     "next to an NPC in Current Room to start one.");
+            }
+            else
+            {
+                ImGui::Text("You:");
+                float yourFraction = c.blue.hp > 0 ? (float)c.blue.current_hp / (float)c.blue.hp : 0.0f;
+                std::string yourLabel = std::to_string(c.blue.current_hp) + " / " + std::to_string(c.blue.hp);
+                ImGui::ProgressBar(yourFraction, ImVec2(-1, 0), yourLabel.c_str());
+
+                ImGui::Spacing();
+                ImGui::Text("Enemy:");
+                float enemyFraction = c.red.hp > 0 ? (float)c.red.current_hp / (float)c.red.hp : 0.0f;
+                std::string enemyLabel = std::to_string(c.red.current_hp) + " / " + std::to_string(c.red.hp);
+                ImGui::ProgressBar(enemyFraction, ImVec2(-1, 0), enemyLabel.c_str());
+            }
+
+            ImGui::Separator();
+            if (ImGui::Button("Attack"))
+            {
+                client.sendCommand("ATTACK");
+                logMsg(log, "> ATTACK");
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Defend"))
+            {
+                client.sendCommand("DEFEND");
+                logMsg(log, "> DEFEND");
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Flee"))
+            {
+                client.sendCommand("FLEE");
+                logMsg(log, "> FLEE");
+            }
+
+            static char consumeBuf[128] = "";
+            ImGui::PushItemWidth(200);
+            ImGui::InputTextWithHint("##ConsumeBuf", "Item name", consumeBuf, IM_ARRAYSIZE(consumeBuf));
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+            if (ImGui::Button("Consume") && consumeBuf[0] != '\0')
+            {
+                std::string cmd = std::string("CONSUME ") + consumeBuf;
+                client.sendCommand(cmd);
+                logMsg(log, "> " + cmd);
+                consumeBuf[0] = '\0';
+            }
+
+            ImGui::EndTabItem();
+        }
+
         if (ImGui::BeginTabItem("Settings"))
         {
             ImGui::Text("Color theme:");
@@ -771,7 +901,7 @@ int main(int, char**)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    applyThemeHue(0.58f); // MODIFIED: tema inicial, mismo mecanismo que el slider de Settings
+    applyThemeHue(0.58f); // MODIFIED: main theme
     ImGui::GetIO().FontGlobalScale = 1.3f;
     ImGui::GetStyle().ScaleAllSizes(1.3f);
 
@@ -785,10 +915,7 @@ int main(int, char**)
     WorldCache                  world;
     bool                        running = true;
 
-    // MODIFIED: cerrar la ventana (con la X, o con el botón/comando QUIT)
-    // ahora sigue el mismo camino: avisar al servidor con QUIT y dar un
-    // margen de 300ms para que llegue "OK, bye" antes de cerrar de verdad,
-    // en vez de cortar la conexión en seco.
+    // MODIFIED: Close window now wait 300ms to the server to respond
     bool                                  quitRequested = false;
     std::chrono::steady_clock::time_point quitRequestedAt{};
 
@@ -842,7 +969,7 @@ int main(int, char**)
 
             bool wasQuitRequested = quitRequested;
             drawMapWindow(world, ImVec2(0, 0), ImVec2(leftW, topH));
-            drawRoomWindow(world, ImVec2(leftW, 0), ImVec2(rightW, topH));
+            drawRoomWindow(client, world, log, ImVec2(leftW, 0), ImVec2(rightW, topH));
             drawMenuWindow(client, log, world, ImVec2(0, topH), ImVec2(io.DisplaySize.x, menuH), quitRequested);
 
             if (quitRequested && !wasQuitRequested)
@@ -863,8 +990,7 @@ int main(int, char**)
         SDL_GL_SwapWindow(window);
     }
 
-    // MODIFIED: cierre explícito -- une el hilo de recepción de forma
-    // determinista antes de desmontar SDL/ImGui.
+    // MODIFIED: Explicit close
     client.disconnect();
 
     ImGui_ImplOpenGL3_Shutdown();
