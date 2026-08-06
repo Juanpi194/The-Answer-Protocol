@@ -60,7 +60,7 @@ std::string	err(ErrorCode err_code);
  * @param	err_code	The error code.
  * @returns	A string with the description of the error code.
  */
-std::string	get_err_description(ErrorCode err_code) TAP_ERROR("Unused in this project, but useful.");
+std::string	get_err_description(ErrorCode err_code);
 
 /**
  * @brief	Creates a string that starts with an 'ok' message,

@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by jvizcain, rohena, cdonaire.*
+*This project has been created as part of the 42 curriculum by jvizcain, roherna2, cdonaire.*
 
 # TAP — The Answer Protocol
 

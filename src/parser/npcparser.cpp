@@ -8,6 +8,7 @@
 #include "factories/NpcPacificFactory.hpp"
 #include "quests/Quest.hpp"
 #include "utils/utils.hpp"
+#include "items/Item.hpp"
 
 static ObjectiveType string_to_objective_type(const std::string& type)
 {
@@ -53,12 +54,20 @@ static t_quest_objective build_objective(
 static Quest build_quest(const nlohmann::json& quest_json)
 {
 	Item *item_reward = nullptr;
+	unsigned int	gold_reward = 0;
 
+	if (quest_json.contains("gold_reward")
+		&& !quest_json["gold_reward"].is_null())
+	{
+		gold_reward = quest_json["gold_reward"];
+		log(std::to_string(gold_reward));
+	}
 	if (quest_json.contains("item_reward")
 		&& !quest_json["item_reward"].is_null())
 	{
 		item_reward = ItemFactory::create_from_name(
 			quest_json["item_reward"]);
+		log(item_reward->get_name());
 	}
 
 	return (
@@ -209,16 +218,16 @@ NPC *NPCParser::build_npc(
 {
 	const std::string role = npc_json["role"];
 
-	if (role == "narrator")
+	if (role == "Narrator")
 		return (build_narrator(npc_json));
 
-	if (role == "enchanter")
+	if (role == "Enchanter")
 		return (build_enchanter(id, npc_json));
 
-	if (role == "merchant")
+	if (role == "Merchant")
 		return (build_merchant(id, npc_json));
 
-	if (role == "quest_giver")
+	if (role == "QuestGiver")
 		return (build_quest_giver(npc_json));
 
 	log(

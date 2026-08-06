@@ -59,7 +59,7 @@ class Battle
 	public:
 		// Constructors -------------------------------------------------------
 
-		Battle(Fighter& blue, Fighter& red) TAP_ERROR("Battle between players is not supported yet.");
+		Battle(Fighter& blue, Fighter& red);
 		Battle(Player& player, Enemy *enemy) TAP_NONNULL;
 		Battle(const Battle& battle) = delete;
 		~Battle(void);

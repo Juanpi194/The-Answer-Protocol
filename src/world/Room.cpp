@@ -164,8 +164,6 @@ void	Room::set_adjacent_room(Direction direction, Room *room)
 
 void				Room::add_item(Item *item)
 {
-	if (!item)
-		throw std::invalid_argument("Cannot add a nullptr to the item list.");
 	for (Item *item_in_list: items)
 		if (item_in_list == item)
 			throw std::invalid_argument("Cannot add the same item twice in the same room.");
@@ -174,8 +172,6 @@ void				Room::add_item(Item *item)
 
 void				Room::add_player(Player *player)
 {
-	if (!player)
-		throw std::invalid_argument("Cannot add a nullptr to the player list.");
 	for (Player *player_in_list: player_list)
 		if (player_in_list == player)
 			throw std::invalid_argument("Cannot add the same player twice in the same room.");
@@ -188,8 +184,6 @@ void				Room::remove_item(Item *item)
 	bool	found;
 
 	found = false;
-	if (!item)
-		throw std::invalid_argument("Cannot remove a nullptr from the item list.");
 	for (Item *item_in_list: items)
 		if (item_in_list == item)
 			found = true;
@@ -203,8 +197,6 @@ void				Room::remove_player(Player *player)
 	bool	found;
 
 	found = false;
-	if (!player)
-		throw std::invalid_argument("Cannot remove a nullptr from the player list.");
 	for (Player *player_in_list: player_list)
 		if (player_in_list == player)
 			found = true;

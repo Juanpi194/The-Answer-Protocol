@@ -171,7 +171,6 @@ Item				*Player::drop_item(const std::string& item_name) noexcept
 
 void		Player::add_enchantment(Enchantment *enchantment) noexcept
 {
-	assert(enchantment != nullptr && "Cannot add a nullptr to the enchantment list.");
 	enchantment_list.push_back(enchantment);
 	log("Player '" + get_name() + "' received the '" + enchantment->get_name() + "' enchantment.", LogLevel::DEBUG);
 }

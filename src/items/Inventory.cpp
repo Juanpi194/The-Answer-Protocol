@@ -24,13 +24,11 @@ const std::list<Item*>&	Inventory::get_items(void) const noexcept
 
 void	Inventory::add_item(Item *item) noexcept
 {
-	assert(item != nullptr && "Cannot add a nullptr to the item list.");
 	items.push_back(item);
 }
 
 void	Inventory::remove_item(Item *item) noexcept
 {
-	assert(item != nullptr && "Cannot remove a nullptr from the item list.");
 	items.remove(item);
 }
 

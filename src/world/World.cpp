@@ -129,8 +129,6 @@ Room					*World::get_spawn_room(void) const noexcept
 
 bool	World::add_room(Room *new_room, Room *connected_to, Direction direction)
 {
-	assert(new_room != nullptr && "New room must not be nullptr");
-	assert(connected_to != nullptr && "Connected room must not be nullptr");
 	if (rooms.size() >= MAX_ROOMS)
 		return (log("The world cannot add any more rooms (Limit reached).", LogLevel::WARNING), false);
 	if (new_room == connected_to)

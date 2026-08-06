@@ -28,7 +28,7 @@ class Room
 		static constexpr size_t		MIN_NAME_LENGTH = 3;
 		static constexpr size_t		MAX_NAME_LENGTH = 18;
 		static constexpr size_t		MIN_DESCRIPTION_LENGTH = 10;
-		static constexpr size_t		MAX_DESCRIPTION_LENGTH = 60;
+		static constexpr size_t		MAX_DESCRIPTION_LENGTH = 90;
 
 		/**
 		 * @brief	Checks that all arguments for the room initialization are valid.
