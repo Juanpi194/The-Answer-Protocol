@@ -1,7 +1,10 @@
 #include <iostream>
 #include <ctime>
+#include <mutex>
 
 #include "utils/utils.hpp"
+
+static std::mutex	log_mtx;
 
 static std::string	timestamp(void) noexcept
 {
@@ -15,6 +18,7 @@ static std::string	timestamp(void) noexcept
 
 void				log(const std::string& msg, LogLevel level) noexcept
 {
+	std::lock_guard<std::mutex>	lock(log_mtx);
 	const char	*labels[] = {"", "ERROR", "WARN", "INFO", "DEBUG"};
 	std::string	clean;
 

@@ -11,7 +11,8 @@ class Shadow final: public Enemy
 		static const std::string	NAME;	// Defined in Shadow.cpp
 		static const std::string	DESCRIPTION;	// Defined in Shadow.cpp
 		static const t_stats		DEFAULT_STATS;	// Defined in Shadow.cpp
-		static const unsigned int	DEFAULT_GOLD = 70;
+		static constexpr unsigned int	DEFAULT_GOLD = 70;
+		static constexpr unsigned int	CONSUME_CHANCE = 15;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,5 +27,5 @@ class Shadow final: public Enemy
 
 		// Utils --------------------------------------------------------------
 
-		FightChoice	choose_action(void) const noexcept override;
+		FightChoice	choose_action(void) noexcept override;
 };

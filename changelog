@@ -1,8 +1,9 @@
 TODO --------------
 Install dependencies (json.h, gui.h....)
-Input Framing (LOOK\nFIGHT) -> 2 commands in the same line (split by \n)
 Más información para los usuarios
 Password class for ServerOwner
+Put items in the rooms
+FLAGS
 
 QUESTIONS ---------
 
@@ -20,6 +21,7 @@ The main 4 different threads:
 - clients (one for each client, client_thread. Client routine)
 Battle logic
 Command parse
+Map generation
 
 CHANGES -----------
 NO COMPILATION FLAGS UNTIL END

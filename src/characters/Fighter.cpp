@@ -121,22 +121,16 @@ Inventory&			Fighter::get_inventory(void) noexcept
 
 void	Fighter::set_armor(Armor *armor) noexcept
 {
-	if (!armor)
-		log("Fighter '" + get_name() + "' received nullptr armor.", LogLevel::INFO);
 	this->armor = armor;
 }
 
 void	Fighter::set_shield(Shield *shield) noexcept
 {
-	if (!shield)
-		log("Fighter '" + get_name() + "' received nullptr shield.", LogLevel::INFO);
 	this->shield = shield;
 }
 
 void	Fighter::set_weapon(Weapon *weapon) noexcept
 {
-	if (!weapon)
-		log("Fighter '" + get_name() + "' received nullptr weapon.", LogLevel::INFO);
 	this->weapon = weapon;
 }
 
@@ -208,10 +202,10 @@ void			Fighter::attack(Fighter& target) noexcept
 	}
 
 	// Calculating damage
-	final_strength = (stats.current_strength / 2);
+	final_strength = (stats.current_strength);
 	if (weapon)
 	{
-		final_strength += weapon->get_extra_damage() / 3;
+		final_strength += weapon->get_extra_damage() / 2;
 		if (weapon->get_enchantment())
 			weapon->get_enchantment()->effect(*this, target);
 	}
@@ -331,7 +325,7 @@ void			Fighter::receive_damage(Fighter& attacker, unsigned int incoming_damage) 
 	special_armor = dynamic_cast<SpecialEffectGear*>(armor);
 	if (special_armor)
 		special_armor->special_effect(*this, attacker);
-	log("'" + attacker.get_name() + "' hit '" + get_name() + "' for " + std::to_string(incoming_damage) + " damage.", LogLevel::INFO);
+	log("'" + attacker.get_name() + "' hit '" + get_name() + "' for " + std::to_string(incoming_damage) + " damage.", LogLevel::DEBUG);
 }
 
 void			Fighter::lose_hp(unsigned int amount) noexcept
@@ -379,7 +373,9 @@ std::string		Fighter::status_json(void) const noexcept
 {
 	std::string	result;
 
-	result = "{";
+	result  = "{";
+	result += "\"level\": " + std::to_string(stats.level);
+	result += ", ";
 	result += "\"current_hp\": " + std::to_string(stats.current_hp);
 	result += ", ";
 	result += "\"hp\": " + std::to_string(stats.hp);

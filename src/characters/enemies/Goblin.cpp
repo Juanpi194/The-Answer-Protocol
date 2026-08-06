@@ -2,6 +2,7 @@
 
 #include "factories/ItemFactory.hpp"
 #include "items/weapons/SteelSword.hpp"
+#include "items/consumables/Apple.hpp"
 
 unsigned int		Goblin::available_id = 0;
 const std::string	Goblin::PREFIX = "goblin.";
@@ -16,6 +17,7 @@ Goblin::Goblin(void):
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
 	set_weapon(ItemFactory::create_steel_sword());
+	get_inventory().add_item(ItemFactory::create_apple());
 }
 
 Goblin::Goblin(const Goblin& goblin):
@@ -31,11 +33,15 @@ Goblin	*Goblin::clone(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-FightChoice	Goblin::choose_action(void) const noexcept
+FightChoice	Goblin::choose_action(void) noexcept
 {
-	int	roll;
+	int			roll;
+	Consumable	*consumable;
 
 	roll = rand() % 3;
+	consumable = roll_consumable(CONSUME_CHANCE);
+	if (consumable)
+		return (FightChoice{FightAction::CONSUME, consumable});
 	if (roll == 0)
 		return (FightChoice{FightAction::DEFEND});
 	return (FightChoice{FightAction::ATTACK});

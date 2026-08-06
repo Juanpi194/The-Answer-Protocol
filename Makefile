@@ -1,6 +1,6 @@
 PROGRAM_NAME = tap
 
-ENTRY = tap.cpp
+ENTRY = main.cpp
 
 SRC_FOLDER = src
 INC_FOLDER = inc
@@ -83,7 +83,7 @@ SRC = $(BATTLE_SRC) $(CHARACTERS_SRC) $(COMMANDS_SRC) $(ENCHANTMENTS_SRC) $(FACT
 
 OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 
-FLAGS = $(VERSION_FLAG) $(FSANITIZE) -I $(INC_FOLDER)
+FLAGS = $(VERSION_FLAG) $(FSANITIZE) $(COMPILATION_FLAGS) -I $(INC_FOLDER)
 FSANITIZE = -g -fsanitize=thread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter

@@ -61,6 +61,7 @@ class ItemFactory
 		static FrostArmor		*create_frost_armor(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static FrostSword		*create_frost_sword(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static HastePotion		*create_haste_potion(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
+		static HealingPotion	*create_healing_potion(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static IcePotion		*create_ice_potion(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static IronArmor		*create_iron_armor(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static IronShield		*create_iron_shield(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
@@ -72,5 +73,4 @@ class ItemFactory
 		static SteelArmor		*create_steel_armor(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static SteelShield		*create_steel_shield(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 		static SteelSword		*create_steel_sword(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
-		static HealingPotion	*create_healing_potion(void) TAP_RETURNS_NONNULL TAP_UNUSED_RESULT;
 };

@@ -172,6 +172,7 @@ std::string	Battle::to_json_format(void) const noexcept
 	result = "{";
 	result += "\"blue\": ";
 	result += blue.status_json();
+	result += ", ";
 	result += "\"red\": ";
 	result += red.status_json();
 	result += "}"; 

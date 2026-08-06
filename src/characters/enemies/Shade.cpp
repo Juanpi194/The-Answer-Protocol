@@ -2,6 +2,7 @@
 
 #include "factories/ItemFactory.hpp"
 #include "items/weapons/SerratedSword.hpp"
+#include "items/consumables/Apple.hpp"
 
 unsigned int		Shade::available_id = 0;
 const std::string	Shade::PREFIX = "shade.";
@@ -16,6 +17,9 @@ Shade::Shade(void):
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
 	set_weapon(ItemFactory::create_serrated_sword());
+	get_inventory().add_item(ItemFactory::create_apple());
+	get_inventory().add_item(ItemFactory::create_apple());
+	get_inventory().add_item(ItemFactory::create_apple());
 }
 
 Shade::Shade(const Shade& shade):
@@ -31,11 +35,15 @@ Shade	*Shade::clone(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-FightChoice	Shade::choose_action(void) const noexcept
+FightChoice	Shade::choose_action(void) noexcept
 {
-	int	roll;
+	int			roll;
+	Consumable	*consumable;
 
 	roll = rand() % 3;
+	consumable = roll_consumable(CONSUME_CHANCE);
+	if (consumable)
+		return (FightChoice{FightAction::CONSUME, consumable});
 	if (roll == 0)
 		return (FightChoice{FightAction::DEFEND});
 	return (FightChoice{FightAction::ATTACK});

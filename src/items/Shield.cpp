@@ -16,7 +16,7 @@ unsigned int		Shield::get_uses(void) const noexcept
 	return (uses);
 }
 
-const unsigned int	Shield::get_max_uses(void) const noexcept
+unsigned int		Shield::get_max_uses(void) const noexcept
 {
 	return (max_uses);
 }

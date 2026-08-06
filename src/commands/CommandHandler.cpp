@@ -410,7 +410,7 @@ static void		cmd_in_fight(const Command& cmd, Player& player, FightChoice choice
 
 static void		cmd_status(Player& player)
 {
-	player.send_to_outbox(ok(player.status_json()));
+	player.send_to_outbox(ok(player.full_status_json()));
 }
 
 static void		cmd_quest(const Command& cmd, Player& player)

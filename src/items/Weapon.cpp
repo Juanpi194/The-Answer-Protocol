@@ -11,7 +11,7 @@ Weapon::Weapon(const std::string& id, const std::string& name, const std::string
 
 // Getters and setters --------------------------------------------------------
 
-const unsigned int	Weapon::get_extra_damage(void) const noexcept
+unsigned int		Weapon::get_extra_damage(void) const noexcept
 {
 	return (extra_damage);
 }
@@ -20,5 +20,3 @@ unsigned int		Weapon::get_total_extra_damage(void) const noexcept
 {
 	return (total_extra_damage);
 }
-
-// Utils ----------------------------------------------------------------------

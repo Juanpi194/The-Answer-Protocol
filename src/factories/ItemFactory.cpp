@@ -13,6 +13,7 @@
 #include "items/consumables/Apple.hpp"
 #include "items/consumables/FirePotion.hpp"
 #include "items/consumables/HastePotion.hpp"
+#include "items/consumables/HealingPotion.hpp"
 #include "items/consumables/IcePotion.hpp"
 #include "items/consumables/PoisonPotion.hpp"
 #include "items/shields/BronzeShield.hpp"
@@ -81,6 +82,8 @@ Item							*ItemFactory::create_from_name(const std::string& item_name)
 		return (create_frost_sword());
 	if (temp == HastePotion::NAME)
 		return (create_haste_potion());
+	if (temp == HealingPotion::NAME)
+		return (create_healing_potion());
 	if (temp == IcePotion::NAME)
 		return (create_ice_potion());
 	if (temp == IronArmor::NAME)
@@ -159,6 +162,11 @@ FrostSword		*ItemFactory::create_frost_sword(void)
 HastePotion		*ItemFactory::create_haste_potion(void)
 {
 	return (new HastePotion());
+}
+
+HealingPotion	*ItemFactory::create_healing_potion(void)
+{
+	return (new HealingPotion());
 }
 
 IcePotion		*ItemFactory::create_ice_potion(void)

@@ -19,18 +19,18 @@ enum class CommandType
 	BUY,
 	EQUIP,
 	ENCHANT,
+	FIGHT,
 	ATTACK,
 	DEFEND,
 	FLEE,
 	CONSUME,
-	FIGHT,
 	STATUS,
 	QUEST,
 	QUESTS,
 	WHO,
-	HELP,
 	GROUP,
-	QUIT
+	QUIT,
+	HELP
 };
 
 struct Command

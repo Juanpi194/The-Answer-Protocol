@@ -40,18 +40,27 @@ const std::map<Item*, unsigned int>&	Merchant::get_items_to_sell(void) const noe
 
 const std::string	Merchant::on_talk(Player& player) noexcept
 {
-	std::string	products;
+	std::string	result;
+	bool		first;
 
-	// ? REVIEW: Logic and format ...
-	products = "===\n";
-	products += "Welcome!";
-	for (std::pair<Item*, unsigned int> item_and_price: items_to_sell)
+	result  = "{";
+	result += "\"npc\": \"" + get_name() + "\", ";
+	result += "\"role\": \"merchant\", ";
+	result += "\"items\": [";
+	first = true;
+	for (std::pair<Item*, unsigned int> entry : items_to_sell)
 	{
-		products += "\n";
-		products += (item_and_price.first->get_name() + " - " + std::to_string(item_and_price.second));
+		if (!first)
+			result += ", ";
+		result += "{";
+		result += "\"name\": \"" + entry.first->get_name() + "\", ";
+		result += "\"price\": " + std::to_string(entry.second) + ", ";
+		result += "\"description\": \"" + entry.first->get_description() + "\"";
+		result += "}";
+		first = false;
 	}
-	products += "\n===";
-	return (products);
+	result += "]}";
+	return (result);
 }
 
 bool	Merchant::on_buy(Player& player, const std::string& product) noexcept

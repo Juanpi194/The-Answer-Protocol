@@ -29,7 +29,7 @@ class Shield: public Item
 		// Getters and setters ------------------------------------------------
 
 		unsigned int		get_uses(void) const noexcept;
-		const unsigned int	get_max_uses(void) const noexcept;
+		unsigned int		get_max_uses(void) const noexcept;
 
 		void	set_uses(unsigned int uses) noexcept;
 

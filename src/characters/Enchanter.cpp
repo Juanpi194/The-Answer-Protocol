@@ -19,7 +19,7 @@ bool	Enchanter::enchant(Gear& gear, Enchantment& enchantment)
 		if (gear_type == gear.get_gear_type())
 			allowed = true;
 	if (!allowed)
-		return (log("Cannot apply '" + enchantment.get_name() + "' to '" + gear.get_name() + "'.", LogLevel::INFO), false);
+		return (false);
 	gear.set_enchantment(enchantment.clone());
 	return (true);
 }
@@ -55,18 +55,27 @@ const std::map<Enchantment*, unsigned int>&	Enchanter::get_enchantments_to_sell(
 
 const std::string	Enchanter::on_talk(Player& player) noexcept
 {
-	std::string	products;
+	std::string	result;
+	bool		first;
 
-	// ? REVIEW: Logic and format ...
-	products = "===\n";
-	products += "Welcome!";
-	for (std::pair<Enchantment*, unsigned int> enchantment_and_price: enchantments_to_sell)
+	result  = "{";
+	result += "\"npc\": \"" + get_name() + "\", ";
+	result += "\"role\": \"enchanter\", ";
+	result += "\"items\": [";
+	first = true;
+	for (std::pair<Enchantment*, unsigned int> entry : enchantments_to_sell)
 	{
-		products += "\n";
-		products += (enchantment_and_price.first->get_name() + " - " + std::to_string(enchantment_and_price.second));
+		if (!first)
+			result += ", ";
+		result += "{";
+		result += "\"name\": \"" + entry.first->get_name() + "\", ";
+		result += "\"price\": " + std::to_string(entry.second) + ", ";
+		result += "\"description\": \"" + entry.first->get_description() + "\"";
+		result += "}";
+		first = false;
 	}
-	products += "\n===";
-	return (products);
+	result += "]}";
+	return (result);
 }
 
 bool	Enchanter::on_enchant(Player &player, const std::string& gear, const std::string& enchantment)

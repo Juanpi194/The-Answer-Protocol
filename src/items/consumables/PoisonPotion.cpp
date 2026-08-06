@@ -6,7 +6,7 @@
 unsigned int		PoisonPotion::available_id = 0;
 const std::string	PoisonPotion::PREFIX = "poison_potion.";
 const std::string	PoisonPotion::NAME = "Poison Potion";
-const std::string	PoisonPotion::DESCRIPTION = "Coats the user's weapon with poison when consumed.";
+const std::string	PoisonPotion::DESCRIPTION = "Restores the user's status if it is poisoned.";
 
 // Constructors ---------------------------------------------------------------
 

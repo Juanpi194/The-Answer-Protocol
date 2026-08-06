@@ -11,7 +11,8 @@ class Goblin final: public Enemy
 		static const std::string	NAME;	// Defined in Goblin.cpp
 		static const std::string	DESCRIPTION;	// Defined in Goblin.cpp
 		static const t_stats		DEFAULT_STATS;	// Defined in Goblin.cpp
-		static const unsigned int	DEFAULT_GOLD = 20;
+		static constexpr unsigned int	DEFAULT_GOLD = 20;
+		static constexpr unsigned int	CONSUME_CHANCE = 30;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,5 +27,5 @@ class Goblin final: public Enemy
 
 		// Utils --------------------------------------------------------------
 
-		FightChoice	choose_action(void) const noexcept override;
+		FightChoice	choose_action(void) noexcept override;
 };

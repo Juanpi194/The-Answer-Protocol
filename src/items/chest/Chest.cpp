@@ -92,10 +92,10 @@ std::list<Item*>	Chest::interact(Player& player)
 	if (opened)
 		return (result);
 	if (guardian && !player.is_enemy_beaten(guardian))
-		return (log("Player '" + player.get_name() + "' has to beat '" + guardian->get_name() + "' before opening the chest.", LogLevel::WARNING), result);
+		return (result);
 	chest_key = player.get_inventory().find_item<ChestKey>();
 	if (!chest_key)
-		return (log("Player '" + player.get_name() + "' has no key to open the chest.", LogLevel::INFO), result);
+		return (result);
 
 	// Removing the key
 	player.get_inventory().consume_item(*chest_key);

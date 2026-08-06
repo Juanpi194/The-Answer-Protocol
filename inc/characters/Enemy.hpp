@@ -7,6 +7,8 @@ class Enemy: public NPC, public Fighter
 {
 	private:
 		unsigned int	gold;	// Will be dropped when defeated
+	protected:
+		Consumable	*roll_consumable(unsigned int chance) noexcept;
 	public:
 		// Constructors -------------------------------------------------------
 
@@ -33,6 +35,6 @@ class Enemy: public NPC, public Fighter
 		 * @returns	The choice, with the action to perform and a possible item
 		 * 			to consume.
 		 */
-		virtual FightChoice	choose_action(void) const noexcept = 0;
+		virtual FightChoice	choose_action(void) noexcept = 0;
 
 };

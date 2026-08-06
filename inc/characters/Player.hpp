@@ -209,6 +209,12 @@ class Player final: public Fighter
 
 		void			level_up(void) noexcept;
 
+		/**
+		 * @brief	Unlike the Fighter's `status_json`, this includes the
+		 * 			amount of money the player has.
+		 */
+		std::string		full_status_json(void) const noexcept;
+
 		// Interactions --
 
 		const std::string	on_talk(Player& player) noexcept override;

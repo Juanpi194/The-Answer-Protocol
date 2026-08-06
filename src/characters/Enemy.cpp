@@ -1,5 +1,14 @@
 #include "characters/Enemy.hpp"
 
+#include "items/Consumable.hpp"
+
+Consumable	*Enemy::roll_consumable(unsigned int chance) noexcept
+{
+	if (rand() % 100 < chance)
+		return (get_inventory().find_item<Consumable>());
+	return (nullptr);
+}
+
 // Constructors ---------------------------------------------------------------
 
 Enemy::Enemy(const std::string& id, const std::string& name, const std::string& description, t_stats stats, unsigned int gold):
