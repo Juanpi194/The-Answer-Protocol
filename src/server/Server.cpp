@@ -468,6 +468,7 @@ void				Server::game_loop(void)
 					left = true;
 				}
 			}
+			pending_leaves.clear();
 		}
 		if (left)
 			broadcast(evt_stats(count_clients()));

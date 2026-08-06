@@ -13,7 +13,7 @@
 static void printMessages(CLI& client)
 {
     for (const std::string& msg : client.pollMessages())
-        std::cout << msg << std::endl;
+        std::cout << msg;
 }
 
 int main(void)
