@@ -226,6 +226,8 @@ fclean: clean
 	rm -f $(PROGRAM_NAME) $(TUI_PROGRAM_NAME) $(GUI_PROGRAM_NAME)
 	rm -rf $(IMGUI_DIR)
 	rm -f inc/libs/json.hpp
+	rm -f imgui.ini
+
 
 # MODIFIED: independent calls to fix a gui install problem
 re:
