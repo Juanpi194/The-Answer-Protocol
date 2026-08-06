@@ -30,6 +30,7 @@ Wizard::Wizard(const Wizard& wizard):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
+	(void)wizard;
 }
 
 Wizard	*Wizard::clone(void) const noexcept

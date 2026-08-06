@@ -4,7 +4,7 @@
 
 Consumable	*Enemy::roll_consumable(unsigned int chance) noexcept
 {
-	if (rand() % 100 < chance)
+	if (((unsigned int)(rand() % 100)) < chance)
 		return (get_inventory().find_item<Consumable>());
 	return (nullptr);
 }
@@ -30,5 +30,6 @@ unsigned int	Enemy::get_gold(void) const noexcept
 
 const std::string	Enemy::on_talk(Player& player) noexcept
 {
+	(void)player;
 	return (get_name() + " is focused...");
 }

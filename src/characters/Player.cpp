@@ -358,8 +358,6 @@ void		Player::respawn(Room *destination)
 
 bool		Player::is_enemy_beaten(Enemy *enemy) noexcept
 {
-	if (!enemy)
-		return (log("Cannot check nullptr enemy.", LogLevel::ERROR), false);
 	for (const std::string& beaten_enemy_id: beaten_enemies_id)
 		if (beaten_enemy_id == enemy->get_id())
 			return (true);
@@ -404,6 +402,7 @@ std::string	Player::full_status_json(void) const noexcept
 
 const std::string		Player::on_talk(Player& player) noexcept
 {
+	(void)player;
 	return ("");
 }
 

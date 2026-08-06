@@ -102,10 +102,10 @@ OBJS = $(SRC:$(SRC_FOLDER)/%.cpp=$(OBJ_FOLDER)/%.o)
 # corriendo por dentro (lo confirmamos con trazas de debug -- no era ningun
 # deadlock nuestro, era sobrecarga de TSan sobre codigo que no es nuestro).
 # Un solo arbol de objetos otra vez, para todo -- server, GUI y TUI.
-FLAGS = $(VERSION_FLAG) -g -I $(INC_FOLDER) -pthread
+FLAGS = $(VERSION_FLAG) $(COMPILATION_FLAGS) -g -I $(INC_FOLDER) -pthread
 VERSION_FLAG = -std=c++17
 COMPILATION_FLAGS = -Wall -Wextra -Werror -Wunused-parameter
-CRAZY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
+UNNECESSARY_FLAGS = -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
 				-Wcast-align -Wold-style-cast -Woverloaded-virtual \
 				-Wnon-virtual-dtor -D_POSIX_C_SOURCE=200809L -O3 \
 				-march=native -flto

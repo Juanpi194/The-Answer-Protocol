@@ -27,6 +27,7 @@ Dragon::Dragon(const Dragon& dragon):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
+	(void)dragon;
 }
 
 Dragon	*Dragon::clone(void) const noexcept

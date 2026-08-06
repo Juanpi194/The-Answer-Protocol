@@ -8,6 +8,8 @@
 bool	Enchantment::validate_arguments(const std::string& name, const std::string& description)
 {
 	// TODO: Validation
+	(void)name;
+	(void)description;
 	return (true);
 }
 

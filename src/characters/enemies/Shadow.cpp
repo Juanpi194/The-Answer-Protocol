@@ -26,6 +26,7 @@ Shadow::Shadow(const Shadow& shadow):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
+	(void)shadow;
 }
 
 Shadow	*Shadow::clone(void) const noexcept

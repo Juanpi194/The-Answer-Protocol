@@ -227,11 +227,13 @@ void			Fighter::defend(void) noexcept
 
 bool			Fighter::flee(Fighter& opponent) noexcept
 {
+	(void)opponent;
 	return (true);
 }
 
 void			Fighter::consume(Fighter& opponent, Consumable& consumable) noexcept
 {
+	(void)opponent;
 	consumable.consume(*this);
 
 	// The selected item should always be in the fighter's inventory.

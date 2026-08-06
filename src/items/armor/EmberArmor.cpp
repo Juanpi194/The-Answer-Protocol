@@ -27,5 +27,6 @@ EmberArmor	*EmberArmor::clone(void) const noexcept
 
 void	EmberArmor::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
+	(void)user;
 	opponent.apply_status(APPLIED_STATUS);
 }

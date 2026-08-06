@@ -27,7 +27,7 @@ std::list<Item*>	Chest::open(void)
 		for (std::pair<Item* const, unsigned int>& entry : pool)
 		{
 			random = rand() % 100;
-			if (random < entry.second)
+			if (((unsigned int)random) < entry.second)
 				generated_items.push_back(entry.first);
 		}
 	}

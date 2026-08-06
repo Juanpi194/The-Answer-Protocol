@@ -26,5 +26,6 @@ SerratedSword	*SerratedSword::clone(void) const noexcept
 
 void	SerratedSword::special_effect(Fighter& user, Fighter& opponent) noexcept
 {
+	(void)user;
 	opponent.apply_status(APPLIED_STATUS);
 }

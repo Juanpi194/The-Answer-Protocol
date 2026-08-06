@@ -30,5 +30,7 @@ void	Shield::set_uses(unsigned int uses) noexcept
 
 void	Shield::protect(Fighter& user, Fighter& attacker) noexcept
 {
+	(void)user;
+	(void)attacker;
 	uses++;
 }

@@ -25,5 +25,6 @@ Flame	*Flame::clone(void) const noexcept
 
 void	Flame::effect(Fighter& user, Fighter& affected) const noexcept
 {
+	(void)user;
 	affected.apply_status(APPLIED_STATUS);
 }

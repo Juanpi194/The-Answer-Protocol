@@ -58,6 +58,7 @@ const std::string	Enchanter::on_talk(Player& player) noexcept
 	std::string	result;
 	bool		first;
 
+	(void)player;
 	result  = "{";
 	result += "\"npc\": \"" + get_name() + "\", ";
 	result += "\"role\": \"enchanter\", ";

@@ -72,7 +72,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool				obtain_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
+		bool				obtain_item(Item *item) noexcept TAP_DEPRECATED;
 
 		/**
 		 * @brief	Tries to find an item with the specified name in the
@@ -95,7 +95,7 @@ class Player final: public Fighter
 		 * 				itself. That's why this method will not be used.
 		 * 				Use the one that receives a string instead.
 		 */
-		bool				drop_item(Item *item) noexcept TAP_NONNULL TAP_DEPRECATED;
+		bool				drop_item(Item *item) noexcept TAP_DEPRECATED;
 
 		/**
 		 * @brief	Tries to find an item with the specified name in the

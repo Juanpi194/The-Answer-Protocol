@@ -26,5 +26,6 @@ std::string	Narrator::get_sentence(void) const noexcept
 
 const std::string	Narrator::on_talk(Player& player) noexcept
 {
+	(void)player;
 	return (sentence);
 }

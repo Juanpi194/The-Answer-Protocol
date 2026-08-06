@@ -28,6 +28,7 @@ SpikeShield	*SpikeShield::clone(void) const noexcept
 
 void	SpikeShield::on_contact(Fighter& user, Fighter& attacker) noexcept
 {
+	(void)user;
 	attacker.lose_hp(REFLECT_DAMAGE);
 	attacker.apply_status(IN_CONTACT_STATUS);
 }

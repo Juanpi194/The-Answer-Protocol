@@ -30,9 +30,7 @@ Ogre::Ogre(const Ogre& ogre):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
-	set_weapon(ItemFactory::create_bronze_sword());
-	set_armor(ItemFactory::create_bronze_armor());
-	set_shield(ItemFactory::create_bronze_shield());
+	(void)ogre;
 }
 
 Ogre	*Ogre::clone(void) const noexcept

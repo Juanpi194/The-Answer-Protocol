@@ -26,6 +26,7 @@ Shade::Shade(const Shade& shade):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
+	(void)shade;
 }
 
 Shade	*Shade::clone(void) const noexcept

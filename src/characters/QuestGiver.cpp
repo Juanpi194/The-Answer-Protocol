@@ -36,6 +36,7 @@ const std::string	QuestGiver::on_talk(Player& player) noexcept
 	const Quest	*quest_found;
 	std::string	result;
 
+	(void)player;
 	quest_found = nullptr;
 	for (const Quest& quest_in_list: player.get_quest_list())
 		if (quest.get_name() == quest_in_list.get_name())
