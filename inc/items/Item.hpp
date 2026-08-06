@@ -14,7 +14,7 @@ class Item
 		static constexpr size_t		MIN_NAME_LENGTH = 3;
 		static constexpr size_t		MAX_NAME_LENGTH = 18;
 		static constexpr size_t		MIN_DESCRIPTION_LENGTH = 8;
-		static constexpr size_t		MAX_DESCRIPTION_LENGTH = 60;
+		static constexpr size_t		MAX_DESCRIPTION_LENGTH = 90;
 
 		/**
 		 * @brief	Verifies that the provided arguments follow the specified

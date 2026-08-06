@@ -41,7 +41,6 @@ Battle::Battle(Fighter& blue, Fighter& red):
 	turns(0),
 	finished(false)
 {
-	// ? REVIEW: Check this logic.
 	if (&blue == &red)
 		throw std::invalid_argument("Cannot start a battle with the same two fighters.");
 	log("Battle between '" + blue.get_name() + "' and '" + red.get_name() + "' starts!", LogLevel::INFO);

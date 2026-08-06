@@ -67,7 +67,7 @@ bool	is_title(const std::string& str)
 					return (false);
 			}
 		}
-		else
+		else if (std::isspace(c))
 			new_word = true;
 	}
 	return (has_letter);

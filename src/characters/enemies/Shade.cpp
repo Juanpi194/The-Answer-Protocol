@@ -1,5 +1,8 @@
 #include "characters/enemies/Shade.hpp"
 
+#include "factories/ItemFactory.hpp"
+#include "items/weapons/SerratedSword.hpp"
+
 unsigned int		Shade::available_id = 0;
 const std::string	Shade::PREFIX = "shade.";
 const std::string	Shade::NAME = "Shade";
@@ -12,7 +15,7 @@ Shade::Shade(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
-	// TODO: Maybe add a default armor and weapon?
+	set_weapon(ItemFactory::create_serrated_sword());
 }
 
 Shade::Shade(const Shade& shade):
@@ -30,9 +33,10 @@ Shade	*Shade::clone(void) const noexcept
 
 FightChoice	Shade::choose_action(void) const noexcept
 {
-	// TODO: Logic...
+	int	roll;
 
-	// Dumb example
-	FightChoice	choice = {FightAction::ATTACK};
-	return (choice);
+	roll = rand() % 3;
+	if (roll == 0)
+		return (FightChoice{FightAction::DEFEND});
+	return (FightChoice{FightAction::ATTACK});
 }

@@ -24,10 +24,6 @@ class Shade final: public Enemy
 
 		Shade&	operator=(const Shade& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the shade and their getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		FightChoice	choose_action(void) const noexcept override;

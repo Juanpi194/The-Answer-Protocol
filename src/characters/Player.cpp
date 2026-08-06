@@ -395,7 +395,6 @@ void		Player::level_up(void) noexcept
 
 const std::string		Player::on_talk(Player& player) noexcept
 {
-	// TODO: Logic...
 	return ("");
 }
 

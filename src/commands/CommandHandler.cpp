@@ -13,6 +13,9 @@
 #include "characters/Vendor.hpp"
 #include "items/chest/Chest.hpp"
 #include "items/chest/ChestKey.hpp"
+#include "items/Armor.hpp"
+#include "items/Shield.hpp"
+#include "items/Weapon.hpp"
 #include "items/Consumable.hpp"
 #include "libs/json.hpp"
 #include "protocol/events.hpp"
@@ -505,6 +508,55 @@ static void		cmd_buy(const Command& cmd, Player& player)
 		player.send_to_outbox(err(ErrorCode::PURCHASE_FAILED));
 }
 
+static void		cmd_equip(const Command& cmd, Player& player)
+{
+	Item	*item;
+	Armor	*armor;
+	Shield	*shield;
+	Weapon	*weapon;
+	
+
+	item = player.get_inventory().find_item_by_name(cmd.args[0]);
+	if (!item)
+	{
+		player.send_to_outbox(err(ErrorCode::ITEM_NOT_IN_INVENTORY));
+		return;
+	}
+
+	weapon = dynamic_cast<Weapon*>(item);
+	armor  = dynamic_cast<Armor*>(item);
+	shield = dynamic_cast<Shield*>(item);
+
+	if (!weapon && !armor && !shield)
+	{
+		player.send_to_outbox(err(ErrorCode::INVALID_ARGUMENT));
+		return;
+	}
+
+	player.get_inventory().remove_item(item);
+
+	if (weapon)
+	{
+		if (player.get_weapon())
+			player.get_inventory().add_item(player.get_weapon());
+		player.set_weapon(weapon);
+	}
+	else if (armor)
+	{
+		if (player.get_armor())
+			player.get_inventory().add_item(player.get_armor());
+		player.set_armor(armor);
+	}
+	else
+	{
+		if (player.get_shield())
+			player.get_inventory().add_item(player.get_shield());
+		player.set_shield(shield);
+	}
+
+	player.send_to_outbox(ok("equipped=" + item->get_id()));
+}
+
 static void		cmd_enchant(const Command& cmd, Player& player)
 {
 	Room		*room;
@@ -618,6 +670,9 @@ void	CommandHandler::handle(const Command& cmd, PlayerConnection& connection, Wo
 			break;
 		case CommandType::BUY:
 			cmd_buy(cmd, player);
+			break;
+		case CommandType::EQUIP:
+			cmd_equip(cmd, player);
 			break;
 		case CommandType::ENCHANT:
 			cmd_enchant(cmd, player);

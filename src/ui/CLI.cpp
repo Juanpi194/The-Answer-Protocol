@@ -211,7 +211,11 @@ std::vector<std::string> CLI::pollMessages(void)
 
 bool CLI::isConnected(void) const noexcept
 {
-    return socketFd_ >= 0;
+    // MODIFIED: antes solo miraba socketFd_ >= 0, que nunca cambiaba si era
+    // el SERVIDOR quien cerraba la conexion (p.ej. tras QUIT) -- ahora
+    // tambien depende de running_, que recvLoop() pone a false en cuanto
+    // detecta que el otro lado cerró.
+    return running_ && socketFd_ >= 0;
 }
 
 // --- Private -----------------------------------------------------------
@@ -224,7 +228,16 @@ void CLI::recvLoop(void)
     {
         int bytes = static_cast<int>(recv(socketFd_, buf, sizeof(buf) - 1, 0));
         if (bytes <= 0)
-            break; // connection closed or error
+        {
+            // MODIFIED: antes esto solo paraba el bucle, sin avisar a nadie
+            // -- isConnected() seguia devolviendo true para siempre, porque
+            // solo miraba socketFd_ (que nunca se tocaba aqui). Ahora
+            // running_ tambien refleja que el servidor cerro la conexion
+            // por su lado (p.ej. tras QUIT), no solo cuando nosotros
+            // llamamos a disconnect() explicitamente.
+            running_ = false;
+            break;
+        }
         buf[bytes] = '\0';
         {
             std::lock_guard<std::mutex> lock(incomingMtx_);

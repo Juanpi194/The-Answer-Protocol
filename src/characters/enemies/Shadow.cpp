@@ -1,5 +1,9 @@
 #include "characters/enemies/Shadow.hpp"
 
+#include "factories/ItemFactory.hpp"
+#include "items/armor/SpikeArmor.hpp"
+#include "items/shields/IronShield.hpp"
+
 unsigned int		Shadow::available_id = 0;
 const std::string	Shadow::PREFIX = "shadow.";
 const std::string	Shadow::NAME = "Shadow";
@@ -12,7 +16,8 @@ Shadow::Shadow(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
-	// TODO: Maybe add a default armor and weapon?
+	set_armor(ItemFactory::create_spike_armor());
+	set_shield(ItemFactory::create_iron_shield());
 }
 
 Shadow::Shadow(const Shadow& shadow):
@@ -30,9 +35,10 @@ Shadow	*Shadow::clone(void) const noexcept
 
 FightChoice	Shadow::choose_action(void) const noexcept
 {
-	// TODO: Logic...
+	int	roll;
 
-	// Dumb example
-	FightChoice	choice = {FightAction::ATTACK};
-	return (choice);
+	roll = rand() % 3;
+	if (roll == 0)
+		return (FightChoice{FightAction::DEFEND});
+	return (FightChoice{FightAction::ATTACK});
 }

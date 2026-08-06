@@ -273,7 +273,6 @@ Server::Server(void):
 	conn_window(0),
 	conn_count(0)
 {
-	// TODO: Give json_path so a specific World can be created
 }
 
 Server::~Server(void)

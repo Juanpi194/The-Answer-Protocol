@@ -1,5 +1,10 @@
 #include "characters/enemies/Ogre.hpp"
 
+#include "factories/ItemFactory.hpp"
+#include "items/armor/BronzeArmor.hpp"
+#include "items/shields/BronzeShield.hpp"
+#include "items/weapons/BronzeSword.hpp"
+
 unsigned int		Ogre::available_id = 0;
 const std::string	Ogre::PREFIX = "ogre.";
 const std::string	Ogre::NAME = "Ogre";
@@ -12,13 +17,18 @@ Ogre::Ogre(void):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
-	// TODO: Maybe add a default armor and weapon?
+	set_armor(ItemFactory::create_bronze_armor());
+	set_shield(ItemFactory::create_bronze_shield());
+	set_weapon(ItemFactory::create_bronze_sword());
 }
 
 Ogre::Ogre(const Ogre& ogre):
 	Character(NAME),
 	Enemy(NPC::PREFIX + PREFIX + std::to_string(available_id++), NAME, DESCRIPTION, DEFAULT_STATS, DEFAULT_GOLD)
 {
+	set_weapon(ItemFactory::create_bronze_sword());
+	set_armor(ItemFactory::create_bronze_armor());
+	set_shield(ItemFactory::create_bronze_shield());
 }
 
 Ogre	*Ogre::clone(void) const noexcept
@@ -30,9 +40,10 @@ Ogre	*Ogre::clone(void) const noexcept
 
 FightChoice	Ogre::choose_action(void) const noexcept
 {
-	// TODO: Logic...
+	int	roll;
 
-	// Dumb example
-	FightChoice	choice = {FightAction::ATTACK};
-	return (choice);
+	roll = rand() % 3;
+	if (roll == 0)
+		return (FightChoice{FightAction::DEFEND});
+	return (FightChoice{FightAction::ATTACK});
 }

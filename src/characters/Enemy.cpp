@@ -21,6 +21,5 @@ unsigned int	Enemy::get_gold(void) const noexcept
 
 const std::string	Enemy::on_talk(Player& player) noexcept
 {
-	// TODO: Enemy on talk messages ...
-	return ("");
+	return (get_name() + " is focused...");
 }

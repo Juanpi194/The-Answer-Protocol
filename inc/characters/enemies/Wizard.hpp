@@ -24,10 +24,6 @@ class Wizard final: public Enemy
 
 		Wizard&	operator=(const Wizard& other) = delete;
 
-		// Getters and setters ------------------------------------------------
-
-		// TODO: Add specific attributes to the wizard and their getters and setters
-
 		// Utils --------------------------------------------------------------
 
 		FightChoice	choose_action(void) const noexcept override;
