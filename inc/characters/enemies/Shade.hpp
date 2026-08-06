@@ -11,7 +11,8 @@ class Shade final: public Enemy
 		static const std::string	NAME;	// Defined in Shade.cpp
 		static const std::string	DESCRIPTION;	// Defined in Shade.cpp
 		static const t_stats		DEFAULT_STATS;	// Defined in Shade.cpp
-		static const unsigned int	DEFAULT_GOLD = 25;
+		static constexpr unsigned int	DEFAULT_GOLD = 25;
+		static constexpr unsigned int	CONSUME_CHANCE = 10;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,5 +27,5 @@ class Shade final: public Enemy
 
 		// Utils --------------------------------------------------------------
 
-		FightChoice	choose_action(void) const noexcept override;
+		FightChoice	choose_action(void) noexcept override;
 };

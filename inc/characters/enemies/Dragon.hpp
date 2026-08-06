@@ -11,7 +11,8 @@ class Dragon final: public Enemy
 		static const std::string	NAME;	// Defined in Dragon.cpp
 		static const std::string	DESCRIPTION;	// Defined in Dragon.cpp
 		static const t_stats		DEFAULT_STATS;	// Defined in Dragon.cpp
-		static const unsigned int	DEFAULT_GOLD = 200;
+		static constexpr unsigned int	DEFAULT_GOLD = 200;
+		static constexpr unsigned int	CONSUME_CHANCE = 20;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,5 +27,5 @@ class Dragon final: public Enemy
 
 		// Utils --------------------------------------------------------------
 
-		FightChoice	choose_action(void) const noexcept override;
+		FightChoice	choose_action(void) noexcept override;
 };

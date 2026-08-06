@@ -73,8 +73,6 @@ Room::Room(const std::string& id, const std::string& name, const std::string& de
 {
 	if (!validate_arguments(id, name, description))
 		throw std::invalid_argument("Provided room arguments are not valid. Room initialization failed.");
-	if (!npc)
-		log("No npc established in room with id '" + id + "'.", LogLevel::INFO);
 	if (chest)
 	{
 		Enemy	*enemy_npc = dynamic_cast<Enemy*>(npc);
@@ -83,11 +81,7 @@ Room::Room(const std::string& id, const std::string& name, const std::string& de
 		else
 			this->chest = new Chest();
 	}
-	else
-		log("No chest established in room with id '" + id + "'.", LogLevel::INFO);
-	if (items.size() == 0)
-		log("No items established in room with id '" + id + "'.", LogLevel::INFO);
-	else
+	if (items.size() > 0)
 	{
 		for (Item *item: items)
 			if (!item)

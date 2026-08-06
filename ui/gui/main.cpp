@@ -56,6 +56,7 @@ struct RoomInfo
 struct StatsInfo
 {
     bool         hasData = false;
+    unsigned int level = 0; // MODIFIED: STATUS now reports the player's level too
     unsigned int current_hp = 0;
     unsigned int hp = 0;
     unsigned int current_strength = 0;
@@ -65,6 +66,7 @@ struct StatsInfo
     unsigned int current_speed = 0;
     unsigned int speed = 0;
     std::string  status;
+    unsigned int gold = 0; // MODIFIED: only STATUS sends this (not combat turns), see ingestStats
 };
 
 // MODIFIED: quest recieved
@@ -109,7 +111,11 @@ class WorldCache
                 ingestRoom(data);
             else if (data.is_object() && data.contains("blue") && data.contains("red"))
                 ingestCombat(data);
-            else if (data.is_object() && data.contains("current_hp"))
+            // MODIFIED: STATUS now wraps the stats inside a "combat" object
+            // instead of sending them flat -- used to check for "current_hp"
+            // directly here, which stopped matching and silently broke the
+            // Stats panel's Refresh button.
+            else if (data.is_object() && data.contains("combat"))
                 ingestStats(data);
             else if (data.is_array())
                 ingestArray(data);
@@ -182,6 +188,7 @@ class WorldCache
         {
             StatsInfo s;
             s.hasData = true;
+            s.level = data.value("level", 0u); // MODIFIED: new field, same object as the rest
             s.current_hp = data.value("current_hp", 0u);
             s.hp = data.value("hp", 0u);
             s.current_strength = data.value("current_strength", 0u);
@@ -194,9 +201,17 @@ class WorldCache
             return s;
         }
 
+        // MODIFIED: STATUS now looks like {"combat": {...same fields as before...}, "gold": N}
+        // instead of the fields being flat at the top level -- unwrap "combat" and
+        // grab "gold" separately (it lives next to "combat", not inside it).
         void ingestStats(const nlohmann::json& data)
         {
-            stats_ = parseStatsObject(data);
+            if (!data.contains("combat") || !data["combat"].is_object())
+                return;
+
+            StatsInfo s = parseStatsObject(data["combat"]);
+            s.gold = data.value("gold", 0u);
+            stats_ = s;
         }
 
         // MODIFIED: Combat state
@@ -727,6 +742,11 @@ static void drawMenuWindow(CLI& client, std::vector<std::string>& log, WorldCach
             }
             else
             {
+                // MODIFIED: STATUS now also reports level and gold, shown above the rest
+                ImGui::Text("Level: %u", s.level);
+                ImGui::Text("Gold:  %u", s.gold);
+                ImGui::Spacing();
+
                 float hpFraction = s.hp > 0 ? (float)s.current_hp / (float)s.hp : 0.0f;
                 std::string hpLabel = std::to_string(s.current_hp) + " / " + std::to_string(s.hp);
                 ImGui::Text("HP:");

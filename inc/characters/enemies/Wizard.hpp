@@ -11,7 +11,8 @@ class Wizard final: public Enemy
 		static const std::string	NAME;	// Defined in Wizard.cpp
 		static const std::string	DESCRIPTION;	// Defined in Wizard.cpp
 		static const t_stats		DEFAULT_STATS;	// Defined in Wizard.cpp
-		static const unsigned int	DEFAULT_GOLD = 50;
+		static constexpr unsigned int	DEFAULT_GOLD = 50;
+		static constexpr unsigned int	CONSUME_CHANCE = 25;
 
 		// Constructors -------------------------------------------------------
 
@@ -26,5 +27,5 @@ class Wizard final: public Enemy
 
 		// Utils --------------------------------------------------------------
 
-		FightChoice	choose_action(void) const noexcept override;
+		FightChoice	choose_action(void) noexcept override;
 };

@@ -6,7 +6,7 @@
 unsigned int		IcePotion::available_id = 0;
 const std::string	IcePotion::PREFIX = "ice_potion.";
 const std::string	IcePotion::NAME = "Ice Potion";
-const std::string	IcePotion::DESCRIPTION = "Grants the user an icy boost when consumed.";
+const std::string	IcePotion::DESCRIPTION = "Restores the user's status if it is frozen.";
 
 // Constructors ---------------------------------------------------------------
 

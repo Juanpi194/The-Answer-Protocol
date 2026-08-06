@@ -11,7 +11,7 @@ Armor::Armor(const std::string& id, const std::string& name, const std::string& 
 
 // Getters and setters --------------------------------------------------------
 
-const unsigned int	Armor::get_damage_reduction(void) const noexcept
+unsigned int	Armor::get_damage_reduction(void) const noexcept
 {
 	return (damage_reduction);
 }
@@ -20,5 +20,3 @@ unsigned int	Armor::get_reduced_damage(void) const noexcept
 {
 	return (reduced_damage);
 }
-
-// Utils ----------------------------------------------------------------------

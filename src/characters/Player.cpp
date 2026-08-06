@@ -52,8 +52,6 @@ Battle							*Player::get_battle(void) const noexcept
 
 void	Player::set_battle(Battle *battle) noexcept
 {
-	if (!battle)
-		log("Player '" + get_name() + "'s battle set to nullptr.", LogLevel::INFO);
 	this->battle = battle;
 }
 
@@ -64,12 +62,12 @@ void	Player::set_battle(Battle *battle) noexcept
 bool				Player::obtain_item(Item *item) noexcept
 {
 	if (!item)
-		return (log("Player '" + get_name() + "' tried to obtain a nullptr item.", LogLevel::INFO), false);
+		return (false);
 	if (!current_room)
-		return (log("Player '" + get_name() + "' cannot obtain an item with nullptr current room.", LogLevel::WARNING), false);
+		return (false);
 	for (Item *item_in_list: inventory.get_items())
 		if (item_in_list == item)
-			return (log("Player '" + get_name() + "' tried to obtain '" + item->get_id() + "', which is already in its item list.", LogLevel::WARNING), false);
+			return (false);
 
 	// Item found, now it will get removed from the room and added to the player.
 	try
@@ -91,13 +89,13 @@ Item				*Player::obtain_item(const std::string& item_name) noexcept
 
 	item_found = nullptr;
 	if (!current_room)
-		return (log("Player '" + get_name() + "' cannot obtain an item with nullptr current room.", LogLevel::WARNING), nullptr);
+		return (nullptr);
 	trim_str(cleaned_name, false);
 	for (Item *item: current_room->get_items())
 		if (cleaned_name == item->get_name() || cleaned_name == item->get_id())
 			item_found = item;
 	if (!item_found)
-		return (log("Couldn't find '" + item_name + "' in the room.", LogLevel::INFO), nullptr);
+		return (nullptr);
 
 	// Item found, now it will get removed from the room and added to the player.
 	try
@@ -119,14 +117,14 @@ bool				Player::drop_item(Item *item) noexcept
 
 	found = false;
 	if (!item)
-		return (log("Player '" + get_name() + "' tried to drop a nullptr item.", LogLevel::INFO), false);
+		return (false);
 	if (!current_room)
-		return (log("Player '" + get_name() + "' cannot drop an item with nullptr current room.", LogLevel::WARNING), false);
+		return (false);
 	for (Item *item_in_list: inventory.get_items())
 		if (item_in_list == item)
 			found = true;
 	if (!found)
-		return (log("Item '" + item->get_id() + "' does not exist in player's item list.", LogLevel::WARNING), false);
+		return (false);
 
 	// Item found, now it will get removed from the player and added to the room.
 	try
@@ -148,13 +146,13 @@ Item				*Player::drop_item(const std::string& item_name) noexcept
 
 	item_found = nullptr;
 	if (!current_room)
-		return (log("Player '" + get_name() + "' cannot drop an item with nullptr current room.", LogLevel::WARNING), nullptr);
+		return (nullptr);
 	trim_str(cleaned_name, false);
 	for (Item *item: inventory.get_items())
 		if (cleaned_name == item->get_name() || cleaned_name == item->get_id())
 			item_found = item;
 	if (!item_found)
-		return (log("Item '" + item_name + "' does not exist in player's item list.", LogLevel::WARNING), nullptr);
+		return (nullptr);
 
 	// Item found, now it will get removed from the player and added to the room.
 	try
@@ -208,7 +206,7 @@ bool		Player::obtain_quest(Quest& quest) noexcept
 {
 	for (Quest& quest_in_list: quest_list)
 		if (quest_in_list.get_name() == quest.get_name())
-			return (log("Player '" + get_name() + "' already has the quest '" + quest.get_name() + "'.", LogLevel::WARNING), false);
+			return (false);
 	quest_list.push_back(quest);
 	return (log("Player '" + get_name() + "' received the quest '" + quest.get_name() + "'.", LogLevel::DEBUG), true);
 }
@@ -306,9 +304,9 @@ void		Player::gain_gold(unsigned int quantity) noexcept
 bool		Player::spend_gold(unsigned int quantity) noexcept
 {
 	if (quantity > gold)
-		return (log("Player '" + get_name() + "' does not have enough gold to spend.", LogLevel::INFO), false);
+		return (false);
 	gold -= quantity;
-	return (log("Player '" + get_name() + "' spent " + std::to_string(quantity) + " gold.", LogLevel::INFO), true);
+	return (log("Player '" + get_name() + "' spent " + std::to_string(quantity) + " gold.", LogLevel::DEBUG), true);
 }
 
 void		Player::lose_gold(unsigned int quantity) noexcept
@@ -317,7 +315,7 @@ void		Player::lose_gold(unsigned int quantity) noexcept
 		gold = 0;
 	else
 		gold -= quantity;
-	log("Player '" + get_name() + "' lost " + std::to_string(quantity) + " gold.", LogLevel::INFO);
+	log("Player '" + get_name() + "' lost " + std::to_string(quantity) + " gold.", LogLevel::DEBUG);
 }
 
 // Location --
@@ -328,9 +326,9 @@ bool		Player::move(Direction direction) noexcept
 
 	// Checking room
 	if (!current_room)
-		return (log("Player '" + get_name() + "' is not at any room, it cannot move.", LogLevel::INFO), false);
+		return (false);
 	if (current_room->get_adjacent_rooms().count(direction) == 0)
-		return (log("Player '" + get_name() + "' tried to move to a non existing room.", LogLevel::INFO), false);
+		return (false);
 
 	// Moving from one room to another
 	adjacent = current_room->get_adjacent_rooms().at(direction);
@@ -391,6 +389,17 @@ void		Player::level_up(void) noexcept
 	complete_level_quests();
 }
 
+std::string	Player::full_status_json(void) const noexcept
+{
+	std::string result;
+
+	result  = "{";
+	result += "\"combat\": " + status_json();
+	result += ", \"gold\": " + std::to_string(get_gold());
+	result += "}";
+	return (result);
+}
+
 // Interactions --
 
 const std::string		Player::on_talk(Player& player) noexcept
@@ -408,8 +417,6 @@ void					Player::send_to_outbox(const std::string& msg)
 	std::lock_guard<std::mutex>	lock(outbox_mtx);
 	if (!cleared_msg.empty())
 		outbox.push_back(msg);
-	else
-		log("Empty message sent from '" + get_name() + "'.", LogLevel::WARNING);
 }
 
 std::list<std::string>	Player::drain_outbox(void)

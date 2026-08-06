@@ -13,6 +13,7 @@
 #include "items/consumables/Apple.hpp"
 #include "items/consumables/FirePotion.hpp"
 #include "items/consumables/HastePotion.hpp"
+#include "items/consumables/HealingPotion.hpp"
 #include "items/consumables/IcePotion.hpp"
 #include "items/consumables/PoisonPotion.hpp"
 #include "items/shields/BronzeShield.hpp"
@@ -25,8 +26,6 @@
 #include "items/weapons/IronSword.hpp"
 #include "items/weapons/SerratedSword.hpp"
 #include "items/weapons/SteelSword.hpp"
-// MODIFIED: HealingPotion.hpp was not called
-#include "items/consumables/HealingPotion.hpp"
 
 std::map<Item*, unsigned int>	ItemFactory::create_default_pool(void)
 {
@@ -83,6 +82,8 @@ Item							*ItemFactory::create_from_name(const std::string& item_name)
 		return (create_frost_sword());
 	if (temp == HastePotion::NAME)
 		return (create_haste_potion());
+	if (temp == HealingPotion::NAME)
+		return (create_healing_potion());
 	if (temp == IcePotion::NAME)
 		return (create_ice_potion());
 	if (temp == IronArmor::NAME)
@@ -163,6 +164,11 @@ HastePotion		*ItemFactory::create_haste_potion(void)
 	return (new HastePotion());
 }
 
+HealingPotion	*ItemFactory::create_healing_potion(void)
+{
+	return (new HealingPotion());
+}
+
 IcePotion		*ItemFactory::create_ice_potion(void)
 {
 	return (new IcePotion());
@@ -216,10 +222,4 @@ SteelShield		*ItemFactory::create_steel_shield(void)
 SteelSword		*ItemFactory::create_steel_sword(void)
 {
 	return (new SteelSword());
-}
-
-// MODIFIED: create_healing_potion() was not implemented
-HealingPotion *ItemFactory::create_healing_potion(void)
-{
-	return (new HealingPotion());
 }

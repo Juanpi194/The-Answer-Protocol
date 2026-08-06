@@ -58,8 +58,6 @@ bool				PlayerConnection::is_connected(void) const noexcept
 
 Server				*PlayerConnection::get_server(void) const noexcept
 {
-	if (!server)
-		log("Player " + player.get_name() + " is not connected to any server.", LogLevel::WARNING);
 	return (server);
 }
 
@@ -78,10 +76,7 @@ void	PlayerConnection::set_client_fd(int client_fd) noexcept
 	if (server && server->is_fd_available(client_fd))
 		this->client_fd = client_fd;
 	else
-	{
-		log("Couldn't set fd " + std::to_string(client_fd) + " to '" + player.get_name() + "'.", LogLevel::WARNING);
 		this->client_fd = -1;
-	}
 }
 
 void	PlayerConnection::set_ip(const std::string& ip) noexcept

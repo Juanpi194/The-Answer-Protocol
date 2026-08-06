@@ -4,6 +4,8 @@
 #include "items/armor/BronzeArmor.hpp"
 #include "items/shields/BronzeShield.hpp"
 #include "items/weapons/BronzeSword.hpp"
+#include "items/consumables/FirePotion.hpp"
+#include "items/consumables/PoisonPotion.hpp"
 
 unsigned int		Ogre::available_id = 0;
 const std::string	Ogre::PREFIX = "ogre.";
@@ -20,6 +22,8 @@ Ogre::Ogre(void):
 	set_armor(ItemFactory::create_bronze_armor());
 	set_shield(ItemFactory::create_bronze_shield());
 	set_weapon(ItemFactory::create_bronze_sword());
+	get_inventory().add_item(ItemFactory::create_fire_potion());
+	get_inventory().add_item(ItemFactory::create_poison_potion());
 }
 
 Ogre::Ogre(const Ogre& ogre):
@@ -38,11 +42,15 @@ Ogre	*Ogre::clone(void) const noexcept
 
 // Utils ----------------------------------------------------------------------
 
-FightChoice	Ogre::choose_action(void) const noexcept
+FightChoice	Ogre::choose_action(void) noexcept
 {
-	int	roll;
+	int			roll;
+	Consumable	*consumable;
 
 	roll = rand() % 3;
+	consumable = roll_consumable(CONSUME_CHANCE);
+	if (consumable)
+		return (FightChoice{FightAction::CONSUME, consumable});
 	if (roll == 0)
 		return (FightChoice{FightAction::DEFEND});
 	return (FightChoice{FightAction::ATTACK});

@@ -215,7 +215,7 @@ void				Server::client_thread(int fd)
 		outbox_msgs = client->get_player().drain_outbox();
 		for (const std::string& outbox_msg: outbox_msgs)
 		{
-			log("Response to '" + client->get_player().get_name() + "': " + outbox_msg, LogLevel::INFO);
+			log("Response to '" + client->get_player().get_name() + "': " + outbox_msg, LogLevel::DEBUG);
 			bytes = send(client_fd, (outbox_msg).c_str(), (outbox_msg).size(), MSG_NOSIGNAL);
 			if (bytes == -1)
 			{
@@ -310,15 +310,11 @@ const std::list<std::string>&		Server::get_banned_clients(void) const noexcept
 
 void	Server::set_owner(ServerOwner *owner) noexcept
 {
-	if (!owner)
-		log("Server owner established as nullptr.", LogLevel::INFO);
 	this->owner = owner;
 }
 
 void	Server::set_world(World *world) noexcept
 {
-	if (!world)
-		log("World established as nullptr.", LogLevel::INFO);
 	this->world = world;
 }
 
@@ -491,7 +487,7 @@ void				Server::game_loop(void)
 		// Executing found command
 		if (got_one && cmd_info.sender->is_connected())
 		{
-			log("Command from '" + cmd_info.sender->get_player().get_name() + "': " + cmd_info.text, LogLevel::INFO);
+			log("Command from '" + cmd_info.sender->get_player().get_name() + "': " + cmd_info.text, LogLevel::DEBUG);
 			if (cmd_info.sender->is_flooding())
 				log("Possible command flooding from '" + cmd_info.sender->get_player().get_name() + "'", LogLevel::WARNING);
 			assert(world != nullptr && "World cannot be nullptr.");
@@ -631,19 +627,76 @@ std::string			Server::get_commands_instructions(void) const noexcept
 {
 	const std::string	bars = "=====";
 	const std::string	connect_instructions = "CONNECT: Receives one argument, the client name.";
+	const std::string	look_instructions = "LOOK: Takes no arguments. Gives all the information of the player's room in json format.";
 	const std::string	move_instructions = "MOVE: Receives one argument, a direction. Moves the player in the specified direction.";
-	const std::string	look_instructions = "LOOK: Takes no argument. Gives all the information of the player's room in json format.";
-	const std::string	quit_instructions = "QUIT: Takes no argument. Disconnects the client.";
-	const std::string	help_instructions = "HELP: Takes no argument. Shows this command list.";
+	const std::string	chat_instructions = "CHAT: Receives two arguments, the scope (GLOBAL, ROOM, GROUP), and the message to send.";
+	const std::string	take_instructions = "TAKE: Receives one argument, the item to take.";
+	const std::string	drop_instructions = "DROP: Receives one argument, the item to drop in the current room.";
+	const std::string	inventory_instructions = "INVENTORY: Takes no arguments. Shows the player's current inventory.";
+	const std::string	talk_instructions = "TALK: Receives one argument, the npc to interact with.";
+	const std::string	open_instructions = "OPEN: Takes no arguments. Tries to open the chest in the current room.";
+	const std::string	buy_instructions = "BUY: Receives one argument, the item to buy. The player will spend money if the item can be bought.";
+	const std::string	equip_instructions = "EQUIP: Receives one argument, the item to equip. Only shields, armor and weapons are able to be equipped.";
+	const std::string	enchant_instructions = "ENCHANT: Receives two arguments, the enchant to apply to the gear, and the gear. Applies that enchantment if it is possible";
+	const std::string	fight_instructions = "FIGHT: Takes no arguments. Starts a fight with the current enemy in the room (if there is one). Until the fight is done, some commands become unusuable.";
+	const std::string	attack_instructions = "ATTACK: Takes no arguments. Attacks the enemy in the current fight.";
+	const std::string	defend_instructions = "DEFEND: Takes no arguments. Defends from the attack of the enemy in the current fight.";
+	const std::string	flee_instructions = "FLEE: Takes no arguments. Runs away from the current fight, making the player to loose some money.";
+	const std::string	consume_instructions = "CONSUME: Receives one argument, the consumable to consume in the current fight.";
+	const std::string	status_instructions = "STATUS: Takes no arguments. Shows the player's status.";
+	const std::string	quest_instructions = "QUEST: Receives one argument, the Quest Giver. Tries to request a quest in the current room.";
+	const std::string	quests_instructions = "QUESTS: Takes no arguments. Shows the quest list of the player.";
+	const std::string	who_instructions = "WHO: Takes no arguments. Shows how many connected players there are at the moment.";
+	const std::string	group_instructions = "GROUP: Takes at least one argument. Depending on the scope (first argument), a second one might be needed. Supported scopes: CREATE, INVITE, JOIN, KICK, LEAVE.";
+	const std::string	quit_instructions = "QUIT: Takes no arguments. Disconnects the client.";
+	const std::string	help_instructions = "HELP: Takes no arguments. Shows this command list.";
 	std::string			result;
 
 	result += bars;
 	result += '\n';
 	result += connect_instructions;
 	result += '\n';
+	result += look_instructions;
+	result += '\n';
 	result += move_instructions;
 	result += '\n';
-	result += look_instructions;
+	result += chat_instructions;
+	result += '\n';
+	result += take_instructions;
+	result += '\n';
+	result += drop_instructions;
+	result += '\n';
+	result += inventory_instructions;
+	result += '\n';
+	result += talk_instructions;
+	result += '\n';
+	result += open_instructions;
+	result += '\n';
+	result += buy_instructions;
+	result += '\n';
+	result += equip_instructions;
+	result += '\n';
+	result += enchant_instructions;
+	result += '\n';
+	result += fight_instructions;
+	result += '\n';
+	result += attack_instructions;
+	result += '\n';
+	result += defend_instructions;
+	result += '\n';
+	result += flee_instructions;
+	result += '\n';
+	result += consume_instructions;
+	result += '\n';
+	result += status_instructions;
+	result += '\n';
+	result += quest_instructions;
+	result += '\n';
+	result += quests_instructions;
+	result += '\n';
+	result += who_instructions;
+	result += '\n';
+	result += group_instructions;
 	result += '\n';
 	result += quit_instructions;
 	result += '\n';

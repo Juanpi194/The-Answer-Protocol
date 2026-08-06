@@ -6,5 +6,3 @@ Consumable::Consumable(const std::string& id, const std::string& name, const std
 	Item(id, name, description)
 {
 }
-
-// Utils ----------------------------------------------------------------------

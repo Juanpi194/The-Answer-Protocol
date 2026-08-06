@@ -121,8 +121,6 @@ const std::list<Room*>&	World::get_rooms(void) const noexcept
 
 Room					*World::get_spawn_room(void) const noexcept
 {
-	if (!spawn_room)
-		log("World has no spawn room yet", LogLevel::INFO);
 	return (spawn_room);
 }
 

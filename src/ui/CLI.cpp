@@ -17,11 +17,6 @@
 #endif
 
 static const int DEFAULT_PORT = 8080; // matches Server::DEFAULT_PORT
-// MODIFIED: tope maximo para que connect() se resuelva (exito o fallo).
-// Antes de esto, un connect() a un host que no responde (nadie escuchando,
-// firewall descartando paquetes en silencio, etc.) podia dejar al sistema
-// operativo decidir cuanto esperar -- a veces mucho tiempo, sentido como
-// "colgado para siempre".
 static const int CONNECT_TIMEOUT_SECONDS = 5;
 
 CLI::CLI(void):
@@ -120,8 +115,7 @@ bool CLI::connect(const std::string& host, int port)
     return true;
 }
 
-// MODIFIED: parser del "nc host port" que el jugador escribe como primera
-// linea (en vez de un formulario de host/puerto). Formas aceptadas:
+// MODIFIED: parser of "nc host port". Acepted forms:
 //   "nc"                      -> 127.0.0.1:8080
 //   "nc <host>"                -> <host>:8080
 //   "nc <host> <port>"         -> <host>:<port>
@@ -194,7 +188,17 @@ void CLI::disconnect(void)
 void CLI::sendCommand(const std::string& text)
 {
     if (socketFd_ >= 0)
-        send(socketFd_, text.c_str(), text.size(), 0);
+    {
+        // MODIFIED: el RFC exige que cada mensaje termine en LF (0x0A) --
+        // §2.1 "Message Delimiter: Line Feed (LF, 0x0A)", §4.1
+        // "command-line = command-name [SP arguments] LF". Sin esto, el
+        // servidor puede quedarse esperando el final de la línea para
+        // siempre, y el comando nunca llega a procesarse de verdad
+        // (coincide exactamente con "STATUS" respondiendo NOT_CONNECTED
+        // -- CONNECT nunca se terminó de leer).
+        std::string line = text + "\n";
+        send(socketFd_, line.c_str(), line.size(), 0);
+    }
 }
 
 std::vector<std::string> CLI::pollMessages(void)
@@ -211,10 +215,6 @@ std::vector<std::string> CLI::pollMessages(void)
 
 bool CLI::isConnected(void) const noexcept
 {
-    // MODIFIED: antes solo miraba socketFd_ >= 0, que nunca cambiaba si era
-    // el SERVIDOR quien cerraba la conexion (p.ej. tras QUIT) -- ahora
-    // tambien depende de running_, que recvLoop() pone a false en cuanto
-    // detecta que el otro lado cerró.
     return running_ && socketFd_ >= 0;
 }
 
@@ -229,12 +229,12 @@ void CLI::recvLoop(void)
         int bytes = static_cast<int>(recv(socketFd_, buf, sizeof(buf) - 1, 0));
         if (bytes <= 0)
         {
-            // MODIFIED: antes esto solo paraba el bucle, sin avisar a nadie
-            // -- isConnected() seguia devolviendo true para siempre, porque
-            // solo miraba socketFd_ (que nunca se tocaba aqui). Ahora
-            // running_ tambien refleja que el servidor cerro la conexion
-            // por su lado (p.ej. tras QUIT), no solo cuando nosotros
-            // llamamos a disconnect() explicitamente.
+            // MODIFIED: Previously, this only stopped the loop, without notifying anyone.
+            // -- isConnected()` kept returning true forever because
+            // it only looked at socketFd_ (which was never touched here). Now
+            // also reflects that the server closed the connection
+            // on its own (e.g., after QUIT), not just when we
+            // explicitly call disconnect()`.
             running_ = false;
             break;
         }

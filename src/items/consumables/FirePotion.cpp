@@ -6,7 +6,7 @@
 unsigned int		FirePotion::available_id = 0;
 const std::string	FirePotion::PREFIX = "fire_potion.";
 const std::string	FirePotion::NAME = "Fire Potion";
-const std::string	FirePotion::DESCRIPTION = "Grants the user a fiery boost when consumed.";
+const std::string	FirePotion::DESCRIPTION = "Restores the user's status if it is burnt.";
 
 // Constructors ---------------------------------------------------------------
 
