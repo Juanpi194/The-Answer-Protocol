@@ -41,7 +41,10 @@ Quest::Quest(const std::string& name, const std::string& description, unsigned i
 Quest::Quest(const Quest& quest):
 	name(quest.name),
 	description(quest.description),
-	completed(quest.completed)
+	completed(quest.completed),
+	gold_reward(quest.gold_reward),
+	item_reward(quest.item_reward),
+	objective(quest.objective)
 {
 }
 

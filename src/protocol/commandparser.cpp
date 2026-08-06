@@ -90,8 +90,8 @@ static Command	parse_single_argument(CommandType type,
 	if (rest.empty())
 		throw CommandParseError(name + " requires an argument.");
 
-	if (rest.find(' ') != std::string::npos)
-		throw CommandParseError(name + " takes exactly one argument.");
+	//if (rest.find(' ') != std::string::npos)
+	//	throw CommandParseError(name + " takes exactly one argument.");
 
 	return (Command{type, {rest}});
 }

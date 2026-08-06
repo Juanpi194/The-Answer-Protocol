@@ -60,14 +60,12 @@ static Quest build_quest(const nlohmann::json& quest_json)
 		&& !quest_json["gold_reward"].is_null())
 	{
 		gold_reward = quest_json["gold_reward"];
-		log(std::to_string(gold_reward));
 	}
 	if (quest_json.contains("item_reward")
 		&& !quest_json["item_reward"].is_null())
 	{
 		item_reward = ItemFactory::create_from_name(
 			quest_json["item_reward"]);
-		log(item_reward->get_name());
 	}
 
 	return (

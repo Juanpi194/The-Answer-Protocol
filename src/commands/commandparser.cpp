@@ -74,7 +74,8 @@ static Command	parse_single_argument(CommandType type,
 	if (rest.empty())
 		throw CommandParseError(ErrorCode::WRONG_ARGUMENTS);
 
- 
+	// if (rest.find(' ') != std::string::npos)
+	// 	throw CommandParseError(ErrorCode::WRONG_ARGUMENTS);
 
 	return (Command{type, {rest}});
 }
