@@ -83,7 +83,8 @@ World::World(const std::string& name, const std::string& json_path):
 
 	rooms = RoomParser::parse(
 		config["rooms"],
-		config.value("npcs", nlohmann::json::object()));
+		config.value("npcs", nlohmann::json::object()),
+		config.value("items", nlohmann::json::object()));
 
 	if (rooms.empty())
 		spawn_room = nullptr;

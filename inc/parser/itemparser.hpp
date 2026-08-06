@@ -1,5 +1,4 @@
-#ifndef ITEMPARSER_HPP
-#define ITEMPARSER_HPP
+#pragma once
 
 #include <list>
 #include <libs/json.hpp>
@@ -11,5 +10,3 @@ class ItemParser
 	public:
 		std::list<Item*>	parse(const nlohmann::json& items_json);
 };
-
-#endif

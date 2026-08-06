@@ -1,3 +1,7 @@
+#include <string>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <cerrno>
 #include <iostream>
 #include <string>
 #include <fstream>

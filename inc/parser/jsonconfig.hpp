@@ -1,5 +1,4 @@
-#ifndef JSONCONFIG_HPP
-#define JSONCONFIG_HPP
+#pragma once
 
 #include <string>
 #include <libs/json.hpp>
@@ -11,5 +10,3 @@ class JsonConfig
 		static nlohmann::json	load_json(const std::string& path);
 		static void				validate(const nlohmann::json& json_data);
 };
-
-#endif
